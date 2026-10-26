@@ -403,13 +403,11 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-# VS Code files for those working on multiple tools
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/*.code-snippets
+# ---> [MODIFICADO / BORRADO ACÁ]: 
+# Antes estaba ".vscode/*" seguido de líneas con "!.vscode/settings.json", "!.vscode/launch.json", etc.
+# Se borraron esas excepciones con "!" y se dejó directamente ".vscode/" para ignorar TODA la carpeta 
+# y que las configuraciones personales de VS Code de cada uno de los 3 no se pisen en GitHub.
+.vscode/
 
 # Local History for Visual Studio Code
 .history/
@@ -424,5 +422,34 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
-# Official VS Code C# Dev Kit Extension exclusion
-#*.lscache
+# ---> [MODIFICADO ACÁ]: 
+# Antes tenía un "#" adelante (#*.lscache). Se le quitó el "#" para activarlo y que ignore 
+# el caché que genera la extensión C# Dev Kit en Visual Studio Code.
+*.lscache
+
+# ==============================================================================
+# ---> [AGREGADO ACÁ]: REGLAS EXTRA DEL EQUIPO (SEGURIDAD, VERCEL Y ENTORNO)
+# ==============================================================================
+
+# 1. Seguridad Backend C# (Evita subir contraseñas, API Keys y conexiones locales a GitHub)
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+
+# 2. Seguridad y entorno Frontend / Vercel
+.vercel/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+config.local.js
+
+# 3. Archivos ocultos o basura del Sistema Operativo (Windows / Mac)()
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# 4. Carpetas de herramientas de IA / Agentes locales (OpenCode, Antigravity, etc.)
+.opencode/
+.antigravity/
