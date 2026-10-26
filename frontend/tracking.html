@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Guardado</title>
+    <link rel="icon" href="Iconos/logo.svg">
+    <link href="Css/tracking.css" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <div>
+            <div class="contenedor-logo">
+                <img src="Iconos/logo.svg" class="logo" alt="Logo"> 
+            </div>
+            <b>ZUNOX 3D</b>
+        </div>
+    </header>
+
+    <main>
+        <section id="section-1">
+            <p class="p-1">PEDIDO #1048</p>
+            <p class="p-2">Registro guardado</p>
+            <p class="p-3">Los datos del pedido, en un solo lugar.</p>
+        </section>
+
+        <section id="section-estado">
+            <div class="estado-card">
+                <div class="estado-header">
+                    <div class="estado-icono-box">
+                        <img src="Iconos/reloj.svg" alt="Pendiente">
+                    </div>
+                    <div class="estado-info">
+                        <span class="estado-sub">ESTADO ACTUAL</span>
+                        <h3 class="estado-nombre">Pendiente</h3>
+                    </div>
+                </div>
+                <p class="estado-desc">El pedido está registrado y aún no se realizó.</p>
+            </div>
+        </section>
+
+        <section id="section-contacto">
+            <div class="contenedor-datos">
+                <h4>Datos de contacto</h4>
+                <div class="dato-item">
+                    <p class="dato-label">Nombre</p>
+                    <p class="dato-valor">Martina</p>
+                </div>
+                <div class="dato-item">
+                    <p class="dato-label">Apellido</p>
+                    <p class="dato-valor">López</p>
+                </div>
+                <div class="dato-item">
+                    <p class="dato-label">Mail (opcional)</p>
+                    <p class="dato-valor">martina.lopez@gmail.com</p>
+                </div>
+                <div class="dato-item">
+                    <p class="dato-label">Teléfono</p>
+                    <p class="dato-valor">+54 9 11 5678 2345</p>
+                </div>
+                <div class="dato-item">
+                    <p class="dato-label">Zona</p>
+                    <p class="dato-valor">Palermo</p>
+                </div>
+                <div class="dato-item">
+                    <p class="dato-label">Observación general</p>
+                    <p class="dato-valor">Entregar por la tarde.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-productos">
+            <div class="contenedor-productos">
+                <div class="productos-header">
+                    <h4>Productos</h4>
+                    <span class="badge-unidades">5 unidades</span>
+                </div>
+
+                <table class="tabla-productos">
+                    <thead>
+                        <tr>
+                            <th>Nombre del producto</th>
+                            <th>Importe</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <p class="prod-nombre">Cuaderno A5 ×2</p>
+                                <span class="prod-unitario">$4.500 por unidad</span>
+                            </td>
+                            <td class="prod-precio">$9.000</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p class="prod-nombre">Bolígrafo negro ×3</p>
+                                <span class="prod-unitario">$800 por unidad</span>
+                            </td>
+                            <td class="prod-precio">$2.400</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th>Total del pedido</th>
+                            <td class="total-valor">$11.400</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </section>
+
+        <footer class="footer-tracking">
+            <div class="solo-lectura">
+                <img src="Iconos/cerrar.svg" alt="Candado">
+                <span>Solo lectura · Datos guardados</span>
+            </div>
+        </footer>
+    </main>
+</body>
+</html>

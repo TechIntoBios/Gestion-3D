@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos y Categorías</title>
+    <link rel="icon" href="Iconos/logo.svg">
+    <link rel="stylesheet" href="Css/products.css">
+</head>
+
+<body>
+    <header>
+        <div>
+            <div class="contenedor-logo">
+                <img src="Iconos/logo.svg" class="logo" alt="Logo">
+            </div>
+            <b>ZUNOX 3D</b>
+        </div>
+        <div>
+            <div class="salida">
+                <span>
+                    <img src="Iconos/menu-hamburguesa.svg" alt="Opciones">
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="section-1">
+            <p class="p-1">CATÁLOGO</p>
+            <h1 class="p-2">Productos y categorías</h1>
+        </section>
+
+        <!-- Card: Cargar producto -->
+        <section id="section-cargar-producto">
+            <div class="contenedor-datos">
+                <h4>Cargar producto</h4>
+                <form action="cargarProducto" method="POST">
+                    <p>Categoría</p>
+                    <select id="categoria" name="categoria" required>
+                        <option value="">Selecciona una categoría</option>
+                        <option value="Papelería">Papelería</option>
+                        <option value="Accesorios">Accesorios</option>
+                        <option value="Modelos 3D">Modelos 3D</option>
+                    </select>
+
+                    <p>Nombre del producto</p>
+                    <input type="text" id="nombreProducto" name="nombreProducto" placeholder="Cuaderno A5" required>
+
+                    <p>Precio</p>
+                    <input type="number" id="precio" name="precio" placeholder="$4.500" required>
+
+                    <button type="submit" class="btn-submit">Cargar producto</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Card: Crear categoría -->
+        <section id="section-crear-categoria">
+            <div class="contenedor-datos">
+                <h4>Crear categoría</h4>
+                <form action="cargarCategoria" method="POST">
+                    <p>Nombre de categoría</p>
+                    <input type="text" id="nombreCategoria" name="nombreCategoria" placeholder="Ej.: Accesorios" required>
+
+                    <button type="submit" class="btn-submit">Cargar categoría</button>
+                </form>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión</title>
+    <link rel="icon" href="Iconos/logo.svg">
+    <link rel="stylesheet" href="Css/login.css">
+</head>
+
+<body>
+    <header>
+        <div>
+            <div class="contenedor-logo">
+                <img src="Iconos/logo.svg" class="logo" alt="Logo">
+            </div>
+            <b>ZUNOX 3D</b>
+        </div>
+    </header>
+
+    <main>
+        <section id="section-1">
+            <h1 class="p-2">Iniciar sesión</h1>
+        </section>
+
+        <section id="section-2">
+            <div class="contenedor-datos">
+                <form action="login.php" method="POST">
+                    <p>Usuario</p>
+                    <input type="text" id="username" name="username" placeholder="Ingresá tu usuario" required>
+
+                    <p>Contraseña</p>
+                    <input type="password" id="password" name="password" placeholder="Ingresá tu contraseña" required>
+
+                    <button type="submit" class="btn-ingresar">Ingresar</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+    </footer>
+</body>
+</html>
