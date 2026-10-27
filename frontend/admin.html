@@ -27,7 +27,7 @@
     </header>
 
     <main>
-        <form>
+        <form id="formulario">
             <section id="section-1">
                 <p class="p-1">
                     NUEVO PEDIDO
@@ -47,69 +47,74 @@
                             <p>
                                 Nombre
                             </p>
-                            <input type="text" name="nombre" placeholder="Ingresá el nombre" maxlength="100" pattern="[^0-9]+" title="El nombre no puede contener números" required>
+                            <input type="text" name="txt-nombre" placeholder="Ingresá el nombre" maxlength="100" pattern="[^0-9]+" title="El nombre no puede contener números" required>
                         </div>
                         <div class="apellido">
                             <p>
                                 Apellido
                             </p>
-                            <input type="text" name="apellido" placeholder="Ingresá el apellido" maxlength="100" pattern="[^0-9]+" title="El apellido no puede contener números" required>
+                            <input type="text" name="txt-apellido" placeholder="Ingresá el apellido" maxlength="100" pattern="[^0-9]+" title="El apellido no puede contener números" required>
                         </div>
                     </div>
                     <p>Mail (opcional)</p>
-                    <input type="email" name="correo" placeholder="ejemplo@correo.com" maxlength="300">
+                    <input type="email" name="txt-correo" placeholder="ejemplo@correo.com" maxlength="300">
                     <p>Teléfono</p>
-                    <input type="tel" name="telefono" placeholder="1123456789" minlength="10" maxlength="20" pattern="[0-9]{10,20}" title="Ingresá entre 10 y 20 dígitos, sin espacios ni guiones" required>
+                    <input type="tel" name="txt-telefono" placeholder="1123456789" minlength="10" maxlength="20" pattern="[0-9]{10,20}" title="Ingresá entre 10 y 20 dígitos, sin espacios ni guiones" required>
                     <p>Zona</p>
-                    <input type="text" name="zona" placeholder="Ingresá la zona" maxlength="100" required>
+                    <input type="text" name="txt-zona" placeholder="Ingresá la zona" maxlength="100" required>
                 </div>
             </section>
             <section id="section-3">
-                <div class="contenedor-prodcuctos">
+                <div id="tarjeta-productos" class="contenedor-productos">
                     <h4>Productos</h4>
                     <div class="contenedor-nota">
                         <p>Notas de pedido</p>
-                        <textarea placeholder="Agregá una nota para el pedido"></textarea>
+                        <textarea name="txt-nota" placeholder="Agregá una nota para el pedido"></textarea>
                     </div>
-                    <div class="sub-contendor-productos">
-                        <p>Categoría</p>
-                        <select required>
-                            <option value="" disabled selected>Seleccioná una categoría</option>
-                        </select>
-                        <p>Producto</p>
-                        <select required>
-                            <option value="" disabled selected>Seleccioná un producto</option>
-                        </select>
-                        <div class="contenedor-precios">
-                            <div>
-                                <p>Cantidad</p>
-                                <input type="number" placeholder="1" min="1" step="1" required>
+                    <template id="tarjeta-sub-productos">
+                        <div class="sub-contendor-productos">
+                            <p>Categoría</p>
+                            <select name="ddl-categorias" required>
+                                <option value="" disabled selected>Seleccioná una categoría</option>
+                                <option value="1" >categoría</option>
+                            </select>
+                            <p>Producto</p>
+                            <select name="ddl-productos" required>
+                                <option value="" disabled selected>Seleccioná un producto</option>
+                                <option value="1" >producto</option>
+                            </select>
+                            <div class="contenedor-precios">
+                                <div>
+                                    <p>Cantidad</p>
+                                    <input name="txt-cantidad" type="number" placeholder="1" min="1" step="1" required>
+                                </div>
+                                <div>
+                                    <p>Precio unitario</p>
+                                    <input name="txt-precio" type="number" placeholder="0,00" min="0.01" step="0.01" required>
+                                </div>
+                                <div>
+                                    <span>
+                                        <img src="Iconos/basura.svg">
+                                    </span>
+                                </div>
                             </div>
                             <div>
-                                <p>Precio unitario</p>
-                                <input type="number" placeholder="0,00" min="0.01" step="0.01" required>
-                            </div>
-                            <div>
-                                <span>
-                                    <img src="Iconos/basura.svg">
-                                </span>
+                                <p>Subtotal</p>
+                                <label>$</label>
                             </div>
                         </div>
-                        <div>
-                            <p>Subtotal</p>
-                            <label>$</label>
-                        </div>
-                    </div>
+                    </template>
                 </div>
                 <div class="contenedor-total">
                     <div class="fila-total">
                         <p>Total</p>
                         <label>$</label>
                     </div>
-                    <button type="button" class="btn-agregar">+ Agregar producto</button>
+                    <button id="btn_agregar" type="button" class="btn-agregar">+ Agregar producto</button>
                 </div>
             </section>
             <section id="section-guardar">
+                <label id="lbl-mensaje"></label>
                 <button type="submit" class="btn-guardar">
                     <img src="Iconos/Check.svg" alt="">
                     Guardar
@@ -121,6 +126,7 @@
     <footer>
 
     </footer>
+    <script src="JavaScript/admin.js" type="module"></script>
 </body>
 
 </html>

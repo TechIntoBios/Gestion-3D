@@ -231,11 +231,11 @@ section{
     border-color: var(--text_main);
 }
 
-#section-3 .contenedor-prodcuctos{
+#section-3 .contenedor-productos{
     margin: 10px;
 }
 
-.contenedor-prodcuctos h4{
+.contenedor-productos h4{
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -245,7 +245,7 @@ section{
     color: var(--primary_hover);
 }
 
-.contenedor-prodcuctos h4 span{
+.contenedor-productos h4 span{
     font-size: 12px;
     color: var(--header_bg);
     font-weight: normal;
@@ -283,6 +283,7 @@ section{
     background-color: var(--bg_card_secondary);
     padding: 16px;
     box-sizing: border-box;
+    margin-bottom: 10px;
 }
 
 .sub-contendor-productos p{

@@ -17,14 +17,14 @@ public class CategoriasController : ControllerBase
         this.negocioCategorias = negocioCategorias;
     }
 
-    [HttpGet("Categorias")]
+    [HttpGet("listar_Categorias")]
     public async Task<IActionResult> GetCategorias()
     {
         var categorias = await negocioCategorias.ListarCategorias();
         return Ok(categorias);
     }
 
-    [HttpPost("Categorias")]
+    [HttpPost("agregar_Categorias")]
 
     public async Task<IActionResult> agregarCategorias([FromBody] Categorias categoria)
     {
@@ -34,6 +34,6 @@ public class CategoriasController : ControllerBase
         {
             return BadRequest(new {mensaje = "No se pudo agregar la categoria"});
         }
-            return Ok(new {mensaje = "Categoria agregada correctamente" });
+        return Ok(new {mensaje = "Categoria agregada correctamente" });
     }
 }
