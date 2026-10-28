@@ -46,7 +46,7 @@ public class NegocioCompras
 
             foreach (var detalle in detalles!)
             {
-                await negocioDetallePedido.agregarDetallePedido(idPedido, detalle.idproducto, detalle.nombre!, detalle.cantidad, conexion, transaccion);
+                await negocioDetallePedido.agregarDetallePedido(idPedido, detalle.idproducto, detalle.nombre!, detalle.cantidad, detalle.precio, conexion, transaccion);
             }
 
             await transaccion.CommitAsync();

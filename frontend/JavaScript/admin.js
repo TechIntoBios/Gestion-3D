@@ -1,13 +1,21 @@
-const URL_API = "https://localhost:7199/api/Categorias"; 
+const URL_API = "https://localhost:7199/api"; 
 
 import { crearCelda, crearCeldaImg, crearButton, crearInput, crearOption } from "./funciones.js"; 
 
 const label = document.getElementById("lbl-mensaje"); 
 label.innerHTML = ""; 
+const btnagregar = document.getElementById("btn-agregar"); 
+const contenedorProductos = document.getElementById("tarjeta-productos");
+const plantillaProducto = document.getElementById("tarjeta-sub-productos");
+
+function agregarFilaProducto() {
+    const fila = plantillaProducto.content.cloneNode(true);
+    contenedorProductos.appendChild(fila);
+}
 
 async function listar_Categorias() {
     try{
-        const respuesta_cat = await fetch(`${URL_API}/${"listar_Categorias"}`); 
+        const respuesta_cat = await fetch(`${URL_API}/Categorias/listar_Categorias`); 
 
         if(!respuesta_cat.ok){
             label.textContent = "No se encontraron categorias"; 
@@ -33,22 +41,62 @@ formulario.addEventListener("submit", async (evento) => {
 
     const datos = new FormData(formulario); 
 
-    const txt_nombre = datos.get("txt-nombre"); 
-    const txt_apellido = datos.get("txt-apellido"); 
-    const txt_correo = datos.get("txt-correo"); 
-    const txt_telefono = datos.get("txt-telefono"); 
-    const txt_zona = datos.get("txt-zona");
-    const txt_nota = datos.get("txt-nota"); 
-    const ddl_categorias = datos.get("ddl-categorias").valueOf();
-    const ddl_productos = datos.get("ddl-productos").valueOf(); 
-    const txt_cantidad = datos.get("txt-cantidad"); 
-    const txt_precio = datos.get("txt-precio"); 
-    
-    // label.textContent = `${txt_nombre}-${txt_apellido}-${txt_correo}-${txt_telefono}
-    // -${txt_zona}-${txt_nota}-${ddl_categorias}-${ddl_productos}-${txt_cantidad}-${txt_precio}`;
+    const detalle = [...contenedorProductos.querySelectorAll(".sub-contendor-productos")].map((fila) => {
+        const producto = fila.querySelector('[name="ddl-productos"]');
+
+        return {
+            idproducto: Number(producto.value),
+            nombre: producto.selectedOptions[0].textContent.trim(),
+            cantidad: Number(fila.querySelector('[name="txt-cantidad"]').value),
+            precio: Number(fila.querySelector('[name="txt-precio"]').value)
+        };
+    });
+
+    const compra = {
+        cliente: {
+            nombre: datos.get("txt-nombre"),
+            apellido: datos.get("txt-apellido"),
+            correo: datos.get("txt-correo") || null,
+            telefono: datos.get("txt-telefono"),
+            zona: datos.get("txt-zona")
+        },
+        pedido: {
+            idestado: 1,
+            nota: datos.get("txt-nota") || null,
+            seguimiento: null
+        },
+        detalle
+    };
+
+    try{
+        const respuesta = await fetch(`${URL_API}/Compras/guardar`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(compra)
+        });
+
+        const resultado = await respuesta.json();
+
+        if (!respuesta.ok) {
+            throw new Error(resultado.mensaje || "No se pudo guardar la compra.");
+        }
+
+        label.textContent = resultado.mensaje;
+    }
+    catch(error){
+        label.textContent = resultado; 
+    }
 });
 
+
+btnagregar.addEventListener("click", () => {
+    agregarFilaProducto(); 
+}); 
+
 document.addEventListener("DOMContentLoaded", async () => {
+    agregarFilaProducto(); 
     await listar_Categorias(); 
 }); 
 
