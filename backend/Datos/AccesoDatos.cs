@@ -17,12 +17,12 @@ public class AccesoDatos
 
     public AccesoDatos(IConfiguration configuration)
     {
-        cadena = configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Falta la cadena de conexión 'ConnectionStrings:Impresiones3D'.");
+        cadena = configuration.GetConnectionString("Impresiones3D") ?? throw new InvalidOperationException("Falta la cadena de conexión 'ConnectionStrings:Impresiones3D'.");
     }
 
     public async Task<NpgsqlConnection> obtenerConexion()
     {
-        using var connection = new NpgsqlConnection(cadena);
+        var connection = new NpgsqlConnection(cadena);
         try
         {
             await connection.OpenAsync();

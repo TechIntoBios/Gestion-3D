@@ -39,9 +39,9 @@ public class DaoProductos
     public async Task<List<Productos>> ListarTodosLosProductos()
     {
         var Lista = new List<Productos>();
-        using var connection = await accesoDatos.obtenerConexion();
-        var command = new NpgsqlCommand(consulta,connection);
-        using var reader = await command.ExecuteReaderAsync();
+        await using var connection = await accesoDatos.obtenerConexion();
+        await using var command = new NpgsqlCommand(consulta,connection);
+        await using var reader = await command.ExecuteReaderAsync();
 
         while(await reader.ReadAsync())
         {

@@ -1,11 +1,33 @@
 using System.Text;
+using Datos;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Negocio;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. Controladores
 builder.Services.AddControllers();
+
+// Dependencias de acceso a datos y negocio usadas por los controllers.
+builder.Services.AddScoped<AccesoDatos>();
+
+builder.Services.AddScoped<DaoUsuarios>();
+builder.Services.AddScoped<DaoProductos>();
+builder.Services.AddScoped<DaoPedidos>();
+builder.Services.AddScoped<DaoDetallePedidos>();
+builder.Services.AddScoped<DaoEstadoPedido>(); 
+builder.Services.AddScoped<DaoClientes>();
+builder.Services.AddScoped<DaoCategorias>();
+
+builder.Services.AddScoped<NegocioUsuarios>();
+builder.Services.AddScoped<NegocioProductos>();
+builder.Services.AddScoped<NegocioPedidos>();
+builder.Services.AddScoped<NegocioDetallePedido>();
+builder.Services.AddScoped<NegocioEstadoPedido>();
+builder.Services.AddScoped<NegocioCompras>();
+builder.Services.AddScoped<NegocioClientes>();
+builder.Services.AddScoped<NegocioCategorias>();
 
 // 2. CORS (para conectar con frontend de Vercel/HTML)
 builder.Services.AddCors(options =>
