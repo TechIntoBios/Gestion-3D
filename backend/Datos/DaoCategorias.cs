@@ -18,15 +18,15 @@ public class DaoCategorias
     public async Task<bool>AgregarCategorias(Categorias categorias)
     {
         var command = new NpgsqlCommand();
-        armarParametrosAgregarCategorias(command,categorias);
+        armarParametrosAgregarCategorias(command, categorias);
         return await accesoDatos.ejecutarProcedimientoAlmacenado(command,procedimiento_categorias) != 0;
     }
 
     public async Task<bool>ExisteCategoria(Categorias categorias) 
     {
         var command = new NpgsqlCommand();
-        command.Parameters.Add("@NOMBRE",NpgsqlDbType.Varchar,100).Value = categorias.NOMBRE;
-        return await accesoDatos.existe("",command);
+        armarParametrosAgregarCategorias(command, categorias); 
+        return await accesoDatos.existe(ExisteCategorias, command);
     }
 
     public void armarParametrosAgregarCategorias(NpgsqlCommand command, Categorias categorias)
@@ -38,8 +38,8 @@ public class DaoCategorias
     {
         var Lista = new List<Categorias>();
         await using var connection = await accesoDatos.obtenerConexion(); 
-        using var command = new NpgsqlCommand(consulta, connection);
-        using var reader = await command.ExecuteReaderAsync();
+        await using var command = new NpgsqlCommand(consulta, connection);
+        await using var reader = await command.ExecuteReaderAsync();
 
         while (await reader.ReadAsync())
         {

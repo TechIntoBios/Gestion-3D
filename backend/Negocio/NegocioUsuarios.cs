@@ -32,6 +32,7 @@ public class NegocioUsuarios
         var usuarios = new Usuarios(); 
         usuarios.Usuario = nombreUsuario; 
         usuarios.Password = Password; 
+        
         // Llamar al método GetUsuario del DaoUsuarios para obtener el usuario desde la base de datos
         var usuarioExistente = await daoUsuarios.GetUsuario(usuarios);
 

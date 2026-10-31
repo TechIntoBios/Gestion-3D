@@ -12,9 +12,9 @@ public class CategoriasController : ControllerBase
 {
     private readonly NegocioCategorias negocioCategorias;
 
-    public CategoriasController(NegocioCategorias negocioCategorias)
+    public CategoriasController(NegocioCategorias negocioC)
     {
-        this.negocioCategorias = negocioCategorias;
+        this.negocioCategorias = negocioC;
     }
 
     [HttpGet("listar_Categorias")]

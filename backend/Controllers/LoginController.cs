@@ -19,7 +19,7 @@ public class LoginController : ControllerBase
         this.negocioUsuarios = nUsuarios;
     }
 
-    [HttpPost("Login")]
+    [HttpPost("autorizacion")]
     public async Task<IActionResult> GetUsuario([FromBody] LoginRequest loginRequest)
     {
         var loginResponse = await negocioUsuarios.GetUsuario(loginRequest!.usuario!, loginRequest!.contrasena!);

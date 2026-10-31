@@ -39,7 +39,7 @@ public class AccesoDatos
     {
         try
         {
-            using var connection = await obtenerConexion();
+            await using var connection = await obtenerConexion();
             command.Connection = connection;
             command.CommandText = consulta;
 
@@ -55,7 +55,7 @@ public class AccesoDatos
     {
         try
         {
-            using var connection = await obtenerConexion(); 
+            await using var connection = await obtenerConexion(); 
             command.Connection = connection; 
             command.CommandText = consulta; 
 
@@ -72,7 +72,7 @@ public class AccesoDatos
     {
         try
         {
-            using var connection = await obtenerConexion();
+            await using var connection = await obtenerConexion();
             command.Connection = connection;
             command.CommandText = consulta;
 
@@ -88,7 +88,7 @@ public class AccesoDatos
     {
         try
         {
-            using var connection = await obtenerConexion();
+            await using var connection = await obtenerConexion();
             command.Connection = connection;
             command.CommandText = procedimiento;
             command.CommandType = CommandType.StoredProcedure;
@@ -105,7 +105,7 @@ public class AccesoDatos
     {
         try
         {
-            using var connection = await obtenerConexion();
+            await using var connection = await obtenerConexion();
             command.Connection = connection;
             command.CommandText = consulta;
             command.CommandType = CommandType.Text;

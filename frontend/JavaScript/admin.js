@@ -8,10 +8,8 @@ const btnagregar = document.getElementById("btn-agregar");
 const contenedorProductos = document.getElementById("tarjeta-productos");
 const plantillaProducto = document.getElementById("tarjeta-sub-productos");
 
-function agregarFilaProducto() {
-    const fila = plantillaProducto.content.cloneNode(true);
-    contenedorProductos.appendChild(fila);
-}
+let productos_set = new Set(); 
+let array_categorias = []; 
 
 async function listar_Categorias() {
     try{
@@ -22,17 +20,24 @@ async function listar_Categorias() {
             return; 
         }
 
-        const categorias = await respuesta_cat.json(); 
-
-        const ddl_categorias = document.getElementById("ddl-categorias"); 
-        categorias.aforEach(cat => {
-            ddl_categorias.appendChild(crearOption(cat.NOMBRE, cat.IDCATEGORIA)); 
-        });
+        array_categorias = await respuesta_cat.json(); 
     }
     catch(error){
         label.textContent = "No se logro conectar a la base de datos"; 
     }
 }
+
+function agregarFilaProducto() {
+    const fila = plantillaProducto.content.cloneNode(true);
+    const ddl_categorias = fila.querySelector('[name="ddl-categorias"]');
+
+    array_categorias.forEach(cat => {
+        ddl_categorias.appendChild(crearOption(cat.nombre, cat.idcategoria)); 
+    });
+
+    contenedorProductos.appendChild(fila);
+}
+
 
 const formulario = document.getElementById("formulario"); 
 
@@ -96,8 +101,8 @@ btnagregar.addEventListener("click", () => {
 }); 
 
 document.addEventListener("DOMContentLoaded", async () => {
-    agregarFilaProducto(); 
     await listar_Categorias(); 
+    agregarFilaProducto(); 
 }); 
 
 

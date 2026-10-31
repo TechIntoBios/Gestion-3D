@@ -9,26 +9,24 @@ public class DaoUsuarios
 {
     private readonly AccesoDatos accesoDatos;
 
-    private const string ObtenerUsuarios = "SELECT usuario, contrasena FROM usuarios WHERE usuario = @usuario AND contrasena = @contrasena";
-    private const string ExisteUsuario = "SELECT EXISTS (SELECT 1 FROM usuarios WHERE usuario = @usuario AND contrasena = @contrasena)"; 
+    private const string ObtenerUsuarios = "SELECT User_U, Password_U FROM Usuarios WHERE User_U = @USER AND Password_U = @PASSWORD";
+    private const string ExisteUsuario = "SELECT EXISTS (SELECT 1 FROM Usuarios WHERE User_U = @USER AND Password_U = @PASSWORD)"; 
     
     public DaoUsuarios(AccesoDatos datos) => accesoDatos = datos;
 
     public async Task<bool>existeUsuario(Usuarios usuario)
     {
-        var command = new NpgsqlCommand();
-        command.Parameters.Add("@usuario", NpgsqlDbType.Varchar,100).Value = usuario.Usuario;
-        command.Parameters.Add("@contrasena", NpgsqlDbType.Varchar,100).Value = usuario.Password;
+        await using var command = new NpgsqlCommand();
+        armarParametrosUsuarios(command, usuario); 
         return await accesoDatos.existe(ExisteUsuario, command);
     }
 
     public async Task<Usuarios?> GetUsuario (Usuarios usuarios)
     {
-       var connection = await accesoDatos.obtenerConexion();
-       var command = new NpgsqlCommand(ObtenerUsuarios, connection);
-       command.Parameters.AddWithValue("@usuario", usuarios.Usuario.Trim());
-       command.Parameters.AddWithValue("@contrasena", usuarios.Password);
-       using var reader = await command.ExecuteReaderAsync();
+       await using var connection = await accesoDatos.obtenerConexion();
+       await using var command = new NpgsqlCommand(ObtenerUsuarios, connection);
+       armarParametrosUsuarios(command, usuarios); 
+       await using var reader = await command.ExecuteReaderAsync();
 
         if(await reader.ReadAsync())
         {
@@ -39,8 +37,12 @@ public class DaoUsuarios
             };
             return usuario;
         }
-
         return null;
+    }
 
+    public void armarParametrosUsuarios(NpgsqlCommand command, Usuarios usuarios)
+    {
+        command.Parameters.Add("@USER", NpgsqlDbType.Varchar,100).Value = usuarios.Usuario;
+        command.Parameters.Add("@PASSWORD", NpgsqlDbType.Varchar,100).Value = usuarios.Password;
     }
 }
