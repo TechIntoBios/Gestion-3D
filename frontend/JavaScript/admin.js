@@ -10,6 +10,7 @@ const plantillaProducto = document.getElementById("tarjeta-sub-productos");
 
 let productos_set = new Set(); 
 let array_categorias = []; 
+let array_productos = [];
 
 async function listar_Categorias() {
     try{
@@ -21,6 +22,22 @@ async function listar_Categorias() {
         }
 
         array_categorias = await respuesta_cat.json(); 
+    }
+    catch(error){
+        label.textContent = "No se logro conectar a la base de datos"; 
+    }
+}
+
+async function listar_Productos(idcategoria) {
+    try{
+        const respuesta_prov = await fetch(`${URL_API}/Productos/listar_productos`); 
+
+        if(!respuesta_prov.ok){
+            label.textContent = "No se encontraron productos"; 
+            return; 
+        }
+
+        array_productos = await respuesta_prov.json(); 
     }
     catch(error){
         label.textContent = "No se logro conectar a la base de datos"; 
