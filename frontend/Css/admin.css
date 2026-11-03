@@ -516,3 +516,249 @@ section{
 .btn-guardar:active{
     transform: scale(0.99);
 }
+
+/* Buscador de cliente existente */
+.buscador-cliente{
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--primary);
+}
+
+.interruptor{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: fit-content;
+    cursor: pointer;
+    margin-bottom: 12px;
+}
+
+.interruptor input{
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+.interruptor-pista{
+    position: relative;
+    flex: 0 0 40px;
+    width: 40px;
+    height: 22px;
+    border: 1px solid var(--primary);
+    border-radius: 999px;
+    background-color: var(--bg_text);
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.interruptor-pista::after{
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--header_bg);
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.interruptor input:checked + .interruptor-pista{
+    border-color: var(--text_main);
+    background-color: rgba(0, 229, 255, 0.15);
+}
+
+.interruptor input:checked + .interruptor-pista::after{
+    transform: translateX(18px);
+    background-color: var(--text_main);
+}
+
+.interruptor input:focus-visible + .interruptor-pista{
+    outline: 2px solid var(--text_main);
+    outline-offset: 2px;
+}
+
+.interruptor-texto{
+    font-size: 13px;
+    color: var(--primary_hover);
+}
+
+.fila-buscador{
+    display: flex;
+    gap: 8px;
+}
+
+.contenedor-datos .fila-buscador input[type="tel"]{
+    flex: 1;
+    min-width: 0;
+    margin-bottom: 0;
+}
+
+.btn-buscar{
+    flex: 0 0 auto;
+    height: 40px;
+    padding: 0 14px;
+    border: none;
+    border-radius: var(--radius-text);
+    background-color: var(--text_main);
+    color: var(--bg_primary);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-buscar:hover{
+    opacity: 0.9;
+}
+
+.fila-buscador input:disabled,
+.btn-buscar:disabled{
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.contenedor-datos .mensaje-busqueda{
+    margin: 10px 0 0 0;
+    font-size: 12px;
+    color: var(--header_bg);
+}
+
+.contenedor-datos .mensaje-busqueda:empty{
+    display: none;
+}
+
+.contenedor-datos .mensaje-busqueda.encontrado{
+    color: var(--status_completed);
+}
+
+.contenedor-datos .mensaje-busqueda.no-encontrado{
+    color: var(--status_cancelled);
+}
+
+
+/* Panel de pedido guardado */
+.panel-exito{
+    width: calc(100% - 28px);
+    max-width: 332px;
+    margin: auto;
+    padding: 24px 18px 18px 18px;
+    border: 1px solid rgba(34, 197, 94, 0.4);
+    border-radius: var(--radius);
+    background-color: var(--bg_card);
+    color: var(--primary_hover);
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+}
+
+.panel-exito::backdrop{
+    background-color: rgba(8, 11, 16, 0.75);
+}
+
+.btn-cerrar-panel{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--primary);
+    border-radius: var(--radius-text);
+    background: none;
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.btn-cerrar-panel img{
+    width: 12px;
+    height: 12px;
+    filter: brightness(0) invert(0.8);
+}
+
+.btn-cerrar-panel:hover,
+.btn-cerrar-panel:focus-visible{
+    border-color: var(--status_cancelled);
+    background-color: rgba(255, 77, 77, 0.08);
+    outline: none;
+}
+
+.icono-exito{
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 14px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background-color: var(--status_completed);
+}
+
+.icono-exito img{
+    width: 22px;
+    height: 22px;
+}
+
+.panel-exito .p-1{
+    color: var(--status_completed);
+}
+
+.etiqueta-link{
+    margin: 18px 0 8px 0;
+    font-size: 12px;
+    color: var(--header_bg);
+    text-align: left;
+}
+
+.fila-link{
+    display: flex;
+    gap: 8px;
+}
+
+.fila-link input{
+    flex: 1;
+    min-width: 0;
+    height: 40px;
+    padding: 0 10px;
+    border: 1px solid var(--primary);
+    border-radius: var(--radius-text);
+    background-color: var(--bg_text);
+    color: var(--text_main);
+    font-size: 13px;
+    outline: none;
+    text-overflow: ellipsis;
+}
+
+.fila-link input:focus{
+    border-color: var(--text_main);
+}
+
+.btn-copiar{
+    flex: 0 0 auto;
+    height: 40px;
+    padding: 0 14px;
+    border: none;
+    border-radius: var(--radius-text);
+    background-color: var(--text_main);
+    color: var(--bg_primary);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-copiar:hover{
+    opacity: 0.9;
+}
+
+.mensaje-copiado{
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--status_completed);
+    text-align: left;
+}
+
+.mensaje-copiado:empty{
+    display: none;
+}

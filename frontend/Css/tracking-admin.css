@@ -457,3 +457,191 @@ section {
     font-weight: 700;
     color: var(--text_main);
 }
+
+/* Buscador por teléfono */
+#section-buscador .contenedor-datos {
+    margin: 14px;
+}
+
+.fila-buscador {
+    display: flex;
+    gap: 8px;
+}
+
+.fila-buscador input,
+.selector-pedido select,
+.dato-input {
+    width: 100%;
+    height: 40px;
+    min-width: 0;
+    padding: 0 10px;
+    border: 1px solid var(--primary);
+    border-radius: var(--radius-text);
+    background-color: var(--bg_text);
+    color: var(--primary_hover);
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.fila-buscador input {
+    flex: 1;
+}
+
+.fila-buscador input:focus,
+.selector-pedido select:focus,
+.dato-input:focus {
+    border-color: var(--text_main);
+}
+
+.btn-buscar {
+    flex: 0 0 auto;
+    height: 40px;
+    padding: 0 14px;
+    border: none;
+    border-radius: var(--radius-text);
+    background-color: var(--text_main);
+    color: var(--bg_primary);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-buscar:hover {
+    opacity: 0.9;
+}
+
+.mensaje-busqueda {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--header_bg);
+}
+
+.mensaje-busqueda:empty {
+    display: none;
+}
+
+.mensaje-busqueda.encontrado {
+    color: var(--status_completed);
+}
+
+.mensaje-busqueda.no-encontrado {
+    color: var(--status_cancelled);
+}
+
+.selector-pedido {
+    margin-top: 12px;
+}
+
+.selector-pedido[hidden] {
+    display: none;
+}
+
+.selector-pedido select {
+    cursor: pointer;
+}
+
+/* Observación general (visible para el cliente) */
+.ayuda-obs {
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--header_bg);
+}
+
+/* Datos de contacto editables */
+.encabezado-tarjeta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.encabezado-tarjeta h4 {
+    margin-bottom: 0;
+}
+
+.btn-editar,
+.btn-cancelar {
+    height: 32px;
+    padding: 0 12px;
+    border: 1px solid var(--primary);
+    border-radius: var(--radius-text);
+    background: none;
+    color: var(--primary_hover);
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.btn-editar {
+    width: 32px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-editar img {
+    width: 15px;
+    height: 15px;
+}
+
+.btn-editar:hover,
+.btn-editar:focus-visible {
+    border-color: var(--text_main);
+    outline: none;
+}
+
+.btn-cancelar:hover {
+    border-color: var(--status_cancelled);
+    color: var(--status_cancelled);
+}
+
+.dato-input[hidden],
+.dato-valor[hidden],
+.acciones-edicion[hidden] {
+    display: none;
+}
+
+.acciones-edicion {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.acciones-edicion .btn-cancelar {
+    height: 44px;
+    flex: 1;
+}
+
+.acciones-edicion .btn-guardar-cambios {
+    flex: 2;
+    margin-top: 0;
+}
+
+/* Productos sin pedido cargado y nota del pedido */
+.fila-vacia td {
+    padding: 14px 0;
+    font-size: 12px;
+    color: var(--header_bg);
+    text-align: center;
+}
+
+.nota-pedido {
+    margin-top: 14px;
+    padding: 12px;
+    border: 1px solid var(--primary);
+    border-radius: var(--radius-text);
+    background-color: var(--bg_card_secondary);
+}
+
+.nota-pedido .dato-valor {
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 1.4;
+    white-space: pre-line;
+}

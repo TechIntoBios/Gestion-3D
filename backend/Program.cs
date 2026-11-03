@@ -104,7 +104,12 @@ if (app.Environment.IsDevelopment())
 
     // En local el front se sirve desde la API para compartir origen, igual que con el rewrite de Vercel.
     var rutaFrontend = Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, "..", "frontend"));
-    app.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(rutaFrontend) });
+    // no-cache: el navegador revalida cada archivo y no muestra CSS o JS viejos mientras se desarrolla.
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(rutaFrontend),
+        OnPrepareResponse = contexto => contexto.Context.Response.Headers.CacheControl = "no-cache"
+    });
 }
 
 app.UseRouting();

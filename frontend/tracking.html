@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro Guardado</title>
+    <title>Seguimiento de tu pedido | ZUNOX 3D</title>
     <link rel="icon" href="Iconos/logo.svg">
     <link href="Css/tracking.css" rel="stylesheet">
 </head>
@@ -13,31 +13,40 @@
     <header>
         <div>
             <div class="contenedor-logo">
-                <img src="Iconos/logo.svg" class="logo" alt="Logo"> 
+                <img src="Iconos/logo.svg" class="logo" alt="Logo">
             </div>
             <b>ZUNOX 3D</b>
         </div>
     </header>
 
+    <!-- Página pública y de solo lectura: el pedido llega por el link que se le comparte al cliente. -->
     <main>
         <section id="section-1">
-            <p class="p-1">PEDIDO #1048</p>
-            <p class="p-2">Registro guardado</p>
-            <p class="p-3">Los datos del pedido, en un solo lugar.</p>
+            <p class="p-1" id="lbl-numero-pedido">SEGUIMIENTO</p>
+            <p class="p-2">Seguimiento de tu pedido</p>
+            <p class="p-3" id="lbl-subtitulo">Los datos de tu pedido, en un solo lugar.</p>
         </section>
 
         <section id="section-estado">
             <div class="estado-card">
                 <div class="estado-header">
                     <div class="estado-icono-box">
-                        <img src="Iconos/reloj.svg" alt="Pendiente">
+                        <img id="img-estado" src="Iconos/reloj.svg" alt="">
                     </div>
                     <div class="estado-info">
                         <span class="estado-sub">ESTADO ACTUAL</span>
-                        <h3 class="estado-nombre">Pendiente</h3>
+                        <h3 class="estado-nombre" id="lbl-estado">—</h3>
                     </div>
                 </div>
-                <p class="estado-desc">El pedido está registrado y aún no se realizó.</p>
+                <p class="estado-desc" id="lbl-estado-desc">Estamos buscando tu pedido.</p>
+
+                <div class="estado-divider"></div>
+
+                <!-- Columna Seguimiento del pedido: la escribe el admin en tracking-admin. -->
+                <div class="seguimiento-mensaje">
+                    <p class="dato-label">Observación general</p>
+                    <p class="dato-valor" id="lbl-observacion">Todavía no hay novedades sobre tu pedido.</p>
+                </div>
             </div>
         </section>
 
@@ -46,27 +55,23 @@
                 <h4>Datos de contacto</h4>
                 <div class="dato-item">
                     <p class="dato-label">Nombre</p>
-                    <p class="dato-valor">Martina</p>
+                    <p class="dato-valor" data-campo="nombre">—</p>
                 </div>
                 <div class="dato-item">
                     <p class="dato-label">Apellido</p>
-                    <p class="dato-valor">López</p>
+                    <p class="dato-valor" data-campo="apellido">—</p>
                 </div>
                 <div class="dato-item">
                     <p class="dato-label">Mail (opcional)</p>
-                    <p class="dato-valor">martina.lopez@gmail.com</p>
+                    <p class="dato-valor" data-campo="correo">—</p>
                 </div>
                 <div class="dato-item">
                     <p class="dato-label">Teléfono</p>
-                    <p class="dato-valor">+54 9 11 5678 2345</p>
+                    <p class="dato-valor" data-campo="telefono">—</p>
                 </div>
                 <div class="dato-item">
                     <p class="dato-label">Zona</p>
-                    <p class="dato-valor">Palermo</p>
-                </div>
-                <div class="dato-item">
-                    <p class="dato-label">Observación general</p>
-                    <p class="dato-valor">Entregar por la tarde.</p>
+                    <p class="dato-valor" data-campo="zona">—</p>
                 </div>
             </div>
         </section>
@@ -75,7 +80,7 @@
             <div class="contenedor-productos">
                 <div class="productos-header">
                     <h4>Productos</h4>
-                    <span class="badge-unidades">5 unidades</span>
+                    <span class="badge-unidades" id="lbl-unidades">0 unidades</span>
                 </div>
 
                 <table class="tabla-productos">
@@ -85,38 +90,35 @@
                             <th>Importe</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <p class="prod-nombre">Cuaderno A5 ×2</p>
-                                <span class="prod-unitario">$4.500 por unidad</span>
-                            </td>
-                            <td class="prod-precio">$9.000</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <p class="prod-nombre">Bolígrafo negro ×3</p>
-                                <span class="prod-unitario">$800 por unidad</span>
-                            </td>
-                            <td class="prod-precio">$2.400</td>
+                    <tbody id="tbody-productos">
+                        <tr class="fila-vacia">
+                            <td colspan="2">Todavía no hay productos para mostrar.</td>
                         </tr>
                     </tbody>
                     <tfoot>
                         <tr>
                             <th>Total del pedido</th>
-                            <td class="total-valor">$11.400</td>
+                            <td class="total-valor" id="lbl-total">$0</td>
                         </tr>
                     </tfoot>
                 </table>
+
+                <!-- Columna Nota del pedido: lo que se anotó al cargar el pedido. -->
+                <div class="nota-pedido">
+                    <p class="dato-label">Nota del pedido</p>
+                    <p class="dato-valor" id="lbl-nota">—</p>
+                </div>
             </div>
         </section>
 
         <footer class="footer-tracking">
             <div class="solo-lectura">
-                <img src="Iconos/cerrar.svg" alt="Candado">
+                <img src="Iconos/cerrar.svg" alt="">
                 <span>Solo lectura · Datos guardados</span>
             </div>
         </footer>
     </main>
+    <script src="JavaScript/tracking.js" type="module"></script>
 </body>
+
 </html>

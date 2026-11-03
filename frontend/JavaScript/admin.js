@@ -1,7 +1,7 @@
 const URL_API = "/api";
 
 import { crearCelda, crearCeldaImg, crearButton, crearInput, crearOption } from "./funciones.js";
-import { exigirSesion, cerrarSesion } from "./sesion.js";
+import { exigirSesion } from "./sesion.js";
 
 const label = document.getElementById("lbl-mensaje"); 
 label.innerHTML = ""; 
@@ -118,7 +118,27 @@ btnagregar.addEventListener("click", () => {
     agregarFilaProducto(); 
 }); 
 
-document.getElementById("btn-cerrar-sesion").addEventListener("click", cerrarSesion);
+// Buscador de cliente existente: por ahora solo se habilita con el interruptor; falta la búsqueda en la API.
+const chkClienteExistente = document.getElementById("chk-cliente-existente");
+const txtBuscarTelefono = document.getElementById("txt-buscar-telefono");
+const btnBuscarCliente = document.getElementById("btn-buscar-cliente");
+const lblBusqueda = document.getElementById("lbl-busqueda");
+
+chkClienteExistente.addEventListener("change", () => {
+    const habilitado = chkClienteExistente.checked;
+
+    txtBuscarTelefono.disabled = !habilitado;
+    btnBuscarCliente.disabled = !habilitado;
+    lblBusqueda.textContent = "";
+    lblBusqueda.className = "mensaje-busqueda";
+
+    if (habilitado) {
+        txtBuscarTelefono.focus();
+    }
+    else {
+        txtBuscarTelefono.value = "";
+    }
+});
 
 document.addEventListener("DOMContentLoaded", async () => {
     if(!await exigirSesion()){

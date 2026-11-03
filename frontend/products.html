@@ -7,6 +7,7 @@
     <title>Productos y Categorías</title>
     <link rel="icon" href="Iconos/logo.svg">
     <link rel="stylesheet" href="Css/products.css">
+    <link rel="stylesheet" href="Css/menu.css">
 </head>
 
 <body>
@@ -17,12 +18,27 @@
             </div>
             <b>ZUNOX 3D</b>
         </div>
-        <div>
-            <div class="salida">
+        <div class="menu-opciones">
+            <button type="button" id="btn-menu" class="salida" aria-label="Abrir menú" aria-haspopup="true" aria-expanded="false" aria-controls="panel-menu">
                 <span>
-                    <img src="Iconos/menu-hamburguesa.svg" alt="Opciones">
+                    <img src="Iconos/puntos.svg" alt="">
                 </span>
-            </div>
+            </button>
+            <nav id="panel-menu" class="panel-menu" aria-label="Menú" hidden>
+                <a href="admin.html" class="item-menu">
+                    <img src="Iconos/plus-pequeno.svg" alt="">
+                    Nuevo pedido
+                </a>
+                <a href="tracking-admin.html" class="item-menu">
+                    <img src="Iconos/calendario-reloj.svg" alt="">
+                    Seguimiento de pedidos
+                </a>
+                <hr>
+                <button type="button" id="btn-cerrar-sesion" class="item-menu item-cerrar-sesion">
+                    <img src="Iconos/salida.svg" alt="">
+                    Cerrar sesión
+                </button>
+            </nav>
         </div>
     </header>
 
@@ -69,6 +85,8 @@
             </div>
         </section>
     </main>
+    <script src="JavaScript/menu.js" type="module"></script>
+    <script src="JavaScript/products.js" type="module"></script>
 </body>
 
 </html>

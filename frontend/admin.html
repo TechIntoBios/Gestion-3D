@@ -7,6 +7,7 @@
     <title>Nuevo Registro</title>
     <link rel="icon" href="Iconos/logo.svg">
     <link href="Css/admin.css" rel="stylesheet">
+    <link href="Css/menu.css" rel="stylesheet">
 </head>
 
 <body>
@@ -17,12 +18,27 @@
             </div>
             <b>ZUNOX 3D</b>
         </div>
-        <div>
-            <button type="button" id="btn-cerrar-sesion" class="salida" aria-label="Cerrar sesión" title="Cerrar sesión">
+        <div class="menu-opciones">
+            <button type="button" id="btn-menu" class="salida" aria-label="Abrir menú" aria-haspopup="true" aria-expanded="false" aria-controls="panel-menu">
                 <span>
-                    <img src="Iconos/salida.svg" alt="">
+                    <img src="Iconos/puntos.svg" alt="">
                 </span>
             </button>
+            <nav id="panel-menu" class="panel-menu" aria-label="Menú" hidden>
+                <a href="tracking-admin.html" class="item-menu">
+                    <img src="Iconos/calendario-reloj.svg" alt="">
+                    Seguimiento de pedidos
+                </a>
+                <a href="products.html" class="item-menu">
+                    <img src="Iconos/lista-del-portapapeles.svg" alt="">
+                    Productos
+                </a>
+                <hr>
+                <button type="button" id="btn-cerrar-sesion" class="item-menu item-cerrar-sesion">
+                    <img src="Iconos/salida.svg" alt="">
+                    Cerrar sesión
+                </button>
+            </nav>
         </div>
     </header>
 
@@ -42,6 +58,19 @@
             <section id="section-2">
                 <div class="contenedor-datos">
                     <h4>Datos de contacto</h4>
+                    <!-- Buscador de cliente existente: sin name, para que no viaje en el FormData del pedido. -->
+                    <div class="buscador-cliente">
+                        <label class="interruptor">
+                            <input type="checkbox" id="chk-cliente-existente" role="switch">
+                            <span class="interruptor-pista" aria-hidden="true"></span>
+                            <span class="interruptor-texto">Cliente existente</span>
+                        </label>
+                        <div class="fila-buscador">
+                            <input type="tel" id="txt-buscar-telefono" placeholder="Buscar por teléfono" inputmode="numeric" maxlength="20" pattern="[0-9]{10,20}" title="Ingresá entre 10 y 20 dígitos, sin espacios ni guiones" aria-label="Teléfono del cliente" disabled>
+                            <button type="button" id="btn-buscar-cliente" class="btn-buscar" disabled>Buscar</button>
+                        </div>
+                        <p id="lbl-busqueda" class="mensaje-busqueda" role="status" aria-live="polite"></p>
+                    </div>
                     <div class="sub-contenedor-datos">
                         <div>
                             <p>
@@ -119,11 +148,35 @@
                 </button>
             </section>
         </form>
+
+        <!-- Se abre con showModal() cuando el pedido se guardó bien. -->
+        <dialog id="dlg-pedido-guardado" class="panel-exito" aria-labelledby="ttl-pedido-guardado">
+            <form method="dialog">
+                <button type="submit" class="btn-cerrar-panel" aria-label="Cerrar">
+                    <img src="Iconos/Cancelar.svg" alt="">
+                </button>
+            </form>
+
+            <div class="icono-exito">
+                <img src="Iconos/Check.svg" alt="">
+            </div>
+            <p class="p-1" id="lbl-numero-guardado">PEDIDO #—</p>
+            <h2 class="p-2" id="ttl-pedido-guardado">Pedido registrado</h2>
+            <p class="p-3">Copiá el link y mandáselo al cliente para que siga su pedido.</p>
+
+            <p class="etiqueta-link">Link de seguimiento del cliente</p>
+            <div class="fila-link">
+                <input type="url" id="txt-link-seguimiento" readonly aria-label="Link de seguimiento del cliente">
+                <button type="button" id="btn-copiar-link" class="btn-copiar" autofocus>Copiar</button>
+            </div>
+            <p id="lbl-copiado" class="mensaje-copiado" role="status" aria-live="polite"></p>
+        </dialog>
     </main>
 
     <footer>
 
     </footer>
+    <script src="JavaScript/menu.js" type="module"></script>
     <script src="JavaScript/admin.js" type="module"></script>
 </body>
 

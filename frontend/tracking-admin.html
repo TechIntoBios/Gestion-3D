@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro Guardado - Pedido #1048</title>
+    <title>Seguimiento de pedidos | ZUNOX 3D</title>
     <link rel="icon" href="Iconos/logo.svg">
     <link href="Css/tracking-admin.css" rel="stylesheet">
+    <link href="Css/menu.css" rel="stylesheet">
 </head>
 
 <body>
@@ -17,34 +18,66 @@
             </div>
             <b>ZUNOX 3D</b>
         </div>
-        <div>
-            <div class="salida">
+        <div class="menu-opciones">
+            <button type="button" id="btn-menu" class="salida" aria-label="Abrir menú" aria-haspopup="true" aria-expanded="false" aria-controls="panel-menu">
                 <span>
-                    <img src="Iconos/menu-hamburguesa.svg" alt="Opciones">
+                    <img src="Iconos/puntos.svg" alt="">
                 </span>
-            </div>
+            </button>
+            <nav id="panel-menu" class="panel-menu" aria-label="Menú" hidden>
+                <a href="admin.html" class="item-menu">
+                    <img src="Iconos/plus-pequeno.svg" alt="">
+                    Nuevo pedido
+                </a>
+                <a href="products.html" class="item-menu">
+                    <img src="Iconos/lista-del-portapapeles.svg" alt="">
+                    Productos
+                </a>
+                <hr>
+                <button type="button" id="btn-cerrar-sesion" class="item-menu item-cerrar-sesion">
+                    <img src="Iconos/salida.svg" alt="">
+                    Cerrar sesión
+                </button>
+            </nav>
         </div>
     </header>
 
     <main>
         <section id="section-1">
-            <p class="p-1">PEDIDO #1048</p>
-            <p class="p-2">Registro guardado</p>
-            <p class="p-3">Los datos del pedido, en un solo lugar.</p>
+            <p class="p-1" id="lbl-numero-pedido">SEGUIMIENTO</p>
+            <p class="p-2">Seguimiento de pedidos</p>
+            <p class="p-3">Buscá el pedido con el teléfono del cliente.</p>
+        </section>
+
+        <section id="section-buscador">
+            <form id="form-buscar" class="contenedor-datos" role="search">
+                <p class="dato-label">Teléfono del cliente</p>
+                <div class="fila-buscador">
+                    <input type="tel" id="txt-buscar-telefono" placeholder="1123456789" inputmode="numeric" minlength="10" maxlength="20" pattern="[0-9]{10,20}" title="Ingresá entre 10 y 20 dígitos, sin espacios ni guiones" aria-label="Teléfono del cliente" required>
+                    <button type="submit" id="btn-buscar" class="btn-buscar">Buscar</button>
+                </div>
+                <p id="lbl-busqueda" class="mensaje-busqueda" role="status" aria-live="polite"></p>
+
+                <!-- Solo se muestra si el cliente tiene más de un pedido. -->
+                <div id="contenedor-pedidos" class="selector-pedido" hidden>
+                    <p class="dato-label">Pedido</p>
+                    <select id="ddl-pedidos" aria-label="Pedido del cliente"></select>
+                </div>
+            </form>
         </section>
 
         <section id="section-estado">
             <div class="estado-card">
                 <div class="estado-header">
                     <div class="estado-icono-box">
-                        <img src="Iconos/reloj.svg" alt="Pendiente">
+                        <img id="img-estado" src="Iconos/reloj.svg" alt="">
                     </div>
                     <div class="estado-info">
                         <span class="estado-sub">ESTADO ACTUAL</span>
-                        <h3 class="estado-nombre">Pendiente</h3>
+                        <h3 class="estado-nombre" id="lbl-estado">—</h3>
                     </div>
                 </div>
-                <p class="estado-desc">El pedido está registrado y aún no se realizó.</p>
+                <p class="estado-desc" id="lbl-estado-desc">Buscá un pedido para ver su estado.</p>
 
                 <div class="estado-divider"></div>
 
@@ -52,7 +85,7 @@
                     <p class="lbl-cambiar">Cambiar estado</p>
                     <div class="opciones-estado">
                         <label class="opcion-estado opcion-pendiente">
-                            <input type="radio" name="estado" value="pendiente" checked>
+                            <input type="radio" name="estado" value="pendiente">
                             <span class="punto-radio"></span>
                             Pendiente
                         </label>
@@ -68,10 +101,12 @@
                         </label>
                     </div>
 
+                    <!-- Columna Seguimiento del pedido: es lo que después va a ver el cliente. -->
                     <p class="lbl-obs">Observación general</p>
-                    <textarea id="obs" placeholder="Observación del pedido...">Entregar por la tarde.</textarea>
+                    <textarea id="txt-observacion" maxlength="300" placeholder="Link de seguimiento, correo o indicaciones para el cliente..."></textarea>
+                    <p class="ayuda-obs">El cliente va a ver este mensaje en el seguimiento de su pedido.</p>
 
-                    <button type="button" class="btn-guardar-cambios">
+                    <button type="button" id="btn-guardar-estado" class="btn-guardar-cambios">
                         <img src="Iconos/Check.svg" alt="">
                         Guardar cambios
                     </button>
@@ -81,31 +116,46 @@
 
         <section id="section-contacto">
             <div class="contenedor-datos">
-                <h4>Datos de contacto</h4>
-                <div class="dato-item">
-                    <p class="dato-label">Nombre</p>
-                    <p class="dato-valor">Martina</p>
+                <div class="encabezado-tarjeta">
+                    <h4>Datos de contacto</h4>
+                    <button type="button" id="btn-editar-contacto" class="btn-editar" aria-label="Editar datos de contacto" title="Editar datos de contacto">
+                        <img src="Iconos/editar.svg" alt="">
+                    </button>
                 </div>
-                <div class="dato-item">
-                    <p class="dato-label">Apellido</p>
-                    <p class="dato-valor">López</p>
-                </div>
-                <div class="dato-item">
-                    <p class="dato-label">Mail (opcional)</p>
-                    <p class="dato-valor">martina.lopez@gmail.com</p>
-                </div>
-                <div class="dato-item">
-                    <p class="dato-label">Teléfono</p>
-                    <p class="dato-valor">+54 9 11 5678 2345</p>
-                </div>
-                <div class="dato-item">
-                    <p class="dato-label">Zona</p>
-                    <p class="dato-valor">Palermo</p>
-                </div>
-                <div class="dato-item">
-                    <p class="dato-label">Observación general</p>
-                    <p class="dato-valor">Entregar por la tarde.</p>
-                </div>
+                <form id="form-contacto">
+                    <div class="dato-item">
+                        <p class="dato-label">Nombre</p>
+                        <p class="dato-valor" data-campo="nombre">—</p>
+                        <input class="dato-input" type="text" name="nombre" maxlength="100" pattern="[^0-9]+" title="El nombre no puede contener números" aria-label="Nombre" required hidden>
+                    </div>
+                    <div class="dato-item">
+                        <p class="dato-label">Apellido</p>
+                        <p class="dato-valor" data-campo="apellido">—</p>
+                        <input class="dato-input" type="text" name="apellido" maxlength="100" pattern="[^0-9]+" title="El apellido no puede contener números" aria-label="Apellido" required hidden>
+                    </div>
+                    <div class="dato-item">
+                        <p class="dato-label">Mail (opcional)</p>
+                        <p class="dato-valor" data-campo="correo">—</p>
+                        <input class="dato-input" type="email" name="correo" maxlength="300" aria-label="Mail" hidden>
+                    </div>
+                    <div class="dato-item">
+                        <p class="dato-label">Teléfono</p>
+                        <p class="dato-valor" data-campo="telefono">—</p>
+                        <input class="dato-input" type="tel" name="telefono" inputmode="numeric" minlength="10" maxlength="20" pattern="[0-9]{10,20}" title="Ingresá entre 10 y 20 dígitos, sin espacios ni guiones" aria-label="Teléfono" required hidden>
+                    </div>
+                    <div class="dato-item">
+                        <p class="dato-label">Zona</p>
+                        <p class="dato-valor" data-campo="zona">—</p>
+                        <input class="dato-input" type="text" name="zona" maxlength="100" aria-label="Zona" required hidden>
+                    </div>
+                    <div class="acciones-edicion" hidden>
+                        <button type="button" id="btn-cancelar-contacto" class="btn-cancelar">Cancelar</button>
+                        <button type="submit" class="btn-guardar-cambios">
+                            <img src="Iconos/Check.svg" alt="">
+                            Guardar
+                        </button>
+                    </div>
+                </form>
             </div>
         </section>
 
@@ -113,7 +163,7 @@
             <div class="contenedor-productos">
                 <div class="productos-header">
                     <h4>Productos</h4>
-                    <span class="badge-unidades">5 unidades</span>
+                    <span class="badge-unidades" id="lbl-unidades">0 unidades</span>
                 </div>
 
                 <table class="tabla-productos">
@@ -123,32 +173,29 @@
                             <th>Importe</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <p class="prod-nombre">Cuaderno A5 ×2</p>
-                                <span class="prod-unitario">$4.500 por unidad</span>
-                            </td>
-                            <td class="prod-precio">$9.000</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <p class="prod-nombre">Bolígrafo negro ×3</p>
-                                <span class="prod-unitario">$800 por unidad</span>
-                            </td>
-                            <td class="prod-precio">$2.400</td>
+                    <tbody id="tbody-productos">
+                        <tr class="fila-vacia">
+                            <td colspan="2">Todavía no hay un pedido cargado.</td>
                         </tr>
                     </tbody>
                     <tfoot>
                         <tr>
                             <th>Total del pedido</th>
-                            <td class="total-valor">$11.400</td>
+                            <td class="total-valor" id="lbl-total">$0</td>
                         </tr>
                     </tfoot>
                 </table>
+
+                <!-- Columna Nota del pedido: lo que se escribió al cargarlo. Solo lectura. -->
+                <div class="nota-pedido">
+                    <p class="dato-label">Nota del pedido</p>
+                    <p class="dato-valor" id="lbl-nota">—</p>
+                </div>
             </div>
         </section>
     </main>
+    <script src="JavaScript/menu.js" type="module"></script>
+    <script src="JavaScript/tracking-admin.js" type="module"></script>
 </body>
 
 </html>

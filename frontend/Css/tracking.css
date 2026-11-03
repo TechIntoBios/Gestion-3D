@@ -328,3 +328,33 @@ section {
     width: 14px;
     height: 14px;
 }
+
+/* Observación general: el mensaje del admin para el cliente */
+.seguimiento-mensaje .dato-valor,
+.nota-pedido .dato-valor {
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 1.4;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
+.seguimiento-mensaje a {
+    color: var(--text_main);
+}
+
+/* Productos sin datos y nota del pedido */
+.fila-vacia td {
+    padding: 14px 0;
+    font-size: 12px;
+    color: var(--header_bg);
+    text-align: center;
+}
+
+.nota-pedido {
+    margin-top: 14px;
+    padding: 12px;
+    border: 1px solid var(--primary);
+    border-radius: var(--radius-text);
+    background-color: var(--bg_card_secondary);
+}
