@@ -21,7 +21,7 @@ public class NegocioProductos
             return await daoProductos.agreagrProducto(productos);
         }
 
-        return true;
+        return false;
     }
 
 

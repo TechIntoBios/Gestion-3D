@@ -17,10 +17,10 @@ public class ProductosController : ControllerBase
         this.negocioProductos = negocioProductos;
     }
 
-    [HttpGet("Productos")]
+    [HttpGet("listar_productos")]
     public async Task<IActionResult> GetProductos()
     {
-        var productos = negocioProductos.obtenerProductos();
+        var productos = await negocioProductos.obtenerProductos();
         return Ok(productos);
     }
 

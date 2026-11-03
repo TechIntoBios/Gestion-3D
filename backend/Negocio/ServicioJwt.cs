@@ -36,9 +36,7 @@ public sealed class ServicioJwt
         clave = new SymmetricSecurityKey(bytesClave);
         emisor = configuracion["JwtSettings:Issuer"] ?? "Sistema3DBackend";
         audiencia = configuracion["JwtSettings:Audience"] ?? "Sistema3DFrontend";
-        DuracionHoras = int.TryParse(configuracion["JwtSettings:DuracionHoras"], out var horas) && horas > 0
-            ? horas
-            : DuracionPorDefectoHoras;
+        DuracionHoras = int.TryParse(configuracion["JwtSettings:DuracionHoras"], out var horas) && horas > 0 ? horas : DuracionPorDefectoHoras;
     }
 
     public TokenValidationParameters ParametrosValidacion() => new()

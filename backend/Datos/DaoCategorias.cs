@@ -8,7 +8,7 @@ public class DaoCategorias
 {
     private readonly AccesoDatos accesoDatos;
 
-    private const string consulta = "SELECT Id_Categoria_Cat, Nombre_Cat, Activo_Cat FROM Categorias";
+    private const string consulta = "SELECT Id_Categoria_Cat, Nombre_Cat, Activo_Cat FROM Categorias WHERE Activo_Cat = TRUE";
 
     private const string procedimiento_categorias = "sp_AgregarCategoria";
     private const string ExisteCategorias = "SELECT EXISTS (SELECT 1 FROM Categorias WHERE Nombre_Cat = @NOMBRE)";
