@@ -101,6 +101,16 @@ header div img{
     align-items: center;
 }
 
+button.salida{
+    background: none;
+    cursor: pointer;
+}
+
+button.salida:focus-visible{
+    outline: 2px solid var(--text_main);
+    outline-offset: 2px;
+}
+
 img{
     width: 20px;
     height: 20px;

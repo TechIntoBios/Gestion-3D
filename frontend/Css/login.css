@@ -139,10 +139,56 @@ section {
     margin: 14px;
 }
 
-.contenedor-datos p {
+.contenedor-datos label {
+    display: block;
     color: var(--primary_hover);
     font-size: 12px;
     margin-bottom: 8px;
+}
+
+.campo-password {
+    position: relative;
+}
+
+.campo-password input {
+    padding-right: 48px;
+}
+
+.btn-ver-password {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 44px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: none;
+    border: none;
+    border-radius: var(--radius-text);
+    cursor: pointer;
+}
+
+.btn-ver-password:focus-visible,
+.btn-ingresar:focus-visible {
+    outline: 2px solid var(--text_main);
+    outline-offset: 2px;
+}
+
+.btn-ver-password img {
+    width: 18px;
+    height: 18px;
+    filter: invert(1);
+}
+
+.mensaje-error {
+    color: var(--status_cancelled);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.mensaje-error:not(:empty) {
+    margin-bottom: 12px;
 }
 
 .contenedor-datos input[type="text"],
@@ -156,7 +202,7 @@ section {
     padding-left: 10px;
     color: var(--primary_hover);
     outline: none;
-    font-size: 14px;
+    font-size: 16px;
     font-family: inherit;
     transition: border-color 0.2s;
 }
@@ -196,4 +242,9 @@ section {
 
 .btn-ingresar:active {
     transform: scale(0.99);
+}
+
+.btn-ingresar:disabled {
+    opacity: 0.6;
+    cursor: wait;
 }

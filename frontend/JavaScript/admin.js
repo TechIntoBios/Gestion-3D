@@ -1,6 +1,7 @@
-const URL_API = "https://localhost:7199/api"; 
+const URL_API = "/api";
 
-import { crearCelda, crearCeldaImg, crearButton, crearInput, crearOption } from "./funciones.js"; 
+import { crearCelda, crearCeldaImg, crearButton, crearInput, crearOption } from "./funciones.js";
+import { exigirSesion, cerrarSesion } from "./sesion.js";
 
 const label = document.getElementById("lbl-mensaje"); 
 label.innerHTML = ""; 
@@ -117,8 +118,14 @@ btnagregar.addEventListener("click", () => {
     agregarFilaProducto(); 
 }); 
 
+document.getElementById("btn-cerrar-sesion").addEventListener("click", cerrarSesion);
+
 document.addEventListener("DOMContentLoaded", async () => {
-    await listar_Categorias(); 
+    if(!await exigirSesion()){
+        return;
+    }
+
+    await listar_Categorias();
     agregarFilaProducto(); 
 }); 
 

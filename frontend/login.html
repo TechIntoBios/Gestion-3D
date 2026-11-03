@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión</title>
+    <title>Iniciar sesión | ZUNOX 3D</title>
+    <meta name="robots" content="noindex">
     <link rel="icon" href="Iconos/logo.svg">
     <link rel="stylesheet" href="Css/login.css">
 </head>
@@ -27,13 +28,23 @@
         <section id="section-2">
             <div class="contenedor-datos">
                 <form id="formulario">
-                    <p>Usuario</p>
-                    <input type="text" id="txt-usuario" name="username" placeholder="Ingresá tu usuario" required>
+                    <label for="txt-usuario">Usuario</label>
+                    <input type="text" id="txt-usuario" name="username" placeholder="Ingresá tu usuario" maxlength="30"
+                        autocomplete="username" autocapitalize="none" spellcheck="false" autofocus required>
 
-                    <p>Contraseña</p>
-                    <input type="password" id="txt-password" name="password" placeholder="Ingresá tu contraseña" required>
+                    <label for="txt-password">Contraseña</label>
+                    <div class="campo-password">
+                        <input type="password" id="txt-password" name="password" placeholder="Ingresá tu contraseña"
+                            autocomplete="current-password" required>
+                        <button type="button" id="btn-ver-password" class="btn-ver-password"
+                            aria-label="Mostrar contraseña" aria-pressed="false">
+                            <img src="Iconos/ojo.svg" alt="">
+                        </button>
+                    </div>
 
-                    <button type="submit" class="btn-ingresar">Ingresar</button>
+                    <p id="lbl-mensaje" class="mensaje-error" role="alert"></p>
+
+                    <button type="submit" id="btn-ingresar" class="btn-ingresar">Ingresar</button>
                 </form>
             </div>
         </section>
@@ -41,5 +52,6 @@
 
     <footer>
     </footer>
+    <script src="JavaScript/login.js" type="module"></script>
 </body>
 </html>
