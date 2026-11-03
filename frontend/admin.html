@@ -113,11 +113,11 @@
                             <div class="contenedor-precios">
                                 <div>
                                     <p>Cantidad</p>
-                                    <input name="txt-cantidad" type="number" placeholder="1" min="1" step="1" required>
+                                    <input name="txt-cantidad" type="number" pattern="[^1-9]+" placeholder="1" min="1" step="1" required>
                                 </div>
                                 <div>
                                     <p>Precio unitario</p>
-                                    <input name="txt-precio" type="number" placeholder="0,00" min="0.01" step="0.01" required>
+                                    <input name="txt-precio" type="number" placeholder="0,00" min="0.01" step="0.01" disabled required>
                                 </div>
                                 <div>
                                     <span>
