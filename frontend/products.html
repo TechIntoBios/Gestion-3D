@@ -6,11 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Productos y Categorías</title>
     <link rel="icon" href="Iconos/logo.svg">
-    <link rel="stylesheet" href="Css/products.css">
-    <link rel="stylesheet" href="Css/menu.css">
+    <link rel="stylesheet" href="Css/estilos.css">
 </head>
 
-<body>
+<body class="pagina-products">
     <header>
         <div>
             <div class="contenedor-logo">
@@ -55,7 +54,7 @@
                 <form action="cargarProducto" method="POST">
                     <p>Categoría</p>
                     <select id="categoria" name="categoria" required>
-                        <option value="">Selecciona una categoría</option>
+                        <option disabled selected value="">Selecciona una categoría</option>
                         <option value="Papelería">Papelería</option>
                         <option value="Accesorios">Accesorios</option>
                         <option value="Modelos 3D">Modelos 3D</option>
@@ -65,7 +64,7 @@
                     <input type="text" id="nombreProducto" name="nombreProducto" placeholder="Cuaderno A5" required>
 
                     <p>Precio</p>
-                    <input type="number" id="precio" name="precio" placeholder="$4.500" required>
+                    <input type="number" id="precio" name="precio" placeholder="0,00" min="0.01" step="0.01" required>
 
                     <button type="submit" class="btn-submit">Cargar producto</button>
                 </form>

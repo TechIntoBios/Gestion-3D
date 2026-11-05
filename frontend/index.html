@@ -4,57 +4,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZUNOX 3D</title>
+    <title>ZUNOX 3D | Impresión 3D a medida</title>
+    <meta name="description" content="ZUNOX 3D: impresión 3D de vasos, máscaras, figuras y piezas a medida. Consultá por WhatsApp.">
     <link rel="icon" href="Iconos/logo.svg">
+    <link rel="stylesheet" href="Css/index.css">
 </head>
 
 <body>
+    <a href="#inicio" class="saltar-contenido">Saltar al contenido</a>
+
     <header>
-        <div>
-            <div class="contenedor-logo">
-                <img src="Iconos/logo.svg" class="logo" alt="Logo">
-            </div>
+        <a href="#inicio" class="marca" aria-label="ZUNOX 3D, ir al inicio">
+            <img src="Iconos/logo.svg" class="logo" alt="">
             <b>ZUNOX 3D</b>
+        </a>
+        <div class="menu-opciones">
+            <button type="button" id="btn-menu" class="btn-hamburguesa" aria-label="Abrir menú" aria-expanded="false" aria-controls="panel-menu">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <line class="linea-1" x1="4" y1="6" x2="20" y2="6" />
+                    <line class="linea-2" x1="4" y1="12" x2="20" y2="12" />
+                    <line class="linea-3" x1="4" y1="18" x2="20" y2="18" />
+                </svg>
+            </button>
+            <nav id="panel-menu" class="panel-menu" aria-label="Menú principal" hidden>
+                <a href="#inicio" class="item-menu">Inicio</a>
+                <a href="#nosotros" class="item-menu">Nosotros</a>
+                <a href="#catalogo" class="item-menu">Catálogo</a>
+                <a href="#contacto" class="item-menu">Contacto</a>
+            </nav>
         </div>
-        <nav>
-            <a href="#section-1">Inicio</a>
-            <a href="#section-2">Sección 2</a>
-            <a href="#section-3">Sección 3</a>
-            <a href="#section-4">Sección 4</a>
-            <a href="#section-5">Sección 5</a>
-        </nav>
     </header>
 
     <main>
-        <!-- Sección 1: presentación -->
-        <section id="section-1">
-            <h1>ZUNOX 3D</h1>
+        <!-- Hero: impresora 3D imprimiendo el nombre -->
+        <section id="inicio" class="seccion-hero">
+            <!-- Impresora 3D vista desde arriba e inclinada. Las capas las arma index.js;
+                 sin JS (o con "reducir movimiento") se ve el nombre ya impreso. -->
+            <div class="impresora" role="img" aria-label="Impresora 3D imprimiendo el nombre ZUNOX 3D">
+                <div class="escena">
+                    <div class="cama">
+                        <div class="poste poste-izq"></div>
+                        <div class="poste poste-der"></div>
+                        <div id="pieza" class="pieza">
+                            <span class="capa">ZUNOX 3D</span>
+                        </div>
+                        <div id="portico" class="portico">
+                            <div class="barra"></div>
+                            <div id="carro" class="carro">
+                                <div class="cabezal"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="etiqueta">IMPRESIÓN 3D</p>
+            <h1 class="titulo-hero">Tus ideas, capa por capa.</h1>
+            <p class="texto-hero">Diseñamos e imprimimos piezas en 3D: vasos, máscaras, figuras y lo que se te ocurra, en el color y material que elijas.</p>
+            <div class="acciones-hero">
+                <a href="#catalogo" class="btn-principal">Ver catálogo</a>
+                <a href="#contacto" class="btn-secundario">Hacer una consulta</a>
+            </div>
         </section>
 
-        <!-- Sección 2 -->
-        <section id="section-2">
-            <h2>Sección 2</h2>
+        <!-- Nosotros (texto de ejemplo, reemplazar por el real) -->
+        <section id="nosotros" class="tarjeta">
+            <p class="etiqueta">NOSOTROS</p>
+            <h2>Quiénes somos</h2>
+            <p class="texto">En ZUNOX 3D convertimos ideas en objetos reales. Trabajamos cada pedido a medida, desde el diseño hasta la última capa, cuidando los detalles y la terminación.</p>
+
+            <ul class="lista-destacados">
+                <li>
+                    <span class="icono-destacado" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
+                    </span>
+                    <div>
+                        <h3>Diseño a medida</h3>
+                        <p>Partimos de tu idea, una foto o un modelo y lo adaptamos.</p>
+                    </div>
+                </li>
+                <li>
+                    <span class="icono-destacado" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="m12 2 10 5-10 5L2 7Z" /><path d="m2 17 10 5 10-5" /><path d="m2 12 10 5 10-5" /></svg>
+                    </span>
+                    <div>
+                        <h3>Filamentos y colores</h3>
+                        <p>PLA, PETG y más, en varios colores según la pieza.</p>
+                    </div>
+                </li>
+                <li>
+                    <span class="icono-destacado" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></svg>
+                    </span>
+                    <div>
+                        <h3>Entrega por zona</h3>
+                        <p>Coordinamos envío o retiro según dónde estés.</p>
+                    </div>
+                </li>
+            </ul>
         </section>
 
-        <!-- Sección 3 -->
-        <section id="section-3">
-            <h2>Sección 3</h2>
+        <!-- Catálogo de categorías (datos de ejemplo). Para poner una foto, reemplazar el div.tarjeta-imagen por
+             <img src="Imagenes/vasos.webp" class="tarjeta-imagen" alt="..." loading="lazy" width="320" height="200"> -->
+        <section id="catalogo" class="seccion-catalogo">
+            <p class="etiqueta">CATÁLOGO</p>
+            <h2>Lo que imprimimos</h2>
+            <p class="texto">Algunas de las categorías que hacemos. Si querés algo distinto, también lo hacemos a medida.</p>
+
+            <div class="lista-categorias">
+                <article class="tarjeta-categoria">
+                    <div class="tarjeta-imagen" aria-hidden="true"><span>Vasos</span></div>
+                    <div class="tarjeta-cuerpo">
+                        <h3>Vasos</h3>
+                        <p class="texto">Vasos y portalápices con diseños personalizados, nombres o logos.</p>
+                        <p class="dato"><span>Filamento</span> PLA / PETG</p>
+                        <ul class="colores" aria-label="Colores disponibles">
+                            <li><span class="punto-color" style="--color: #F5F7F8"></span>Blanco</li>
+                            <li><span class="punto-color" style="--color: #111111"></span>Negro</li>
+                            <li><span class="punto-color" style="--color: #00E5FF"></span>Cian</li>
+                        </ul>
+                        <a class="btn-whatsapp" data-categoria="Vasos" href="#" target="_blank" rel="noopener">
+                            <img src="Iconos/whatsapp-icon.svg" alt="">
+                            Lo quiero
+                        </a>
+                    </div>
+                </article>
+
+                <article class="tarjeta-categoria">
+                    <div class="tarjeta-imagen" aria-hidden="true"><span>Máscaras</span></div>
+                    <div class="tarjeta-cuerpo">
+                        <h3>Máscaras</h3>
+                        <p class="texto">Máscaras para cosplay, decoración o eventos, listas para pintar o terminadas.</p>
+                        <p class="dato"><span>Filamento</span> PLA</p>
+                        <ul class="colores" aria-label="Colores disponibles">
+                            <li><span class="punto-color" style="--color: #9CAAB7"></span>Gris</li>
+                            <li><span class="punto-color" style="--color: #FF4D4D"></span>Rojo</li>
+                            <li><span class="punto-color" style="--color: #111111"></span>Negro</li>
+                        </ul>
+                        <a class="btn-whatsapp" data-categoria="Máscaras" href="#" target="_blank" rel="noopener">
+                            <img src="Iconos/whatsapp-icon.svg" alt="">
+                            Lo quiero
+                        </a>
+                    </div>
+                </article>
+
+                <article class="tarjeta-categoria">
+                    <div class="tarjeta-imagen" aria-hidden="true"><span>Figuras</span></div>
+                    <div class="tarjeta-cuerpo">
+                        <h3>Figuras</h3>
+                        <p class="texto">Figuras y personajes con buen nivel de detalle, en el tamaño que necesites.</p>
+                        <p class="dato"><span>Filamento</span> PLA</p>
+                        <ul class="colores" aria-label="Colores disponibles">
+                            <li><span class="punto-color" style="--color: #F5F7F8"></span>Blanco</li>
+                            <li><span class="punto-color" style="--color: #F6C453"></span>Amarillo</li>
+                            <li><span class="punto-color" style="--color: #22C55E"></span>Verde</li>
+                        </ul>
+                        <a class="btn-whatsapp" data-categoria="Figuras" href="#" target="_blank" rel="noopener">
+                            <img src="Iconos/whatsapp-icon.svg" alt="">
+                            Lo quiero
+                        </a>
+                    </div>
+                </article>
+
+                <article class="tarjeta-categoria">
+                    <div class="tarjeta-imagen" aria-hidden="true"><span>Llaveros</span></div>
+                    <div class="tarjeta-cuerpo">
+                        <h3>Llaveros</h3>
+                        <p class="texto">Llaveros con nombres, logos o formas. Ideales para regalos y souvenirs.</p>
+                        <p class="dato"><span>Filamento</span> PLA / PETG</p>
+                        <ul class="colores" aria-label="Colores disponibles">
+                            <li><span class="punto-color" style="--color: #00E5FF"></span>Cian</li>
+                            <li><span class="punto-color" style="--color: #FF4D4D"></span>Rojo</li>
+                            <li><span class="punto-color" style="--color: #F5F7F8"></span>Blanco</li>
+                        </ul>
+                        <a class="btn-whatsapp" data-categoria="Llaveros" href="#" target="_blank" rel="noopener">
+                            <img src="Iconos/whatsapp-icon.svg" alt="">
+                            Lo quiero
+                        </a>
+                    </div>
+                </article>
+            </div>
         </section>
 
-        <!-- Sección 4 -->
-        <section id="section-4">
-            <h2>Sección 4</h2>
-        </section>
+        <!-- Consulta: arma el mensaje y lo abre en WhatsApp -->
+        <section id="contacto" class="tarjeta">
+            <p class="etiqueta">CONTACTO</p>
+            <h2>Hacé tu consulta</h2>
+            <p class="texto">Completá tus datos y te respondemos por WhatsApp. El teléfono no hace falta: nos llega con tu mensaje.</p>
 
-        <!-- Sección 5 -->
-        <section id="section-5">
-            <h2>Sección 5</h2>
+            <form id="form-consulta" class="formulario">
+                <div class="fila-campos">
+                    <div class="campo">
+                        <label for="txt-nombre">Nombre</label>
+                        <input type="text" id="txt-nombre" name="nombre" placeholder="Tu nombre" maxlength="100" autocomplete="given-name" required>
+                    </div>
+                    <div class="campo">
+                        <label for="txt-apellido">Apellido</label>
+                        <input type="text" id="txt-apellido" name="apellido" placeholder="Tu apellido" maxlength="100" autocomplete="family-name" required>
+                    </div>
+                </div>
+
+                <div class="campo">
+                    <label for="txt-correo">Mail <span class="opcional">(opcional)</span></label>
+                    <input type="email" id="txt-correo" name="correo" placeholder="ejemplo@correo.com" maxlength="300" autocomplete="email">
+                </div>
+
+                <div class="campo">
+                    <label for="txt-zona">Zona</label>
+                    <input type="text" id="txt-zona" name="zona" placeholder="Barrio o localidad" maxlength="100" autocomplete="address-level2" required>
+                </div>
+
+                <div class="campo">
+                    <label for="ddl-tipo">Tipo de consulta</label>
+                    <select id="ddl-tipo" name="tipo" required>
+                        <option value="Pedido personalizado">Pedido personalizado</option>
+                        <option value="Producto del catálogo">Producto del catálogo</option>
+                        <option value="Otra consulta">Otra consulta</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="txt-descripcion">Contanos qué querés</label>
+                    <textarea id="txt-descripcion" name="descripcion" placeholder="Ej.: 2 vasos con nombre, en blanco y cian" maxlength="500" required></textarea>
+                </div>
+
+                <button type="submit" class="btn-principal">
+                    <img src="Iconos/whatsapp-icon.svg" alt="">
+                    Consultar
+                </button>
+            </form>
         </section>
     </main>
 
-    <footer>
+    <footer class="pie">
+        <div class="marca">
+            <img src="Iconos/logo.svg" class="logo" alt="">
+            <b>ZUNOX 3D</b>
+        </div>
         <p>&copy; 2026 ZUNOX 3D</p>
     </footer>
+
+    <!-- Botón flotante de WhatsApp: aparece al hacer scroll -->
+    <a id="btn-whatsapp-flotante" class="btn-whatsapp-flotante" href="#" target="_blank" rel="noopener" aria-label="Escribinos por WhatsApp">
+        <img src="Iconos/whatsapp-icon.svg" alt="">
+    </a>
+
+    <script src="JavaScript/index.js" type="module"></script>
 </body>
 
 </html>

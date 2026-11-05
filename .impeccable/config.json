@@ -1,0 +1,23 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "arial",
+        "createdAt": "2026-11-05T19:27:29.162Z",
+        "reason": "User asked to keep the existing fonts unchanged while merging the CSS files; Arial comes from the original stylesheets"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "frontend/index.html"
+        ],
+        "createdAt": "2026-11-05T20:10:30.131Z",
+        "reason": "Claude triage: flagged .impresora/.cama are the CSS 3D printer scene (children are 3D-transformed decorations, verified centered in screenshots) and .tarjeta-imagen are temporary photo placeholders with centered text"
+      }
+    ]
+  }
+}
