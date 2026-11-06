@@ -17,6 +17,51 @@
         ],
         "createdAt": "2026-11-05T20:10:30.131Z",
         "reason": "Claude triage: flagged .impresora/.cama are the CSS 3D printer scene (children are 3D-transformed decorations, verified centered in screenshots) and .tarjeta-imagen are temporary photo placeholders with centered text"
+      },
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "frontend/Css/index.css"
+        ],
+        "createdAt": "2026-11-05T23:39:01.451Z",
+        "reason": "User explicitly requested multicolor rainbow text for 'Todos los colores, a eleccion' in catalog cards"
+      },
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "frontend/Css/index.css"
+        ],
+        "createdAt": "2026-11-05T23:39:01.643Z",
+        "reason": "Claude triage: border-left/top on .tubo draws the curved filament tube of the CSS 3D printer, not a card accent"
+      },
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "frontend/index.html"
+        ],
+        "createdAt": "2026-11-05T23:39:01.823Z",
+        "reason": "User explicitly requested multicolor rainbow text for 'Todos los colores, a eleccion' in catalog cards"
+      },
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "frontend/index.html"
+        ],
+        "createdAt": "2026-11-05T23:39:02.001Z",
+        "reason": "Claude triage: border-left/top on .tubo draws the curved filament tube of the CSS 3D printer, not a card accent"
+      },
+      {
+        "rule": "border-accent-on-rounded",
+        "value": "*",
+        "files": [
+          "frontend/Css/index.css"
+        ],
+        "createdAt": "2026-11-05T23:39:02.188Z",
+        "reason": "Claude triage: .tubo border+radius draws the curved filament tube in the 3D printer scene"
       }
     ]
   }
