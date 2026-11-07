@@ -1,7 +1,4 @@
-// ===== WhatsApp: número y mensajes (cambiar acá) =====
-
-// Número con código de país, sin "+", espacios ni guiones. Ej.: 5491123456789
-const NUMERO_WHATSAPP = "549XXXXXXXXXX";
+const NUMERO_WHATSAPP = "5491123353700";
 
 const MENSAJES = {
     // Botón "Lo quiero" de cada categoría. {categoria} se reemplaza por el nombre de la tarjeta.
@@ -58,7 +55,6 @@ formConsulta.addEventListener("submit", (evento) => {
     window.open(linkWhatsapp(completar(MENSAJES.formulario, datos)), "_blank", "noopener");
 });
 
-// ===== Menú hamburguesa =====
 const botonMenu = document.getElementById("btn-menu");
 const panelMenu = document.getElementById("panel-menu");
 
@@ -73,7 +69,6 @@ botonMenu.addEventListener("click", (evento) => {
     mostrarMenu(panelMenu.hidden);
 });
 
-// Se cierra al elegir una opción, al tocar fuera del panel o con Escape.
 panelMenu.addEventListener("click", (evento) => {
     if (evento.target.closest("a")) {
         mostrarMenu(false);
@@ -94,22 +89,19 @@ document.addEventListener("keydown", (evento) => {
 });
 
 
-// ===== Animación de la impresora 3D =====
-// Imprime el nombre capa por capa, lo deja un momento, lo retira y hace lo mismo con el logo.
-// En cada capa el cabezal cruza de un lado al otro, la capa aparece detrás de él "caliente"
-// (naranja) y se enfría hasta su color final. Después el pórtico sube un escalón.
+
 const CAPAS = 24;
-const ALTO_CAPA = 1.2;          // px por capa (eje Z). Tiene que coincidir con .capa en index.css
-const DURACION = 26000;         // ciclo completo (nombre + logo) en ms
+const ALTO_CAPA = 1.2;          
+const DURACION = 26000;         
 const COLOR_CALIENTE = "#FFB35C";
 
-// Tiempos dentro de cada mitad del ciclo (de 0 a 0.5)
-const INICIO = 0.02;            // empieza a imprimir
-const IMPRESION = 0.34;         // cuánto tarda en imprimir todas las capas
-const RETIRO = 0.44;            // se empieza a retirar la pieza terminada
-const FIN_RETIRO = 0.48;        // la pieza ya no se ve
 
-const SUAVE = "cubic-bezier(0.45, 0, 0.55, 1)"; // el cabezal frena y acelera en los extremos
+const INICIO = 0.02;            
+const IMPRESION = 0.34;         
+const RETIRO = 0.44;            
+const FIN_RETIRO = 0.48;        
+
+const SUAVE = "cubic-bezier(0.45, 0, 0.55, 1)"; 
 
 const impresora = document.querySelector(".impresora");
 const piezaNombre = document.getElementById("pieza-nombre");
@@ -118,13 +110,11 @@ const sombra = document.querySelector(".sombra-pieza");
 const portico = document.getElementById("portico");
 const carro = document.getElementById("carro");
 
-// Las capas de abajo más oscuras (dan el lateral del bloque) y una de cada dos un poco más apagada,
-// así se notan las líneas del filamento. Devuelve un valor de 0 a 1.
+
 function brillo(i) {
     return (30 + Math.round((i / (CAPAS - 1)) * 70) - (i % 2 ? 6 : 0)) / 100;
 }
 
-// Nombre: la capa del HTML queda arriba de todo (más clara, es la cara de arriba) y se clonan las de abajo.
 const capaNombre = piezaNombre.querySelector(".capa");
 const capasNombre = [];
 
@@ -141,7 +131,6 @@ for (let i = 0; i < CAPAS; i++) {
 const menosMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 if (!menosMovimiento) {
-    // Logo: mismas capas, pero con la imagen del logo.
     const capasLogo = [];
 
     for (let i = 0; i < CAPAS; i++) {
@@ -188,7 +177,6 @@ if (!menosMovimiento) {
             movimientoZ.push({ offset: momento(i + 1), transform: tz(i * ALTO_CAPA + 2) });
         });
 
-        // Terminada: el cabezal se corre a un costado y el pórtico sube un poco para dejarla salir.
         const zFinal = (CAPAS - 1) * ALTO_CAPA + 2;
         movimientoX.push({ offset: mitad + INICIO + IMPRESION + 0.03, transform: tx(radio + 34) });
         movimientoX.push({ offset: mitad + FIN_RETIRO, transform: tx(radio + 34) });
@@ -198,7 +186,6 @@ if (!menosMovimiento) {
         movimientoZ.push({ offset: mitad + 0.5, transform: tz(2) });
     }
 
-    // La pieza terminada se levanta y se va hacia atrás, como cuando la sacás de la cama.
     function retirar(pieza, mitad) {
         const quieta = "translate3d(0, 0, 0)";
         animaciones.push(pieza.animate([
@@ -222,7 +209,6 @@ if (!menosMovimiento) {
     retirar(piezaNombre, 0);
     retirar(piezaLogo, 0.5);
 
-    // La sombra crece mientras se imprime y se va con la pieza.
     const cuadrosSombra = [{ offset: 0, opacity: 0 }];
     for (const mitad of [0, 0.5]) {
         cuadrosSombra.push(
@@ -238,7 +224,6 @@ if (!menosMovimiento) {
     animaciones.push(carro.animate(movimientoX, opciones));
     animaciones.push(portico.animate(movimientoZ, opciones));
 
-    // Se pausa cuando el hero no está en pantalla.
     new IntersectionObserver(([entrada]) => {
         animaciones.forEach((animacion) => entrada.isIntersecting ? animacion.play() : animacion.pause());
         impresora.classList.toggle("pausada", !entrada.isIntersecting);

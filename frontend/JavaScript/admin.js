@@ -29,7 +29,7 @@ async function listar_Categorias() {
     }
 }
 
-async function listar_Productos(idcategoria) {
+async function listar_Productos() {
     try{
         const respuesta_prov = await fetch(`${URL_API}/Productos/listar_productos`); 
 
@@ -48,10 +48,26 @@ async function listar_Productos(idcategoria) {
 function agregarFilaProducto() {
     const fila = plantillaProducto.content.cloneNode(true);
     const ddl_categorias = fila.querySelector('[name="ddl-categorias"]');
+    const ddl_productos = fila.querySelector('[name="ddl-productos"]');
 
     array_categorias.forEach(cat => {
         ddl_categorias.appendChild(crearOption(cat.nombre, cat.idcategoria)); 
     });
+
+    ddl_categorias.addEventListener("change", () => {
+        const idCategoria = Number(ddl_categorias.value); 
+
+        const productosCategoria = array_productos.filter(prod => prod.id_categoria === idCategoria);
+
+        ddl_productos.length = 1; 
+        ddl_productos.selectedIndex = 0; 
+
+        productosCategoria.forEach(prod => {
+            ddl_productos.appendChild(crearOption(prod.nombre, prod.id_producto))
+        }); 
+    }); 
+
+    
 
     contenedorProductos.appendChild(fila);
 }
@@ -146,6 +162,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     await listar_Categorias();
+    await listar_Productos(); 
     agregarFilaProducto(); 
 }); 
 

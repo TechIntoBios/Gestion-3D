@@ -45,19 +45,16 @@
         <section id="section-1">
             <p class="p-1">CATÁLOGO</p>
             <h1 class="p-2">Productos y categorías</h1>
+            <label id="lbl_errores"></label>
         </section>
 
-        <!-- Card: Cargar producto -->
         <section id="section-cargar-producto">
             <div class="contenedor-datos">
                 <h4>Cargar producto</h4>
-                <form action="cargarProducto" method="POST">
+                <form id="form-productos" action="cargarProducto" method="POST">
                     <p>Categoría</p>
-                    <select id="categoria" name="categoria" required>
+                    <select id="ddl_categorias" name="categoria" required>
                         <option disabled selected value="">Selecciona una categoría</option>
-                        <option value="Papelería">Papelería</option>
-                        <option value="Accesorios">Accesorios</option>
-                        <option value="Modelos 3D">Modelos 3D</option>
                     </select>
 
                     <p>Nombre del producto</p>
@@ -66,18 +63,21 @@
                     <p>Precio</p>
                     <input type="number" id="precio" name="precio" placeholder="0,00" min="0.01" step="0.01" required>
 
+                    <label id="lbl_mensaje_productos"></label>
+
                     <button type="submit" class="btn-submit">Cargar producto</button>
                 </form>
             </div>
         </section>
 
-        <!-- Card: Crear categoría -->
         <section id="section-crear-categoria">
             <div class="contenedor-datos">
                 <h4>Crear categoría</h4>
-                <form action="cargarCategoria" method="POST">
+                <form id="form-categorias" action="cargarCategoria" method="POST">
                     <p>Nombre de categoría</p>
                     <input type="text" id="nombreCategoria" name="nombreCategoria" placeholder="Ej.: Accesorios" required>
+
+                    <label id="lbl_mensaje_categorias"></label>
 
                     <button type="submit" class="btn-submit">Cargar categoría</button>
                 </form>

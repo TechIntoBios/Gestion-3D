@@ -8,8 +8,8 @@ public class DaoProductos
 {
     private readonly AccesoDatos accesoDatos;
     private const string Productos = "sp_AgregarProducto";
-    private const string existe_producto = "SELECT EXISTS (SELECT 1 FROM Productos WHERE Id_Categoria_Prod = @ID_CATEGORIA AND LOWER(Nombre_Prod) = LOWER(@NOMBRE)"; 
-    private const String consulta = "Select Id_Productos_Prod, Nombre_Prod, Id_Categoria_Prod, Precio_Prod, Activo_Prod FROM Productos";
+    private const string existe_producto = "SELECT EXISTS (SELECT 1 FROM Productos WHERE Id_Categoria_Prod = @id_categoria AND LOWER(Nombre_Prod) = LOWER(@nombre))";
+    private const string consulta = "Select Id_Productos_Prod, Nombre_Prod, Id_Categoria_Prod, Precio_Prod, Activo_Prod FROM Productos";
 
     public DaoProductos (AccesoDatos datos) => accesoDatos = datos;
     
@@ -17,22 +17,23 @@ public class DaoProductos
     {
         var command = new NpgsqlCommand();
         armarParametrosAgregarProducto(command,productos);
-        return await accesoDatos.ejecutarProcedimientoAlmacenado(command,Productos) != 0;
+        return await accesoDatos.ejecutarProcedimientoAlmacenado(Productos, command) != 0;
     }
 
     public async Task<bool> existeProducto(Productos productos)
     {
         var command = new NpgsqlCommand(); 
-        command.Parameters.Add("@ID_CATEGORIA", NpgsqlDbType.Integer).Value = productos.Id_categoria; 
-        command.Parameters.Add("@NOMBRE", NpgsqlDbType.Varchar, 100).Value = productos.Nombre; 
+        armarParametrosAgregarProducto(command, productos);  
         return await accesoDatos.existe(existe_producto, command); 
     }
 
     public void armarParametrosAgregarProducto(NpgsqlCommand command, Productos productos)
     {
-        command.Parameters.Add("@ID_CATEGORIA", NpgsqlDbType.Integer).Value = productos.Id_categoria;
-        command.Parameters.Add("@NOMBRE",NpgsqlDbType.Varchar,100).Value = productos.Nombre;
-        command.Parameters.Add("@PRECIO",NpgsqlDbType.Numeric).Value = productos.Precio;
+        // Los nombres tienen que ser iguales a los del procedimiento en PostgreSQL (en minúscula y sin @),
+        // porque Npgsql los manda como argumentos con nombre: sp_AgregarProducto("id_categoria" := ...).
+        command.Parameters.Add("id_categoria", NpgsqlDbType.Integer).Value = productos.Id_categoria;
+        command.Parameters.Add("nombre",NpgsqlDbType.Varchar,100).Value = productos.Nombre;
+        command.Parameters.Add("precio",NpgsqlDbType.Numeric).Value = Convert.ToDecimal(productos.Precio);
     }
 
 

@@ -11,7 +11,7 @@ public class DaoCategorias
     private const string consulta = "SELECT Id_Categoria_Cat, Nombre_Cat, Activo_Cat FROM Categorias WHERE Activo_Cat = TRUE";
 
     private const string procedimiento_categorias = "sp_AgregarCategoria";
-    private const string ExisteCategorias = "SELECT EXISTS (SELECT 1 FROM Categorias WHERE Nombre_Cat = @NOMBRE)";
+    private const string ExisteCategorias = "SELECT EXISTS (SELECT 1 FROM Categorias WHERE LOWER(Nombre_Cat) = LOWER(@nombre))";
 
     public DaoCategorias(AccesoDatos datos) => accesoDatos = datos;
 
@@ -19,7 +19,7 @@ public class DaoCategorias
     {
         var command = new NpgsqlCommand();
         armarParametrosAgregarCategorias(command, categorias);
-        return await accesoDatos.ejecutarProcedimientoAlmacenado(command,procedimiento_categorias) != 0;
+        return await accesoDatos.ejecutarProcedimientoAlmacenado(procedimiento_categorias, command) != 0;
     }
 
     public async Task<bool>ExisteCategoria(Categorias categorias) 
@@ -31,7 +31,7 @@ public class DaoCategorias
 
     public void armarParametrosAgregarCategorias(NpgsqlCommand command, Categorias categorias)
     {
-        command.Parameters.Add("@NOMBRE",NpgsqlDbType.Varchar,100).Value = categorias.NOMBRE;
+        command.Parameters.Add("nombre",NpgsqlDbType.Varchar,100).Value = categorias.NOMBRE;
     }
 
     public async Task<List<Categorias>> ListarTodasLasCategorias()

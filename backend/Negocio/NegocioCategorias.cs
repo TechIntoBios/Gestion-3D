@@ -13,7 +13,6 @@ public class NegocioCategorias
     public async Task<bool>AgregarCategorias(String Nombre)
     {
         var categorias = new Categorias();
-
         categorias.NOMBRE = Nombre;
 
         if(!await daoCategorias.ExisteCategoria(categorias))

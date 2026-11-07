@@ -84,7 +84,7 @@ public class AccesoDatos
         }
     }
 
-    public async Task<int> ejecutarProcedimientoAlmacenado(NpgsqlCommand command, String procedimiento, bool scalar = false)
+    public async Task<int> ejecutarProcedimientoAlmacenado(string procedimiento, NpgsqlCommand command, bool scalar = false)
     {
         try
         {

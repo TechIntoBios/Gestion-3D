@@ -28,11 +28,13 @@ public class ProductosController : ControllerBase
     public async Task<IActionResult> agregarProducto([FromBody]Productos request)
     {
         bool resultado = await negocioProductos.agregarProducto(request.Id_categoria, request.Nombre, request.Precio);
+        
         if(!resultado)
         {
             return BadRequest(new {mensaje = "No se pudo agregar el producto." });
         }
-            return Ok(new {mensaje = "Producto agregdo correctamente" });
+        
+        return Ok(new {mensaje = "Producto agregdo correctamente" });
     }
     
 }
