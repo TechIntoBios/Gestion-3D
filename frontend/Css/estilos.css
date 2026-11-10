@@ -502,6 +502,25 @@ section {
     align-items: center;
 }
 
+/* El botón ocupa todo el cuadro, así se puede tocar en cualquier parte. */
+.btn-eliminar {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    border: none;
+    border-radius: var(--radius-text);
+    background: none;
+    cursor: pointer;
+}
+
+.btn-eliminar:focus-visible {
+    outline: 2px solid var(--status_cancelled);
+    outline-offset: 2px;
+}
+
 .contenedor-precios > div:nth-child(3) img {
     width: 18px;
     height: 18px;

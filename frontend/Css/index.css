@@ -1,3 +1,11 @@
+/* Hallmark · shape: kept · genre: editorial · theme: brand · redesign: full · hero: kept (the printer printing the name) · nav: kept (wordmark and quick menu) · footer: mast with socials and the legal lines · signature: the printer animation, kept as the client liked it
+ * axes: dark/grotesk-sans/chromatic-cyan · posture: one cyan signal on near-black · contrast: pass · fold: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H4 E4 S4 R4 V3 · weakest: V, the page keeps its own order and brand on purpose; the catalog moved from a 3,200px card stack to a tile grid with a panel */
+/* Nota: Hallmark marca 2a en .circulo-arcoiris y no admite excepción. Se deja igual a pedido del cliente:
+   el círculo de 18px dice "cualquier color", no es decoración. Es una falla conocida y aceptada. */
+/* Hallmark · dismissed 3 · the border-left on .tubo draws the filament tube of the printer, not a card stripe */
+/* Hallmark · dropped "IMPRESIÓN 3D", "NOSOTROS", "CATÁLOGO", "CONTACTO" · 54 names the eyebrows; each heading already says it */
+
 /* Landing pública (index.html). Por ahora solo formato celular. */
 
 :root {
@@ -29,6 +37,65 @@
     --radius-text: 8px;
 }
 
+/* Tokens agregados para esta página. No cambian los de arriba: son los mismos
+   valores que antes estaban escritos sueltos en cada regla. */
+:root {
+    --fuente: Arial, Helvetica, sans-serif;
+
+    /* Impresora 3D del hero */
+    --impresora-fondo-alto: #0A1118;
+    --impresora-fondo-bajo: #070B10;
+    --impresora-brillo: rgba(0, 229, 255, 0.10);
+    --cama: #111A23;
+    --cama-borde: #34495C;
+    --cama-reflejo: rgba(255, 255, 255, 0.06);
+    --cama-reflejo-suave: rgba(255, 255, 255, 0.03);
+    --cama-grilla: rgba(0, 229, 255, 0.06);
+    --cama-marco: rgba(8, 12, 17, 0.55);
+    --cama-canto-alto: #3E556A;
+    --cama-canto-bajo: #1C2833;
+    --sombra-pieza: rgba(0, 0, 0, 0.55);
+    --pieza-terminada: #A6F7FF;
+    --metal-oscuro: #22313F;
+    --metal-medio: #4A6378;
+    --metal-sombra: #2A3B4B;
+    --metal-base: #26364A;
+    --metal-claro: #6A8297;
+    --metal-barra: #34485B;
+    --soporte: #2B3B4A;
+    --cabezal-alto: #2E4050;
+    --cabezal-bajo: #1A2530;
+    --aspa-oscura: #12202B;
+    --aspa-clara: #3A5163;
+    --boquilla-alta: #B7C2CC;
+    --boquilla-baja: #8A6A3A;
+    --boquilla-caliente: #FFB35C;
+    --filamento: rgba(220, 235, 245, 0.35);
+
+    /* Círculo "Color a elección" */
+    --arcoiris-1: #FF3B3B;
+    --arcoiris-2: #FF9F1C;
+    --arcoiris-3: #FFE23B;
+    --arcoiris-4: #3BD16F;
+    --arcoiris-5: #00E5FF;
+    --arcoiris-6: #3B6BFF;
+    --arcoiris-7: #B23BFF;
+    --arcoiris-8: #FF3BA7;
+    --arcoiris-borde: rgba(255, 255, 255, 0.25);
+
+    /* Colores de filamento que se pueden probar en la impresora del hero */
+    --filamento-cian: var(--text_main);
+    --filamento-naranja: var(--arcoiris-2);
+    --filamento-rojo: var(--arcoiris-1);
+    --filamento-verde: var(--arcoiris-4);
+    --filamento-violeta: var(--arcoiris-7);
+    --filamento-blanco: var(--primary_hover);
+
+    /* Sombras y velos */
+    --sombra-flotante: rgba(0, 0, 0, 0.5);
+    --velo-panel: rgba(8, 11, 16, 0.75);
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -37,17 +104,24 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: clip;
+    scrollbar-gutter: stable;
 }
 
 body {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: var(--fuente);
     background-color: var(--bg_primary);
     color: var(--primary_hover);
     min-height: 100vh;
     width: 100%;
     max-width: 360px;
     margin: 0 auto;
-    overflow-x: hidden;
+    overflow-x: clip;
+}
+
+/* Con el panel abierto, la página de atrás no se desplaza */
+html:has(.panel-categoria[open]) {
+    overflow-y: clip;
 }
 
 img {
@@ -57,6 +131,14 @@ img {
 
 a {
     color: inherit;
+}
+
+h1,
+h2,
+h3 {
+    overflow-wrap: break-word;
+    min-width: 0;
+    text-wrap: balance;
 }
 
 :focus-visible {
@@ -69,7 +151,7 @@ a {
     left: 8px;
     top: -60px;
     z-index: 30;
-    padding: 10px 14px;
+    padding: 12px 16px;
     border-radius: var(--radius-text);
     background-color: var(--text_main);
     color: var(--bg_primary);
@@ -91,9 +173,8 @@ header {
     justify-content: space-between;
     align-items: center;
     height: 60px;
-    padding: 0 10px;
-    background-color: rgba(16, 22, 30, 0.92);
-    backdrop-filter: blur(8px);
+    padding: 0 12px;
+    background-color: var(--bg_card);
     border-bottom: 1px solid var(--primary);
 }
 
@@ -121,12 +202,13 @@ header {
     justify-content: center;
     align-items: center;
     border: 1px solid var(--primary);
-    border-radius: 10px;
+    border-radius: 12px;
     background: none;
     cursor: pointer;
     transition: border-color 0.2s;
 }
 
+.btn-hamburguesa:hover,
 .btn-hamburguesa[aria-expanded="true"] {
     border-color: var(--text_main);
 }
@@ -165,13 +247,13 @@ header {
     z-index: 10;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
     min-width: 200px;
-    padding: 6px;
+    padding: 8px;
     background-color: var(--bg_card);
+    color: var(--primary_hover);
     border: 1px solid var(--primary);
-    border-radius: 10px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+    border-radius: 12px;
 }
 
 .panel-menu[hidden] {
@@ -183,9 +265,9 @@ header {
     align-items: center;
     min-height: 44px;
     padding: 0 12px;
-    border-radius: 6px;
+    border-radius: 8px;
     color: var(--primary_hover);
-    font-size: 15px;
+    font-size: 16px;
     text-decoration: none;
     transition: background-color 0.2s;
 }
@@ -193,7 +275,6 @@ header {
 .item-menu:hover,
 .item-menu:focus-visible {
     background-color: var(--primary);
-    outline: none;
 }
 
 /* ===== Estructura y textos ===== */
@@ -205,8 +286,8 @@ main {
 }
 
 section {
-    margin: 14px;
-    scroll-margin-top: 74px;
+    margin: 16px;
+    scroll-margin-top: 76px;
 }
 
 .tarjeta {
@@ -216,16 +297,10 @@ section {
     background-color: var(--bg_card);
 }
 
-.etiqueta {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    color: var(--text_main);
-}
-
 h2 {
-    margin: 6px 0 8px 0;
-    font-size: 22px;
+    margin-bottom: 8px;
+    font-size: 24px;
+    line-height: 1.2;
     font-weight: 700;
     color: var(--primary_hover);
 }
@@ -237,8 +312,8 @@ h3 {
 }
 
 .texto {
-    font-size: 14px;
-    line-height: 1.55;
+    font-size: 16px;
+    line-height: 1.5;
     color: var(--header_bg);
 }
 
@@ -251,11 +326,12 @@ h3 {
     align-items: center;
     gap: 8px;
     width: 100%;
-    height: 46px;
-    border-radius: 10px;
+    height: 48px;
+    border-radius: 12px;
     font-family: inherit;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 600;
+    white-space: nowrap;
     text-decoration: none;
     cursor: pointer;
     transition: opacity 0.2s, transform 0.1s, border-color 0.2s;
@@ -286,27 +362,210 @@ h3 {
     transform: scale(0.98);
 }
 
+.btn-principal:disabled,
+.btn-secundario:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
 /* ===== Hero ===== */
 
 /* Ocupa toda la pantalla del celular (menos el header), así "Quiénes somos" aparece recién al bajar */
 .seccion-hero {
     display: flex;
     flex-direction: column;
-    min-height: calc(100svh - 78px);
-    margin-top: 18px;
+    min-height: calc(100svh - 80px);
+    margin-top: 16px;
+}
+
+/* Ángulos de la cámara. Registrados con @property para que puedan transicionar
+   (volver suave al soltar) y animarse (el vaivén en reposo). */
+@property --girar {
+    syntax: "<angle>";
+    inherits: true;
+    initial-value: 0deg;
+}
+
+@property --inclinar {
+    syntax: "<angle>";
+    inherits: true;
+    initial-value: 0deg;
+}
+
+@property --vaiven {
+    syntax: "<angle>";
+    inherits: true;
+    initial-value: 0deg;
 }
 
 .impresora {
+    --color-filamento: var(--filamento-cian);
+    position: relative;
     flex: 1;
     display: flex;
-    min-height: 330px;
-    margin: 0 -14px 18px -14px;
+    min-height: 390px;
+    margin: 0 -16px 20px -16px;
+    touch-action: pan-y;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: --girar 0.9s cubic-bezier(0.2, 0.8, 0.2, 1), --inclinar 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+    animation: vaiven 10s ease-in-out infinite alternate;
     border-top: 1px solid var(--primary);
     border-bottom: 1px solid var(--primary);
     background:
-        radial-gradient(ellipse at 50% 45%, rgba(0, 229, 255, 0.10), transparent 60%),
-        linear-gradient(180deg, #0A1118, var(--bg_card_secondary) 55%, #070B10);
+        radial-gradient(ellipse at 50% 45%, var(--impresora-brillo), transparent 60%),
+        linear-gradient(180deg, var(--impresora-fondo-alto), var(--bg_card_secondary) 55%, var(--impresora-fondo-bajo));
     overflow: hidden;
+}
+
+/* Mientras se arrastra: sin transición (sigue al dedo) y sin vaivén */
+.impresora.arrastrando {
+    cursor: grabbing;
+    transition: none;
+    animation-play-state: paused;
+}
+
+.impresora.pausada {
+    animation-play-state: paused;
+}
+
+.impresora:focus-visible {
+    outline-offset: -4px;
+}
+
+@keyframes vaiven {
+    from {
+        --vaiven: -7deg;
+    }
+
+    to {
+        --vaiven: 7deg;
+    }
+}
+
+/* Pista de que se puede girar; se va después del primer arrastre */
+.pista-girar {
+    position: absolute;
+    top: 12px;
+    left: 16px;
+    z-index: 1;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--header_bg);
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.js .pista-girar {
+    display: flex;
+}
+
+.pista-girar svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: var(--text_main);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.impresora.girada .pista-girar {
+    opacity: 0;
+}
+
+/* Fila de colores de filamento, abajo de la escena */
+.colores-filamento {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 12px;
+    z-index: 1;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: default;
+}
+
+.js .colores-filamento {
+    display: flex;
+}
+
+.colores-filamento-texto {
+    font-size: 14px;
+    color: var(--header_bg);
+}
+
+.lista-filamentos {
+    display: flex;
+}
+
+.color-filamento {
+    --muestra: var(--filamento-cian);
+    width: 44px;
+    height: 44px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    border-radius: 50%;
+    background: none;
+    cursor: pointer;
+}
+
+.color-filamento::before {
+    content: "";
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: var(--muestra);
+    box-shadow: 0 0 0 1px var(--arcoiris-borde);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.color-filamento:hover::before {
+    transform: scale(1.12);
+}
+
+.color-filamento:active::before {
+    transform: scale(0.92);
+}
+
+.color-filamento[aria-pressed="true"]::before {
+    box-shadow: 0 0 0 2px var(--bg_card_secondary), 0 0 0 4px var(--muestra);
+}
+
+.color-filamento:focus-visible {
+    outline-offset: -2px;
+}
+
+.color-cian {
+    --muestra: var(--filamento-cian);
+}
+
+.color-naranja {
+    --muestra: var(--filamento-naranja);
+}
+
+.color-rojo {
+    --muestra: var(--filamento-rojo);
+}
+
+.color-verde {
+    --muestra: var(--filamento-verde);
+}
+
+.color-violeta {
+    --muestra: var(--filamento-violeta);
+}
+
+.color-blanco {
+    --muestra: var(--filamento-blanco);
 }
 
 /* La cámara: mira la cama desde arriba y en diagonal */
@@ -325,16 +584,17 @@ h3 {
     width: 300px;
     height: 190px;
     transform-style: preserve-3d;
-    transform: translateY(26px) rotateX(57deg) rotateZ(-15deg);
-    border: 1px solid #34495C;
+    /* La posición original más lo que gira el usuario y el vaivén en reposo */
+    transform: translateY(26px) rotateX(calc(57deg + var(--inclinar))) rotateZ(calc(-15deg + var(--girar) + var(--vaiven)));
+    border: 1px solid var(--cama-borde);
     border-radius: 8px;
-    background-color: #111A23;
+    background-color: var(--cama);
     background-image:
-        linear-gradient(115deg, rgba(255, 255, 255, 0.06), transparent 40%, rgba(255, 255, 255, 0.03) 70%, transparent),
-        linear-gradient(rgba(0, 229, 255, 0.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 229, 255, 0.06) 1px, transparent 1px);
+        linear-gradient(115deg, var(--cama-reflejo), transparent 40%, var(--cama-reflejo-suave) 70%, transparent),
+        linear-gradient(var(--cama-grilla) 1px, transparent 1px),
+        linear-gradient(90deg, var(--cama-grilla) 1px, transparent 1px);
     background-size: 100% 100%, 15px 15px, 15px 15px;
-    box-shadow: inset 0 0 0 6px rgba(8, 12, 17, 0.55);
+    box-shadow: inset 0 0 0 6px var(--cama-marco);
 }
 
 /* Canto de adelante de la cama (baja hacia el eje Z negativo) */
@@ -346,7 +606,7 @@ h3 {
     bottom: 0;
     height: 8px;
     border-radius: 0 0 6px 6px;
-    background: linear-gradient(180deg, #3E556A, #1C2833);
+    background: linear-gradient(180deg, var(--cama-canto-alto), var(--cama-canto-bajo));
     transform-origin: bottom center;
     transform: rotateX(90deg);
 }
@@ -359,7 +619,7 @@ h3 {
     top: 30%;
     bottom: 22%;
     border-radius: 50%;
-    background: radial-gradient(closest-side, rgba(0, 0, 0, 0.55), transparent);
+    background: radial-gradient(closest-side, var(--sombra-pieza), transparent);
     transform: translate(10px, 6px);
 }
 
@@ -380,7 +640,7 @@ h3 {
     letter-spacing: 1px;
     line-height: 1;
     white-space: nowrap;
-    color: #A6F7FF;
+    color: var(--pieza-terminada);
     transform: translateZ(calc(var(--i, 23) * 1.2px));
     backface-visibility: hidden;
 }
@@ -397,7 +657,7 @@ h3 {
     width: 9px;
     height: 150px;
     border-radius: 3px;
-    background: linear-gradient(90deg, #22313F, #4A6378 45%, #2A3B4B);
+    background: linear-gradient(90deg, var(--metal-oscuro), var(--metal-medio) 45%, var(--metal-sombra));
     transform-origin: bottom center;
     transform: rotateX(-90deg);
 }
@@ -417,7 +677,7 @@ h3 {
     bottom: calc(50% + 21px);
     height: 9px;
     border-radius: 3px;
-    background: linear-gradient(180deg, #4A6378, #26364A);
+    background: linear-gradient(180deg, var(--metal-medio), var(--metal-base));
     transform: translateZ(150px);
 }
 
@@ -439,7 +699,7 @@ h3 {
     bottom: 26px;
     height: 8px;
     border-radius: 3px;
-    background: linear-gradient(180deg, #6A8297, #34485B);
+    background: linear-gradient(180deg, var(--metal-claro), var(--metal-barra));
     transform-origin: bottom center;
     transform: translateY(-24px) rotateX(-90deg);
 }
@@ -462,7 +722,7 @@ h3 {
     bottom: 0;
     width: 16px;
     height: 24px;
-    background-color: #2B3B4A;
+    background-color: var(--soporte);
     transform: translateZ(30px);
 }
 
@@ -482,10 +742,10 @@ h3 {
     position: absolute;
     inset: 0 0 10px 0;
     border-radius: 5px 5px 3px 3px;
-    border: 1px solid #3E556A;
+    border: 1px solid var(--cama-canto-alto);
     background:
         linear-gradient(var(--text_main), var(--text_main)) 4px 4px / 8px 2px no-repeat,
-        linear-gradient(180deg, #2E4050, #1A2530);
+        linear-gradient(180deg, var(--cabezal-alto), var(--cabezal-bajo));
 }
 
 .ventilador {
@@ -495,8 +755,8 @@ h3 {
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    border: 1px solid #4A6378;
-    background: repeating-conic-gradient(#12202B 0 30deg, #3A5163 30deg 60deg);
+    border: 1px solid var(--metal-medio);
+    background: repeating-conic-gradient(var(--aspa-oscura) 0 30deg, var(--aspa-clara) 30deg 60deg);
     animation: girar 0.4s linear infinite;
 }
 
@@ -507,7 +767,7 @@ h3 {
     bottom: 0;
     width: 12px;
     height: 10px;
-    background: linear-gradient(180deg, #B7C2CC, #8A6A3A);
+    background: linear-gradient(180deg, var(--boquilla-alta), var(--boquilla-baja));
     clip-path: polygon(0 0, 100% 0, 65% 100%, 35% 100%);
 }
 
@@ -519,7 +779,7 @@ h3 {
     width: 4px;
     height: 3px;
     border-radius: 50%;
-    background-color: #FFB35C;
+    background-color: var(--boquilla-caliente);
 }
 
 /* Tubo del filamento que sale del cabezal hacia arriba */
@@ -529,8 +789,9 @@ h3 {
     bottom: 34px;
     width: 46px;
     height: 70px;
-    border-top: 3px solid rgba(220, 235, 245, 0.35);
-    border-left: 3px solid rgba(220, 235, 245, 0.35);
+    /* Tubo translúcido con el filamento del color elegido adentro */
+    border-top: 3px solid color-mix(in srgb, var(--color-filamento) 55%, var(--filamento));
+    border-left: 3px solid color-mix(in srgb, var(--color-filamento) 55%, var(--filamento));
     border-top-left-radius: 46px;
     transform-origin: bottom left;
     transform: rotateX(-90deg);
@@ -547,24 +808,24 @@ h3 {
 }
 
 .titulo-hero {
-    margin: 8px 0 10px 0;
-    font-size: 28px;
-    line-height: 1.2;
+    margin-bottom: 12px;
+    font-size: 32px;
+    line-height: 1.15;
     font-weight: 700;
     color: var(--primary_hover);
 }
 
 .texto-hero {
     margin-bottom: 20px;
-    font-size: 15px;
-    line-height: 1.55;
+    font-size: 16px;
+    line-height: 1.5;
     color: var(--header_bg);
 }
 
 .acciones-hero {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
 }
 
 /* ===== Nosotros ===== */
@@ -573,8 +834,8 @@ h3 {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    margin-top: 18px;
+    gap: 16px;
+    margin-top: 20px;
 }
 
 .lista-destacados li {
@@ -583,8 +844,8 @@ h3 {
 }
 
 .lista-destacados p {
-    margin-top: 3px;
-    font-size: 13px;
+    margin-top: 4px;
+    font-size: 14px;
     line-height: 1.5;
     color: var(--header_bg);
 }
@@ -596,9 +857,9 @@ h3 {
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 1px solid rgba(0, 229, 255, 0.3);
-    border-radius: 10px;
-    background-color: rgba(0, 229, 255, 0.08);
+    border: 1px solid color-mix(in srgb, var(--text_main) 30%, transparent);
+    border-radius: 12px;
+    background-color: color-mix(in srgb, var(--text_main) 8%, transparent);
 }
 
 .icono-destacado svg {
@@ -611,59 +872,244 @@ h3 {
     stroke-linejoin: round;
 }
 
-/* ===== Catálogo ===== */
+/* ===== Catálogo: mosaicos ===== */
 
 .lista-categorias {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    margin-top: 16px;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 20px;
 }
 
-.tarjeta-categoria {
+.mosaico {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
     overflow: hidden;
     border: 1px solid var(--primary);
     border-radius: var(--radius);
     background-color: var(--bg_card);
+    transition: border-color 0.2s, transform 0.1s;
 }
 
-/* Placeholder hasta tener fotos. Si se usa <img class="tarjeta-imagen">, ocupa el mismo lugar. */
-.tarjeta-imagen {
+.mosaico:hover,
+.mosaico:has(:focus-visible) {
+    border-color: var(--text_main);
+}
+
+.mosaico:active {
+    transform: scale(0.98);
+}
+
+.mosaico-boton {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex: 1;
+    flex-direction: column;
+    width: 100%;
+    padding: 0;
+    border: none;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.mosaico-boton:focus-visible {
+    outline: none;
+}
+
+/* Lugar de la foto. Para poner una foto, reemplazar el div.tarjeta-imagen por
+   <img src="Imagenes/vasos.webp" class="tarjeta-imagen" alt="..." loading="lazy" width="400" height="300"> */
+.tarjeta-imagen {
+    display: block;
     width: 100%;
     height: auto;
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 4 / 3;
     object-fit: cover;
     background:
-        repeating-linear-gradient(0deg, rgba(0, 229, 255, 0.06) 0 2px, transparent 2px 6px),
-        radial-gradient(circle at 30% 30%, rgba(0, 229, 255, 0.18), transparent 60%),
+        repeating-linear-gradient(0deg, var(--cama-grilla) 0 2px, transparent 2px 6px),
+        radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--text_main) 18%, transparent), transparent 60%),
         var(--bg_card_secondary);
     border-bottom: 1px solid var(--primary);
 }
 
-.tarjeta-imagen span {
-    font-size: 26px;
+.mosaico-nombre {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    font-size: 16px;
     font-weight: 700;
-    letter-spacing: 1px;
-    color: rgba(0, 229, 255, 0.35);
+    line-height: 1.25;
+    color: var(--primary_hover);
 }
 
-.tarjeta-cuerpo {
+.mosaico-icono {
+    flex: 0 0 24px;
+    width: 24px;
+    height: 24px;
+    padding: 4px;
+    border: 1px solid var(--primary);
+    border-radius: 50%;
+    fill: none;
+    stroke: var(--text_main);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+}
+
+/* El detalle vive dentro de cada mosaico. Con JavaScript se muestra en el panel;
+   sin JavaScript queda visible debajo del nombre. */
+.mosaico-detalle {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 16px;
+    gap: 12px;
+    padding: 0 12px 12px 12px;
 }
 
+.js .mosaico-detalle {
+    display: none;
+}
+
+/* Mosaico 8: pedido a medida */
+.mosaico-otra {
+    border-style: dashed;
+    background-color: var(--bg_primary);
+}
+
+.mosaico-medida {
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 12px;
+    text-decoration: none;
+}
+
+.mosaico-medida .mosaico-icono {
+    width: 32px;
+    height: 32px;
+    flex-basis: 32px;
+    padding: 8px;
+}
+
+.mosaico-medida strong {
+    font-size: 16px;
+    line-height: 1.25;
+    color: var(--primary_hover);
+}
+
+.mosaico-medida span {
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--header_bg);
+}
+
+/* ===== Catálogo: panel de cada categoría ===== */
+
+.panel-categoria {
+    position: fixed;
+    inset: auto 0 0 0;
+    width: 100%;
+    max-width: 360px;
+    margin: auto auto 0 auto;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--primary);
+    border-bottom: none;
+    border-radius: var(--radius) var(--radius) 0 0;
+    background-color: var(--bg_card);
+    color: var(--primary_hover);
+    transform: translateY(0);
+    opacity: 1;
+    transition: transform 0.3s ease, opacity 0.3s ease, overlay 0.3s allow-discrete, display 0.3s allow-discrete;
+}
+
+.panel-categoria:not([open]) {
+    transform: translateY(100%);
+    opacity: 0;
+}
+
+@starting-style {
+    .panel-categoria[open] {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+}
+
+.panel-categoria::backdrop {
+    background-color: var(--velo-panel);
+}
+
+/* La X queda fija arriba a la derecha; lo que se desplaza es el cuerpo del panel */
+.panel-cabecera {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 1;
+}
+
+.btn-cerrar-panel {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--primary);
+    border-radius: 50%;
+    background-color: var(--bg_card);
+    color: var(--primary_hover);
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.btn-cerrar-panel:hover {
+    border-color: var(--text_main);
+}
+
+.btn-cerrar-panel svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: var(--primary_hover);
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.panel-cuerpo {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 88svh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom));
+}
+
+.panel-cuerpo .tarjeta-imagen {
+    border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.panel-cuerpo > :not(.tarjeta-imagen) {
+    margin: 0 16px;
+}
+
+.panel-cuerpo h3 {
+    margin-top: 4px;
+    font-size: 24px;
+    line-height: 1.2;
+}
+
+/* ===== Datos de la categoría ===== */
+
 .dato {
-    font-size: 13px;
+    font-size: 14px;
     color: var(--primary_hover);
 }
 
 .dato span {
-    margin-right: 6px;
+    margin-right: 8px;
     color: var(--header_bg);
 }
 
@@ -671,51 +1117,52 @@ h3 {
     list-style: none;
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 8px;
 }
 
 .colores li {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 4px 10px 4px 6px;
+    gap: 8px;
+    padding: 4px 12px 4px 4px;
     border: 1px solid var(--primary);
     border-radius: 999px;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
     color: var(--primary_hover);
 }
 
-/* Círculo lleno con todo el arcoíris: el color lo elige el cliente */
+/* Círculo lleno con todo el arcoíris: el color lo elige el cliente.
+   El aro va por fuera con box-shadow, así el degradado no se ensucia en el borde. */
 .circulo-arcoiris {
-    flex: 0 0 14px;
-    width: 14px;
-    height: 14px;
+    flex: 0 0 18px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    background: conic-gradient(#FF3B3B, #FF9F1C, #FFE23B, #3BD16F, #00E5FF, #3B6BFF, #B23BFF, #FF3BA7, #FF3B3B);
+    background: conic-gradient(var(--arcoiris-1), var(--arcoiris-2), var(--arcoiris-3), var(--arcoiris-4), var(--arcoiris-5), var(--arcoiris-6), var(--arcoiris-7), var(--arcoiris-8), var(--arcoiris-1));
+    box-shadow: 0 0 0 1px var(--arcoiris-borde);
 }
-
 
 .btn-whatsapp {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 8px;
-    height: 44px;
+    height: 48px;
     margin-top: 4px;
-    border: 1px solid rgba(37, 211, 102, 0.5);
-    border-radius: 10px;
-    background-color: rgba(37, 211, 102, 0.1);
+    border: 1px solid color-mix(in srgb, var(--whatsapp) 50%, transparent);
+    border-radius: 12px;
+    background-color: color-mix(in srgb, var(--whatsapp) 10%, transparent);
     color: var(--whatsapp);
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 600;
+    white-space: nowrap;
     text-decoration: none;
     transition: background-color 0.2s, transform 0.1s;
 }
 
 .btn-whatsapp:hover {
-    background-color: rgba(37, 211, 102, 0.18);
+    background-color: color-mix(in srgb, var(--whatsapp) 18%, transparent);
 }
 
 .btn-whatsapp:active {
@@ -727,25 +1174,25 @@ h3 {
 .formulario {
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    margin-top: 18px;
+    gap: 16px;
+    margin-top: 20px;
 }
 
 .fila-campos {
     display: flex;
-    gap: 10px;
+    gap: 12px;
 }
 
 .campo {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     min-width: 0;
     flex: 1;
 }
 
 .campo label {
-    font-size: 13px;
+    font-size: 14px;
     color: var(--primary_hover);
 }
 
@@ -757,7 +1204,7 @@ h3 {
 .campo select,
 .campo textarea {
     width: 100%;
-    height: 44px;
+    height: 48px;
     padding: 0 12px;
     border: 1px solid var(--primary);
     border-radius: var(--radius-text);
@@ -765,44 +1212,45 @@ h3 {
     color: var(--primary_hover);
     font-family: inherit;
     font-size: 16px;
-    outline: none;
-    transition: border-color 0.2s;
+}
+
+.campo input:hover,
+.campo select:hover,
+.campo textarea:hover {
+    border-color: var(--header_bg);
 }
 
 .campo input::placeholder,
 .campo textarea::placeholder {
     color: var(--header_bg);
-    opacity: 0.6;
+    opacity: 0.75;
 }
 
+/* Flecha del select dibujada con dos triángulos, en el color de los textos secundarios */
 .campo select {
-    padding-right: 36px;
+    padding-right: 40px;
     appearance: none;
     -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239CAAB7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--header_bg) 50%),
+        linear-gradient(135deg, var(--header_bg) 50%, transparent 50%);
     background-repeat: no-repeat;
-    background-position: calc(100% - 12px) center;
-    background-size: 16px;
+    background-position: calc(100% - 20px) 50%, calc(100% - 14px) 50%;
+    background-size: 6px 6px;
     cursor: pointer;
 }
 
 .campo textarea {
-    height: 100px;
-    padding: 10px 12px;
+    height: 112px;
+    padding: 12px;
     line-height: 1.4;
     resize: vertical;
 }
 
-.campo input:focus,
-.campo select:focus,
-.campo textarea:focus {
-    border-color: var(--text_main);
-}
-
 .formulario .btn-principal img {
     filter: brightness(0);
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
 }
 
 /* ===== Footer ===== */
@@ -810,14 +1258,86 @@ h3 {
 .pie {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    padding: 24px 14px 90px 14px;
+    gap: 24px;
+    padding: 32px 16px 96px 16px;
     border-top: 1px solid var(--primary);
 }
 
-.pie p {
-    font-size: 12px;
+.pie-lema {
+    margin-top: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--header_bg);
+}
+
+.pie-titulo {
+    margin-bottom: 12px;
+    font-size: 16px;
+}
+
+.lista-redes {
+    list-style: none;
+    display: flex;
+    gap: 12px;
+}
+
+.red {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 0 16px;
+    border: 1px solid var(--primary);
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color 0.2s, transform 0.1s;
+}
+
+.lista-redes li {
+    display: flex;
+    flex: 1;
+}
+
+.red:hover {
+    border-color: var(--text_main);
+}
+
+.red:active {
+    transform: scale(0.98);
+}
+
+.red svg {
+    flex: 0 0 20px;
+    width: 20px;
+    height: 20px;
+}
+
+.icono-trazo {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.icono-relleno {
+    fill: currentColor;
+}
+
+.legal {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 20px;
+    border-top: 1px solid var(--primary);
+}
+
+.legal p {
+    font-size: 14px;
+    line-height: 1.5;
     color: var(--header_bg);
 }
 
@@ -835,17 +1355,15 @@ h3 {
     align-items: center;
     border-radius: 50%;
     background-color: var(--whatsapp);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(16px) scale(0.9);
+    box-shadow: 0 6px 16px var(--sombra-flotante);
     transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
 }
 
-.btn-whatsapp-flotante.visible {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0) scale(1);
+/* Solo se esconde arriba de todo si el script está activo; sin script queda siempre visible */
+.js .btn-whatsapp-flotante:not(.visible) {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(16px) scale(0.9);
 }
 
 .btn-whatsapp-flotante img {
@@ -871,7 +1389,24 @@ h3 {
         transition-duration: 0.01ms !important;
     }
 
-    .ventilador {
+    .ventilador,
+    .impresora {
         animation: none;
+    }
+
+    .impresora {
+        transition: none;
+    }
+
+    .panel-categoria,
+    .panel-categoria:not([open]),
+    .js .btn-whatsapp-flotante:not(.visible) {
+        transform: none;
+    }
+
+    @starting-style {
+        .panel-categoria[open] {
+            transform: none;
+        }
     }
 }

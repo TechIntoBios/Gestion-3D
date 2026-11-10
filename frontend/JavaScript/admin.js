@@ -8,8 +8,10 @@ label.innerHTML = "";
 const btnagregar = document.getElementById("btn-agregar"); 
 const contenedorProductos = document.getElementById("tarjeta-productos");
 const plantillaProducto = document.getElementById("tarjeta-sub-productos");
+const lblTotal = document.getElementById("lbl-total");
 
-let productos_set = new Set(); 
+const formatoPesos = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS" });
+
 let array_categorias = []; 
 let array_productos = [];
 
@@ -45,10 +47,34 @@ async function listar_Productos() {
     }
 }
 
+function calcularSubtotal(tarjeta) {
+    const cantidad = Number(tarjeta.querySelector('[name="txt-cantidad"]').value) || 0;
+    const precio = Number(tarjeta.querySelector('[name="txt-precio"]').value) || 0;
+
+    return Math.round(cantidad * precio * 100) / 100;
+}
+
+function actualizarTotal() {
+    const tarjetas = contenedorProductos.querySelectorAll(".sub-contendor-productos");
+    const total = [...tarjetas].reduce((suma, tarjeta) => suma + calcularSubtotal(tarjeta), 0);
+
+    lblTotal.textContent = formatoPesos.format(total);
+}
+
 function agregarFilaProducto() {
     const fila = plantillaProducto.content.cloneNode(true);
     const ddl_categorias = fila.querySelector('[name="ddl-categorias"]');
     const ddl_productos = fila.querySelector('[name="ddl-productos"]');
+    const txt_precio = fila.querySelector('[name="txt-precio"]');
+    const txt_cantidad = fila.querySelector('[name="txt-cantidad"]');
+    const tarjeta = fila.querySelector(".sub-contendor-productos");
+    const btn_eliminar = fila.querySelector(".btn-eliminar");
+    const lbl_subtotal = fila.querySelector(".lbl-subtotal");
+
+    function actualizarSubtotal() {
+        lbl_subtotal.textContent = formatoPesos.format(calcularSubtotal(tarjeta));
+        actualizarTotal();
+    }
 
     array_categorias.forEach(cat => {
         ddl_categorias.appendChild(crearOption(cat.nombre, cat.idcategoria)); 
@@ -64,12 +90,47 @@ function agregarFilaProducto() {
 
         productosCategoria.forEach(prod => {
             ddl_productos.appendChild(crearOption(prod.nombre, prod.id_producto))
-        }); 
-    }); 
+        });
 
-    
+        txt_precio.value = "";
+        actualizarSubtotal();
+    });
+
+    ddl_productos.addEventListener("change", () => {
+        const idProducto = Number(ddl_productos.value); 
+        const productos = array_productos.find(prod => prod.id_producto === idProducto); 
+
+        txt_precio.value = productos ? productos.precio : "";
+
+        if(!txt_cantidad.value){
+            txt_cantidad.value = 1;
+        }
+
+        actualizarSubtotal();
+    });
+
+    txt_cantidad.addEventListener("input", actualizarSubtotal);
+    txt_precio.addEventListener("input", actualizarSubtotal);
+
+    btn_eliminar.addEventListener("click", () => {
+        const cantidadTarjetas = contenedorProductos.querySelectorAll(".sub-contendor-productos").length;
+
+        if (cantidadTarjetas > 1) {
+            tarjeta.remove();
+            actualizarTotal();
+            return;
+        }
+
+        ddl_categorias.selectedIndex = 0;
+        ddl_productos.length = 1;
+        ddl_productos.selectedIndex = 0;
+        txt_precio.value = "";
+        txt_cantidad.value = "";
+        actualizarSubtotal();
+    });
 
     contenedorProductos.appendChild(fila);
+    actualizarSubtotal();
 }
 
 
@@ -125,7 +186,7 @@ formulario.addEventListener("submit", async (evento) => {
         label.textContent = resultado.mensaje;
     }
     catch(error){
-        label.textContent = resultado; 
+        label.textContent = error.message;
     }
 });
 
@@ -134,7 +195,6 @@ btnagregar.addEventListener("click", () => {
     agregarFilaProducto(); 
 }); 
 
-// Buscador de cliente existente: por ahora solo se habilita con el interruptor; falta la búsqueda en la API.
 const chkClienteExistente = document.getElementById("chk-cliente-existente");
 const txtBuscarTelefono = document.getElementById("txt-buscar-telefono");
 const btnBuscarCliente = document.getElementById("btn-buscar-cliente");
@@ -165,15 +225,3 @@ document.addEventListener("DOMContentLoaded", async () => {
     await listar_Productos(); 
     agregarFilaProducto(); 
 }); 
-
-
-//clonar cosas
-// const btnagregar = document.getElementById("btn_agregar"); 
-// const contendor1 = document.getElementById("tarjeta-productos"); 
-// const contenedor2 = document.getElementById("tarjeta-sub-productos"); 
-
-
-// btnagregar.addEventListener("click", () => {
-//     const nuevo = contenedor2.content.cloneNode(true); 
-//     contendor1.appendChild(nuevo); 
-// });
