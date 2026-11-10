@@ -248,3 +248,49 @@ section {
     opacity: 0.6;
     cursor: wait;
 }
+
+/* =====================================================================
+   ADAPTACIÓN A OTRAS PANTALLAS
+   Lo de arriba es el diseño de celular. Desde tablet el login queda como una
+   tarjeta centrada de ancho fijo: un formulario de dos campos no gana nada estirándose.
+   ===================================================================== */
+
+/* ===== Tablet ===== */
+@media (min-width: 600px) {
+    body {
+        max-width: none;
+        display: flex;
+        flex-direction: column;
+    }
+
+    header {
+        padding: 0 max(14px, calc((100% - 1120px) / 2));
+    }
+
+    main {
+        width: min(100% - 48px, 440px);
+        margin: 64px auto;
+    }
+
+    .p-2 {
+        font-size: 28px;
+    }
+
+    #section-2 .contenedor-datos {
+        margin: 24px;
+    }
+}
+
+/* ===== Notebook y pantallas grandes: la tarjeta se centra en la altura disponible ===== */
+@media (min-width: 1024px) {
+    header {
+        height: 72px;
+    }
+
+    main {
+        flex: 1;
+        justify-content: center;
+        margin: 0 auto;
+        padding: 48px 0 96px 0;
+    }
+}

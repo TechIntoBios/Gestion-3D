@@ -1487,3 +1487,258 @@ section {
     flex: 2;
     margin-top: 0;
 }
+
+/* =====================================================================
+   ADAPTACIÓN A OTRAS PANTALLAS
+   Lo de arriba es el diseño de celular y no se toca. Acá solo se agregan
+   cambios a partir de cada ancho:
+     - Tablet:          desde 600px  (contenido centrado de 720px)
+     - Notebook:        desde 1024px (cada página en dos columnas)
+     - Pantalla grande: desde 1440px (contenido de 1280px centrado)
+   ===================================================================== */
+
+/* ===== Tablet ===== */
+@media (min-width: 600px) {
+    :root {
+        --ancho-contenido: 720px;
+    }
+
+    body {
+        max-width: none;
+    }
+
+    header {
+        padding: 0 max(4px, calc((100% - var(--ancho-contenido)) / 2 - 10px));
+    }
+
+    main {
+        width: min(100% - 48px, var(--ancho-contenido));
+        margin: 0 auto;
+        padding-top: 16px;
+        padding-bottom: 48px;
+    }
+
+    section,
+    #section-1,
+    #section-guardar {
+        margin: 12px 0;
+    }
+
+    section {
+        padding: 12px;
+    }
+
+    #section-1 {
+        padding: 0;
+    }
+
+    .p-2 {
+        font-size: 28px;
+    }
+
+    .p-3 {
+        font-size: 14px;
+    }
+
+    /* Panel de "pedido guardado" un poco más ancho */
+    .panel-exito {
+        max-width: 440px;
+        padding: 32px 28px 24px 28px;
+    }
+
+    /* Botones de acción con ancho natural en vez de ocupar toda la fila */
+    #section-guardar {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    .btn-guardar {
+        width: auto;
+        min-width: 200px;
+        padding: 0 32px;
+    }
+
+    .footer-tracking {
+        margin: 12px 0 24px 0;
+    }
+}
+
+/* ===== Notebook ===== */
+@media (min-width: 1024px) {
+    :root {
+        --ancho-contenido: 1120px;
+    }
+
+    header {
+        height: 72px;
+    }
+
+    main {
+        padding-top: 32px;
+    }
+
+    section,
+    #section-1,
+    #section-guardar {
+        margin: 0;
+    }
+
+    section {
+        padding: 16px;
+    }
+
+    #section-1 {
+        padding: 0 0 8px 0;
+    }
+
+    .p-2 {
+        font-size: 32px;
+    }
+
+    /* ----- Nuevo pedido: cliente a la izquierda, productos a la derecha ----- */
+    .pagina-admin #formulario {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+        grid-template-areas:
+            "titulo   titulo"
+            "cliente  productos"
+            "cliente  guardar"
+            ".        guardar";
+        grid-template-rows: auto auto auto 1fr;
+        gap: 20px 24px;
+        align-items: start;
+    }
+
+    .pagina-admin #section-1 {
+        grid-area: titulo;
+    }
+
+    .pagina-admin #section-2 {
+        grid-area: cliente;
+        position: sticky;
+        top: 24px;
+    }
+
+    .pagina-admin #section-3 {
+        grid-area: productos;
+    }
+
+    .pagina-admin #section-guardar {
+        grid-area: guardar;
+    }
+
+    /* ----- Productos: los dos formularios lado a lado ----- */
+    .pagina-products main {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 20px 24px;
+        align-items: start;
+    }
+
+    .pagina-products #section-1 {
+        grid-column: 1 / -1;
+    }
+
+    /* ----- Seguimiento (admin): buscar y cambiar estado a la izquierda; contacto y productos a la derecha ----- */
+    .pagina-tracking-admin main {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        /* Cada columna se apila sola: el estado arranca justo debajo del buscador
+           aunque los datos de contacto sean más altos */
+        grid-template-areas:
+            "titulo    titulo"
+            "buscador  contacto"
+            "estado    contacto"
+            "estado    productos";
+        grid-template-rows: auto auto auto 1fr;
+        gap: 20px 24px;
+        align-items: start;
+    }
+
+    .pagina-tracking-admin #section-1 {
+        grid-area: titulo;
+    }
+
+    .pagina-tracking-admin #section-buscador {
+        grid-area: buscador;
+    }
+
+    .pagina-tracking-admin #section-estado {
+        grid-area: estado;
+    }
+
+    .pagina-tracking-admin #section-contacto {
+        grid-area: contacto;
+    }
+
+    .pagina-tracking-admin #section-productos {
+        grid-area: productos;
+    }
+
+    /* ----- Seguimiento (cliente): estado y contacto a la izquierda, productos a la derecha ----- */
+    .pagina-tracking main {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+        grid-template-areas:
+            "titulo    titulo"
+            "estado    productos"
+            "contacto  productos"
+            "pie       pie";
+        grid-template-rows: auto auto 1fr auto;
+        gap: 20px 24px;
+        align-items: start;
+    }
+
+    .pagina-tracking #section-1 {
+        grid-area: titulo;
+    }
+
+    .pagina-tracking #section-estado {
+        grid-area: estado;
+    }
+
+    .pagina-tracking #section-contacto {
+        grid-area: contacto;
+    }
+
+    .pagina-tracking #section-productos {
+        grid-area: productos;
+    }
+
+    .pagina-tracking .footer-tracking {
+        grid-area: pie;
+        margin: 0;
+    }
+
+    /* Datos de contacto en dos columnas cuando hay lugar */
+    #section-contacto form,
+    .pagina-tracking #section-contacto .contenedor-datos {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        column-gap: 24px;
+    }
+
+    .pagina-tracking #section-contacto .contenedor-datos > h4,
+    #section-contacto .acciones-edicion {
+        grid-column: 1 / -1;
+    }
+}
+
+/* ===== Pantalla grande (monitores de 24" o 27") ===== */
+@media (min-width: 1440px) {
+    :root {
+        --ancho-contenido: 1280px;
+    }
+
+    .p-2 {
+        font-size: 36px;
+    }
+}
+
+/* ===== Monitores muy anchos (27" a resolución alta) ===== */
+@media (min-width: 1920px) {
+    :root {
+        --ancho-contenido: 1440px;
+    }
+}

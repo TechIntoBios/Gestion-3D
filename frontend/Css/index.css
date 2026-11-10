@@ -1410,3 +1410,365 @@ h3 {
         }
     }
 }
+
+/* =====================================================================
+   ADAPTACIÓN A OTRAS PANTALLAS
+   Lo de arriba es el diseño de celular y no se toca. Acá solo se agregan
+   cambios a partir de cada ancho:
+     - Tablet:          desde 600px
+     - Notebook:        desde 1024px
+     - Pantalla grande: desde 1440px
+   En pantallas grandes el contenido no se estira: queda centrado y crecen los márgenes.
+   ===================================================================== */
+
+/* ===== Tablet ===== */
+@media (min-width: 600px) {
+    :root {
+        --ancho-contenido: 720px;
+        --margen-lateral: 24px;
+    }
+
+    body {
+        max-width: none;
+    }
+
+    /* El header ocupa todo el ancho, pero su contenido se alinea con el de la página */
+    header {
+        padding: 0 max(var(--margen-lateral), calc((100% - var(--ancho-contenido)) / 2));
+    }
+
+    section {
+        width: min(100% - 2 * var(--margen-lateral), var(--ancho-contenido));
+        margin: 24px auto;
+    }
+
+    h2 {
+        font-size: 32px;
+    }
+
+    .tarjeta {
+        padding: 32px;
+    }
+
+    /* Hero: la impresora pasa a ser una tarjeta con bordes y un poco más grande */
+    .seccion-hero {
+        min-height: auto;
+        margin-top: 24px;
+    }
+
+    .impresora {
+        min-height: 480px;
+        margin: 0 0 32px 0;
+        border: 1px solid var(--primary);
+        border-radius: var(--radius);
+    }
+
+    .cama {
+        scale: 1.3;
+    }
+
+    .titulo-hero {
+        font-size: 48px;
+    }
+
+    .texto-hero {
+        max-width: 48ch;
+        font-size: 18px;
+    }
+
+    .acciones-hero {
+        flex-direction: row;
+    }
+
+    .acciones-hero > * {
+        width: auto;
+        padding: 0 32px;
+    }
+
+    /* Catálogo en 3 columnas */
+    .lista-categorias {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    /* El panel sigue subiendo desde abajo, pero más ancho */
+    .panel-categoria {
+        max-width: 560px;
+    }
+
+    /* Contacto: nombre y apellido ya entran cómodos lado a lado; el botón no ocupa todo el ancho */
+    .formulario .btn-principal {
+        width: auto;
+        align-self: flex-start;
+        padding: 0 32px;
+    }
+
+    /* Footer: marca y redes en dos columnas, lo legal abajo */
+    .pie {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        align-items: start;
+        padding: 40px max(var(--margen-lateral), calc((100% - var(--ancho-contenido)) / 2)) 96px;
+    }
+
+    .legal {
+        grid-column: 1 / -1;
+    }
+}
+
+/* ===== Notebook ===== */
+@media (min-width: 1024px) {
+    :root {
+        --ancho-contenido: 1120px;
+        --margen-lateral: 40px;
+    }
+
+    header {
+        height: 72px;
+    }
+
+    section {
+        margin: 48px auto;
+        scroll-margin-top: 88px;
+    }
+
+    /* El menú hamburguesa se convierte en links dentro del header */
+    .btn-hamburguesa {
+        display: none;
+    }
+
+    .panel-menu,
+    .panel-menu[hidden] {
+        position: static;
+        display: flex;
+        flex-direction: row;
+        gap: 4px;
+        min-width: 0;
+        padding: 0;
+        border: none;
+        background: none;
+    }
+
+    .item-menu {
+        padding: 0 16px;
+    }
+
+    /* Hero en dos columnas: el texto a la izquierda, la impresora grande a la derecha.
+       Entra entero en la primera pantalla. */
+    .seccion-hero {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+        grid-template-rows: 1fr auto auto auto 1fr;
+        column-gap: 56px;
+        /* Ocupa la primera pantalla, con un tope para que en monitores altos la impresora no quede como una columna */
+        min-height: min(calc(100svh - 72px - 64px), 760px);
+        margin-top: 32px;
+    }
+
+    .impresora {
+        grid-column: 2;
+        grid-row: 1 / -1;
+        min-height: 560px;
+        margin: 0;
+    }
+
+    .cama {
+        scale: 1.45;
+    }
+
+    .titulo-hero {
+        grid-column: 1;
+        grid-row: 2;
+        font-size: 60px;
+        line-height: 1.05;
+    }
+
+    .texto-hero {
+        grid-column: 1;
+        grid-row: 3;
+        margin-bottom: 32px;
+    }
+
+    .acciones-hero {
+        grid-column: 1;
+        grid-row: 4;
+    }
+
+    /* Nosotros: los tres destacados en fila */
+    .lista-destacados {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 32px;
+        margin-top: 32px;
+    }
+
+    #nosotros > .texto {
+        max-width: 60ch;
+    }
+
+    /* Catálogo en 4 columnas: las 8 tarjetas quedan en dos filas */
+    .lista-categorias {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .seccion-catalogo > .texto {
+        max-width: 60ch;
+    }
+
+    /* En compu el panel se abre en el centro: foto a la izquierda, detalle a la derecha */
+    .panel-categoria {
+        inset: 0;
+        max-width: 880px;
+        margin: auto;
+        border-bottom: 1px solid var(--primary);
+        border-radius: var(--radius);
+    }
+
+    .panel-categoria:not([open]) {
+        transform: translateY(24px);
+    }
+
+    @starting-style {
+        .panel-categoria[open] {
+            transform: translateY(24px);
+        }
+    }
+
+    .panel-cuerpo {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        grid-auto-rows: min-content;
+        align-content: start;
+        column-gap: 32px;
+        max-height: 85svh;
+        padding: 0;
+    }
+
+    .panel-cuerpo .tarjeta-imagen {
+        grid-column: 1;
+        grid-row: 1 / span 6;
+        align-self: stretch;
+        height: 100%;
+        min-height: 360px;
+        border-bottom: none;
+        border-right: 1px solid var(--primary);
+        border-radius: var(--radius) 0 0 var(--radius);
+    }
+
+    .panel-cuerpo > :not(.tarjeta-imagen) {
+        grid-column: 2;
+        margin: 0 32px 0 0;
+    }
+
+    /* Mismo peso que la regla de márgenes de la columna derecha, y va después: le gana */
+    .panel-cuerpo > h3:not(.tarjeta-imagen) {
+        margin-top: 72px;
+    }
+
+    .panel-cuerpo > :last-child {
+        margin-bottom: 32px;
+    }
+
+    /* Contacto en dos columnas: el texto a la izquierda, el formulario a la derecha */
+    #contacto {
+        display: grid;
+        grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+        grid-template-rows: auto 1fr;
+        column-gap: 56px;
+        padding: 48px;
+    }
+
+    #contacto > h2 {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    #contacto > .texto {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    #contacto > .formulario {
+        grid-column: 2;
+        grid-row: 1 / -1;
+        margin-top: 0;
+    }
+
+    /* Footer en tres columnas */
+    .pie {
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1.2fr);
+        column-gap: 48px;
+        padding-bottom: 48px;
+    }
+
+    .legal {
+        grid-column: auto;
+        padding-top: 0;
+        border-top: none;
+    }
+}
+
+/* ===== Pantalla grande (monitores de 24" o 27") ===== */
+@media (min-width: 1440px) {
+    :root {
+        --ancho-contenido: 1280px;
+    }
+
+    .impresora {
+        min-height: 640px;
+    }
+
+    .cama {
+        scale: 1.7;
+    }
+
+    .titulo-hero {
+        font-size: 72px;
+    }
+
+    .texto-hero {
+        font-size: 20px;
+    }
+
+    h2 {
+        font-size: 36px;
+    }
+}
+
+/* ===== Monitores muy anchos (27" a resolución alta) ===== */
+@media (min-width: 1920px) {
+    :root {
+        --ancho-contenido: 1440px;
+    }
+
+    .seccion-hero {
+        min-height: min(calc(100svh - 72px - 64px), 860px);
+    }
+
+    .impresora {
+        min-height: 720px;
+    }
+
+    .cama {
+        scale: 1.95;
+    }
+
+    .titulo-hero {
+        font-size: 80px;
+    }
+}
+
+/* "Reducir movimiento" tiene que ganarle a los cambios de pantalla de arriba */
+@media (prefers-reduced-motion: reduce) and (min-width: 1024px) {
+    .panel-categoria,
+    .panel-categoria:not([open]) {
+        transform: none;
+    }
+
+    @starting-style {
+        .panel-categoria[open] {
+            transform: none;
+        }
+    }
+}
