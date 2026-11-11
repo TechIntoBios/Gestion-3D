@@ -10,37 +10,32 @@ public class NegocioClientes
 
     public NegocioClientes(DaoClientes dao) => daoClientes = dao; 
 
-    // public async Task<String> agregarCliente(String nombre, String apellido, String correo, String zona, String telefono)
-    // {
-    //     var clientes = new Clientes(); 
-    //     clientes.Nombre = nombre;
-    //     clientes.Apellido = apellido;
-    //     clientes.Correo = correo; 
-    //     clientes.Zona = zona; 
-    //     clientes.Telefono = telefono;
-
-    //     if (!await daoClientes.existeCliente(clientes))
-    //     {
-    //         return await daoClientes.agregarCliente(clientes);
-    //     }
-
-    //     return ""; 
-    // }
     
     public async Task<Guid> agregarCliente(String nombre, String apellido, String? correo, String zona, String telefono, NpgsqlConnection conexion, NpgsqlTransaction transaccion)
     {
         var clientes = new Clientes();
-        clientes.Nombre = nombre;
-        clientes.Apellido = apellido;
-        clientes.Correo = correo!;
-        clientes.Zona = zona;
-        clientes.Telefono = telefono;
-
-        if (await daoClientes.existeCliente(clientes, conexion, transaccion))
-        {
-            throw new Exception("Cliente existente");
-        }
+        clientes.Nombre = nombre.Trim();
+        clientes.Apellido = apellido.Trim();
+        clientes.Correo = string.IsNullOrWhiteSpace(correo) ? null! : correo.Trim();
+        clientes.Zona = zona.Trim();
+        clientes.Telefono = telefono.Trim();
 
         return await daoClientes.agregarCliente(clientes, conexion, transaccion);
+    }
+
+    public async Task<Clientes?> buscarPorTelefono(String? telefono)
+    {
+        validarTelefono(telefono);
+        return await daoClientes.obtenerPorTelefono(telefono!.Trim());
+    }
+
+    public static void validarTelefono(String? telefono)
+    {
+        var limpio = telefono?.Trim();
+
+        if (string.IsNullOrEmpty(limpio) || limpio.Length < 10 || limpio.Length > 20 || limpio.Any(c => !char.IsDigit(c)))
+        {
+            throw new ArgumentException("El teléfono debe tener entre 10 y 20 dígitos, sin espacios ni guiones.");
+        }
     }
 }

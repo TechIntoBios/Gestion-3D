@@ -57,7 +57,6 @@
             <section id="section-2">
                 <div class="contenedor-datos">
                     <h4>Datos de contacto</h4>
-                    <!-- Buscador de cliente existente: sin name, para que no viaje en el FormData del pedido. -->
                     <div class="buscador-cliente">
                         <label class="interruptor">
                             <input type="checkbox" id="chk-cliente-existente" role="switch">
@@ -148,7 +147,6 @@
             </section>
         </form>
 
-        <!-- Se abre con showModal() cuando el pedido se guardó bien. -->
         <dialog id="dlg-pedido-guardado" class="panel-exito" aria-labelledby="ttl-pedido-guardado">
             <form method="dialog">
                 <button type="submit" class="btn-cerrar-panel" aria-label="Cerrar">
@@ -169,6 +167,7 @@
                 <button type="button" id="btn-copiar-link" class="btn-copiar" autofocus>Copiar</button>
             </div>
             <p id="lbl-copiado" class="mensaje-copiado" role="status" aria-live="polite"></p>
+            <p id="lbl-mail-cliente" class="estado-mail"></p>
         </dialog>
     </main>
 

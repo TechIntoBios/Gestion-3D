@@ -57,7 +57,6 @@
                 </div>
                 <p id="lbl-busqueda" class="mensaje-busqueda" role="status" aria-live="polite"></p>
 
-                <!-- Solo se muestra si el cliente tiene más de un pedido. -->
                 <div id="contenedor-pedidos" class="selector-pedido" hidden>
                     <p class="dato-label">Pedido</p>
                     <select id="ddl-pedidos" aria-label="Pedido del cliente"></select>
@@ -105,10 +104,11 @@
                     <textarea id="txt-observacion" maxlength="300" placeholder="Link de seguimiento, correo o indicaciones para el cliente..."></textarea>
                     <p class="ayuda-obs">El cliente va a ver este mensaje en el seguimiento de su pedido.</p>
 
-                    <button type="button" id="btn-guardar-estado" class="btn-guardar-cambios">
+                    <button type="button" id="btn-guardar-estado" class="btn-guardar-cambios" disabled>
                         <img src="Iconos/Check.svg" alt="">
                         Guardar cambios
                     </button>
+                    <p id="lbl-estado-guardado" class="mensaje-busqueda" role="status" aria-live="polite"></p>
                 </div>
             </div>
         </section>

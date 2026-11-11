@@ -49,7 +49,6 @@ public class AuthController : ControllerBase
         return Ok(new LoginResponse { Usuario = usuario.Usuario, ExpiraEnHoras = servicioJwt.DuracionHoras });
     }
 
-    // Anonimo a proposito: una sesion vencida tambien tiene que poder borrar su cookie.
     [AllowAnonymous]
     [HttpPost("logout")]
     public IActionResult Logout()

@@ -1,5 +1,7 @@
+using System.Net.Mail;
 using Datos;
 using DTOs;
+using Npgsql;
 
 namespace Negocio;
 
@@ -9,20 +11,29 @@ public class NegocioCompras
     private readonly NegocioClientes negocioClientes;
     private readonly NegocioPedidos negocioPedidos;
     private readonly NegocioDetallePedido negocioDetallePedido;
+    private readonly ServicioMail servicioMail;
+    private readonly ILogger<NegocioCompras> logger;
+
+    // Id_EstadoPedido_EST de PENDIENTE: es el primer estado que se inserta en EstadoPedido.
+    private const int EstadoPendiente = 1;
 
     public NegocioCompras(
         AccesoDatos accesoDatos,
         NegocioClientes negocioClientes,
         NegocioPedidos negocioPedidos,
-        NegocioDetallePedido negocioDetallePedido)
+        NegocioDetallePedido negocioDetallePedido,
+        ServicioMail servicioMail,
+        ILogger<NegocioCompras> logger)
     {
         this.accesoDatos = accesoDatos;
         this.negocioClientes = negocioClientes;
         this.negocioPedidos = negocioPedidos;
         this.negocioDetallePedido = negocioDetallePedido;
+        this.servicioMail = servicioMail;
+        this.logger = logger;
     }
 
-    public async Task<Guid> registrarCompra(CompraRequest request)
+    public async Task<(Guid idPedido, int numero, string? correo, bool mailEnviado)> registrarCompra(CompraRequest request)
     {
         if (request is null)
         {
@@ -35,50 +46,85 @@ public class NegocioCompras
 
         validarCompra(cliente, pedido, detalles);
 
-        await using var conexion = await accesoDatos.obtenerConexion();
-        await using var transaccion = await conexion.BeginTransactionAsync();
+        Guid idPedido;
+        int numero;
 
+        await using (var conexion = await accesoDatos.obtenerConexion())
+        await using (var transaccion = await conexion.BeginTransactionAsync())
+        {
+            try
+            {
+                var idCliente = await negocioClientes.agregarCliente(cliente.nombre!, cliente.apellido!, cliente.correo, cliente.zona!, cliente.telefono!, conexion, transaccion);
+
+                // Todo pedido nuevo arranca Pendiente, mande lo que mande el formulario.
+                idPedido = await negocioPedidos.agregarPedido(idCliente, EstadoPendiente, pedido.nota, pedido.Seguimiento, conexion, transaccion);
+
+                foreach (var detalle in detalles!)
+                {
+                    await negocioDetallePedido.agregarDetallePedido(idPedido, detalle.idproducto, detalle.nombre!, detalle.cantidad, detalle.precio, conexion, transaccion);
+                }
+
+                numero = await negocioPedidos.obtenerNumero(idPedido, conexion, transaccion);
+
+                await transaccion.CommitAsync();
+            }
+            catch (PostgresException e) when (e.SqlState == PostgresErrorCodes.ForeignKeyViolation)
+            {
+                await transaccion.RollbackAsync();
+                throw new ArgumentException("Alguno de los productos o el estado del pedido no existe.", e);
+            }
+            catch
+            {
+                await transaccion.RollbackAsync();
+                throw;
+            }
+        }
+
+        var (correo, mailEnviado) = await avisarCliente(cliente.telefono!.Trim(), idPedido);
+        return (idPedido, numero, correo, mailEnviado);
+    }
+
+    private async Task<(string? correo, bool enviado)> avisarCliente(string telefono, Guid idPedido)
+    {
         try
         {
-            var idCliente = await negocioClientes.agregarCliente(cliente.nombre!, cliente.apellido!, cliente.correo, cliente.zona!, cliente.telefono!, conexion, transaccion);
+            var seguimiento = await negocioPedidos.buscarPorTelefono(telefono);
+            var pedidoGuardado = seguimiento?.pedidos.Find(p => p.idpedido == idPedido);
 
-            var idPedido = await negocioPedidos.agregarPedido( idCliente, pedido.idestado, pedido.nota, pedido.Seguimiento, conexion, transaccion);
-
-            foreach (var detalle in detalles!)
+            if (seguimiento?.cliente is not null && pedidoGuardado is not null)
             {
-                await negocioDetallePedido.agregarDetallePedido(idPedido, detalle.idproducto, detalle.nombre!, detalle.cantidad, detalle.precio, conexion, transaccion);
+                var enviado = await servicioMail.enviarEstadoPedido(seguimiento.cliente, pedidoGuardado, AvisoPedido.Nuevo);
+                return (seguimiento.cliente.Correo, enviado);
             }
-
-            await transaccion.CommitAsync();
-            return idPedido;
         }
-        catch
+        catch (Exception e)
         {
-            await transaccion.RollbackAsync();
-            throw;
+            logger.LogWarning(e, "El pedido {IdPedido} se guardó pero no se pudo preparar el mail.", idPedido);
         }
+
+        return (null, false);
     }
 
     private static void validarCompra(ClientesRequest cliente, PedidoResquest pedido, List<DetalleResquest>? detalles)
     {
         validarTextoRequerido(cliente.nombre, "El nombre es obligatorio.", 100);
         validarTextoRequerido(cliente.apellido, "El apellido es obligatorio.", 100);
-        validarTextoRequerido(cliente.zona, "La zona es obligatoria.", 100);
-        validarTextoRequerido(cliente.telefono, "El teléfono es obligatorio.", 20);
 
-        if (cliente.telefono!.Length < 10 || cliente.telefono.Any(c => !char.IsDigit(c)))
+        if (cliente.nombre!.Any(char.IsDigit) || cliente.apellido!.Any(char.IsDigit))
         {
-            throw new ArgumentException("El teléfono debe tener al menos 10 dígitos y contener solo números.");
+            throw new ArgumentException("El nombre y el apellido no pueden contener números.");
         }
+        validarTextoRequerido(cliente.zona, "La zona es obligatoria.", 100);
+        NegocioClientes.validarTelefono(cliente.telefono);
 
         if (cliente.correo?.Length > 300)
         {
             throw new ArgumentException("El correo no puede superar los 300 caracteres.");
         }
 
-        if (pedido.idestado <= 0)
+        if (!string.IsNullOrWhiteSpace(cliente.correo) && !MailAddress.TryCreate(cliente.correo.Trim(), out _))
         {
-            throw new ArgumentException("El estado del pedido debe ser válido.");
+            throw new ArgumentException("El correo no tiene un formato válido.");
         }
 
         if (pedido.nota?.Length > 300 || pedido.Seguimiento?.Length > 300)

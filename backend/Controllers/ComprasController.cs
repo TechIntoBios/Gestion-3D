@@ -20,8 +20,8 @@ public class ComprasController : ControllerBase
     {
         try
         {
-            var idPedido = await negocioCompras.registrarCompra(request);
-            return StatusCode(StatusCodes.Status201Created, new { idPedido, mensaje = "Compra creada correctamente." });
+            var (idPedido, numero, correo, mailEnviado) = await negocioCompras.registrarCompra(request);
+            return StatusCode(StatusCodes.Status201Created, new { idPedido, numero, correo, mailEnviado, mensaje = $"Pedido #{numero} guardado correctamente." });
         }
         catch (ArgumentException e)
         {

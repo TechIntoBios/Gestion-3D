@@ -453,3 +453,8 @@ Desktop.ini
 # 4. Carpetas de herramientas de IA / Agentes locales (OpenCode, Antigravity, etc.)
 .opencode/
 .antigravity/
+.hallmark/
+.impeccable/
+
+# 5. Scripts SQL locales (quedan solo en la compu, no se suben)
+db/

@@ -36,6 +36,9 @@ builder.Services.AddScoped<NegocioCompras>();
 builder.Services.AddScoped<NegocioClientes>();
 builder.Services.AddScoped<NegocioCategorias>();
 
+// Mails a clientes con Resend. Si tarda más de 10 s se corta: el pedido no espera al mail.
+builder.Services.AddHttpClient<ServicioMail>(cliente => cliente.Timeout = TimeSpan.FromSeconds(10));
+
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<ProteccionLogin>();
 

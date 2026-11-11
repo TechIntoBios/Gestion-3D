@@ -168,6 +168,10 @@ formulario.addEventListener("submit", async (evento) => {
         detalle
     };
 
+    const btnGuardar = formulario.querySelector('button[type="submit"]');
+    btnGuardar.disabled = true;
+    label.textContent = "Guardando...";
+
     try{
         const respuesta = await fetch(`${URL_API}/Compras/guardar`, {
             method: "POST",
@@ -177,18 +181,68 @@ formulario.addEventListener("submit", async (evento) => {
             body: JSON.stringify(compra)
         });
 
-        const resultado = await respuesta.json();
+        const resultado = await respuesta.json().catch(() => ({}));
 
         if (!respuesta.ok) {
-            throw new Error(resultado.mensaje || "No se pudo guardar la compra.");
+            label.textContent = resultado.mensaje ?? "No se pudo guardar el pedido.";
+            return;
         }
 
+        limpiarFormulario();
         label.textContent = resultado.mensaje;
+        mostrarPedidoGuardado(resultado);
     }
     catch(error){
-        label.textContent = error.message;
+        label.textContent = "No se logro conectar con el servidor";
+    }
+    finally{
+        btnGuardar.disabled = false;
     }
 });
+
+const dlgPedidoGuardado = document.getElementById("dlg-pedido-guardado");
+const txtLinkSeguimiento = document.getElementById("txt-link-seguimiento");
+const lblCopiado = document.getElementById("lbl-copiado");
+const lblMailCliente = document.getElementById("lbl-mail-cliente");
+
+function mostrarPedidoGuardado(resultado) {
+    const link = new URL(`tracking.html?id=${encodeURIComponent(resultado.idPedido)}`, window.location.href);
+
+    document.getElementById("lbl-numero-guardado").textContent = `PEDIDO #${resultado.numero}`;
+    txtLinkSeguimiento.value = link.href;
+    lblCopiado.textContent = "";
+    if (resultado.mailEnviado) {
+        lblMailCliente.textContent = `Le enviamos el pedido por mail a ${resultado.correo}.`;
+    }
+    else if (resultado.correo) {
+        lblMailCliente.textContent = `No se pudo enviar el mail a ${resultado.correo}. Mandale el link por WhatsApp.`;
+    }
+    else {
+        lblMailCliente.textContent = "El cliente no dejó mail: mandale el link por WhatsApp.";
+    }
+
+    dlgPedidoGuardado.showModal();
+}
+
+document.getElementById("btn-copiar-link").addEventListener("click", async () => {
+    try {
+        await navigator.clipboard.writeText(txtLinkSeguimiento.value);
+    }
+    catch (error) {
+        txtLinkSeguimiento.select();
+        lblCopiado.textContent = "Seleccioné el link: copialo con Ctrl+C o mantené apretado.";
+        return;
+    }
+
+    lblCopiado.textContent = "Link copiado.";
+});
+
+function limpiarFormulario() {
+    formulario.reset();
+    contenedorProductos.querySelectorAll(".sub-contendor-productos").forEach((fila) => fila.remove());
+    agregarFilaProducto();
+    chkClienteExistente.dispatchEvent(new Event("change"));
+}
 
 
 btnagregar.addEventListener("click", () => {
@@ -213,6 +267,54 @@ chkClienteExistente.addEventListener("change", () => {
     }
     else {
         txtBuscarTelefono.value = "";
+    }
+});
+
+function mostrarBusqueda(texto, encontrado) {
+    lblBusqueda.textContent = texto;
+    lblBusqueda.className = `mensaje-busqueda ${encontrado ? "encontrado" : "no-encontrado"}`;
+}
+
+async function buscarCliente() {
+    const telefono = txtBuscarTelefono.value.trim();
+
+    if (!txtBuscarTelefono.checkValidity() || telefono === "") {
+        mostrarBusqueda("Ingresá entre 10 y 20 dígitos, sin espacios ni guiones.", false);
+        return;
+    }
+
+    btnBuscarCliente.disabled = true;
+
+    try {
+        const respuesta = await fetch(`${URL_API}/Clientes/por_telefono/${encodeURIComponent(telefono)}`);
+        const datos = await respuesta.json().catch(() => ({}));
+
+        if (!respuesta.ok) {
+            mostrarBusqueda(datos.mensaje ?? "No se pudo buscar el cliente.", false);
+            return;
+        }
+
+        formulario.elements["txt-nombre"].value = datos.nombre;
+        formulario.elements["txt-apellido"].value = datos.apellido;
+        formulario.elements["txt-correo"].value = datos.correo ?? "";
+        formulario.elements["txt-telefono"].value = datos.telefono;
+        formulario.elements["txt-zona"].value = datos.zona;
+        mostrarBusqueda(`Cliente encontrado: ${datos.nombre} ${datos.apellido}.`, true);
+    }
+    catch (error) {
+        mostrarBusqueda("No se logro conectar con el servidor.", false);
+    }
+    finally {
+        btnBuscarCliente.disabled = !chkClienteExistente.checked;
+    }
+}
+
+btnBuscarCliente.addEventListener("click", buscarCliente);
+
+txtBuscarTelefono.addEventListener("keydown", (evento) => {
+    if (evento.key === "Enter") {
+        evento.preventDefault();
+        buscarCliente();
     }
 });
 

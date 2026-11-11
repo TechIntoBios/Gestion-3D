@@ -863,6 +863,18 @@ section {
     display: none;
 }
 
+/* Si al cliente le llegó el mail del pedido o hay que mandarle el link por WhatsApp */
+.estado-mail {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--primary);
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--header_bg);
+    text-align: left;
+    overflow-wrap: anywhere;
+}
+
 /* ===== Productos y categorías (products.html) ===== */
 
 .pagina-products .contenedor-datos {
@@ -967,11 +979,20 @@ section {
 
 /* ===== Seguimiento (tracking.html y tracking-admin.html) ===== */
 
-/* Card Estado Actual */
+/* Card Estado Actual: el color sale de --estado, que cambia con data-estado (lo pone el JS) */
 #section-estado {
+    --estado: var(--status_pending);
     padding: 14px;
-    border: 1px solid rgba(246, 196, 83, 0.4);
-    background-color: #17150d;
+    border: 1px solid color-mix(in srgb, var(--estado) 40%, transparent);
+    background-color: color-mix(in srgb, var(--estado) 8%, var(--bg_primary));
+}
+
+#section-estado[data-estado="CANCELADO"] {
+    --estado: var(--status_cancelled);
+}
+
+#section-estado[data-estado="REALIZADO"] {
+    --estado: var(--status_completed);
 }
 
 .estado-card {
@@ -996,7 +1017,7 @@ section {
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    background-color: rgba(246, 196, 83, 0.15);
+    background-color: color-mix(in srgb, var(--estado, var(--status_pending)) 15%, transparent);
 }
 
 .estado-icono-box img {
@@ -1006,14 +1027,14 @@ section {
 
 .estado-sub {
     font-size: 10px;
-    color: var(--status_pending);
+    color: var(--estado, var(--status_pending));
     letter-spacing: 0.5px;
     font-weight: 700;
 }
 
 .estado-nombre {
     font-size: 20px;
-    color: var(--status_pending);
+    color: var(--estado, var(--status_pending));
     font-weight: 700;
     margin-top: 2px;
 }

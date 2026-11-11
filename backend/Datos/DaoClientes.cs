@@ -9,37 +9,12 @@ public class DaoClientes
     private readonly AccesoDatos accesoDatos;
     private const string procedimiento_cliente = "sp_AgregarCliente";
     private const string existe_cliente = "SELECT EXISTS (SELECT 1 FROM Clientes WHERE Telefono_Cli = @TELEFONO)";
-    private const string function_cliente = "SELECT fn_AgregarCliente(@NOMBRE, @APELLIDO, @CORREO, @ZONA, @TELEFONO)"; 
+    private const string function_cliente = "SELECT fn_AgregarCliente(@NOMBRE, @APELLIDO, @CORREO, @ZONA, @TELEFONO)";
+    private const string cliente_por_telefono = "SELECT Id_cliente_Cli, Nombre_Cli, Apellido_Cli, CorreoElectronico_Cli, Zona_Cli, Telefono_Cli, Activo_Cli FROM Clientes WHERE Telefono_Cli = @TELEFONO";
 
     public DaoClientes(AccesoDatos datos) => accesoDatos = datos;
 
-    // public async Task<String> agregarCliente(Clientes clientes)
-    // {
-    //     var command = new NpgsqlCommand();
-    //     armarParametrosAgregarCliente(command, clientes);
-    //     object? result = await accesoDatos.ejecutarFunction(command, function_cliente); 
-    //     if(result == null || result == DBNull.Value)
-    //     {
-    //         throw new Exception("No se pudo registrar el cliente.");
-    //     }
-    //     return (String)result;
-    //     //return await accesoDatos.ejecutarProcedimientoAlmacenado(command, procedimiento_cliente) != 0;
-    // }
 
-    // public async Task<bool> existeCliente(Clientes clientes)
-    // {
-    //     await using var command = new NpgsqlCommand();
-    //     command.Parameters.Add("@TELEFONO", NpgsqlDbType.Varchar, 20).Value = clientes.Telefono;
-    //     return await accesoDatos.existe(existe_cliente, command);
-    // }
-
-
-    public async Task<bool> existeCliente(Clientes clientes, NpgsqlConnection conexion, NpgsqlTransaction transaccion)
-    {
-        await using var command = new NpgsqlCommand(existe_cliente, conexion, transaccion);
-        command.Parameters.Add("@TELEFONO", NpgsqlDbType.Varchar, 20).Value = clientes.Telefono;
-        return (bool)(await command.ExecuteScalarAsync())!;
-    }
     public async Task<Guid> agregarCliente(Clientes clientes, NpgsqlConnection conexion, NpgsqlTransaction transaccion)
     {
         await using var command = new NpgsqlCommand(function_cliente, conexion, transaccion);
@@ -52,6 +27,30 @@ public class DaoClientes
         }
 
         return idCliente;
+    }
+
+    public async Task<Clientes?> obtenerPorTelefono(String telefono)
+    {
+        await using var connection = await accesoDatos.obtenerConexion();
+        await using var command = new NpgsqlCommand(cliente_por_telefono, connection);
+        command.Parameters.Add("@TELEFONO", NpgsqlDbType.Varchar, 20).Value = telefono;
+        await using var reader = await command.ExecuteReaderAsync();
+
+        if (!await reader.ReadAsync())
+        {
+            return null;
+        }
+
+        return new Clientes
+        {
+            Idcliente = reader.GetGuid(0).ToString(),
+            Nombre = reader.GetString(1),
+            Apellido = reader.GetString(2),
+            Correo = reader.IsDBNull(3) ? null! : reader.GetString(3),
+            Zona = reader.GetString(4),
+            Telefono = reader.GetString(5),
+            Activo = reader.GetBoolean(6)
+        };
     }
 
     public void armarParametrosAgregarCliente(NpgsqlCommand command, Clientes clientes)
