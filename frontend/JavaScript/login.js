@@ -1,7 +1,7 @@
 import { pedirApi } from "./api.js";
 import { haySesion } from "./sesion.js";
 
-const RUTA_INICIO = "admin.html";
+const RUTA_INICIO = "pedidos";
 
 const MENSAJES_ERROR = {
     0: "No pudimos conectarnos. Revisá tu conexión y probá de nuevo.",

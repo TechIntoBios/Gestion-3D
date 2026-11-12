@@ -7,14 +7,6 @@ using Entidades;
 
 namespace Negocio;
 
-// Envía los mails a los clientes con la API de Resend (https://resend.com/docs/api-reference/emails/send-email).
-// Configuración (appsettings.Development.json en local, variables de entorno en Render):
-//   Resend:ApiKey       clave de la API de Resend (secreta)
-//   Resend:EmailEmisor  "pedidos@tudominio.com" o "ZUNOX 3D <pedidos@tudominio.com>", del dominio verificado en Resend
-//   Resend:ResponderA   (opcional) casilla real a la que llegan las respuestas del cliente
-//   Frontend:UrlBase    (opcional) "https://tudominio.com"; sin esto el mail sale sin el botón de seguimiento
-//   Contacto:WhatsApp   número para el pie del mail
-// Nunca tira excepción: si el mail falla, el pedido ya quedó guardado igual y solo se registra en el log.
 public class NegocioMail
 {
     private const string UrlResend = "https://api.resend.com/emails";
@@ -103,7 +95,7 @@ public class NegocioMail
             ? ""
             : $"""
                 <p style="margin:24px 0 12px;font-size:15px;line-height:1.5;color:{Texto}">Podés ver el detalle y el estado de tu pedido cuando quieras.</p>
-                <a href="{Html($"{urlBase}/tracking.html?id={pedido.idpedido}")}" style="display:block;background:{Cian};color:{Fondo};text-decoration:none;text-align:center;font-weight:bold;font-size:16px;padding:16px;border-radius:12px">Seguir mi pedido</a>
+                <a href="{Html($"{urlBase}/seguimiento?id={pedido.idpedido}")}" style="display:block;background:{Cian};color:{Fondo};text-decoration:none;text-align:center;font-weight:bold;font-size:16px;padding:16px;border-radius:12px">Seguir mi pedido</a>
                 """;
 
         return $"""
@@ -175,18 +167,13 @@ public class NegocioMail
         }
     }
 
-    // Acepta "pedidos@dominio.com" o "ZUNOX 3D <pedidos@dominio.com>".
     private string Remitente() => emisor!.Contains('<') ? emisor : $"ZUNOX 3D <{emisor}>";
 
     private static string Html(string? texto) => WebUtility.HtmlEncode(texto ?? "");
 
-    // La observación puede traer un link de seguimiento del envío: se deja clickeable.
     private static string HtmlConLinks(string texto) =>
         System.Text.RegularExpressions.Regex.Replace(Html(texto), @"https?://[^\s<]+",
             enlace => $"""<a href="{enlace.Value}" style="color:{Cian}">{enlace.Value}</a>""");
-
-    // Tablas y estilos en línea: es lo que respetan Gmail, Outlook y los clientes de mail del celular.
-    // El texto oculto del principio es la vista previa que muestra la bandeja de entrada.
     private string Plantilla(string vistaPrevia, string cuerpo)
     {
         var contacto = string.IsNullOrWhiteSpace(whatsapp)

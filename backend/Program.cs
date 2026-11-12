@@ -125,6 +125,27 @@ var rutaFrontend = app.Environment.IsDevelopment()
 if (Directory.Exists(rutaFrontend))
 {
     var archivos = new PhysicalFileProvider(rutaFrontend);
+
+    app.Use((contexto, siguiente) =>
+    {
+        if (HttpMethods.IsGet(contexto.Request.Method) || HttpMethods.IsHead(contexto.Request.Method))
+        {
+            var nueva = NegocioRutasPaginas.rutaNuevaDe(contexto.Request.Path);
+            if (nueva is not null)
+            {
+                contexto.Response.Redirect(nueva + contexto.Request.QueryString, permanent: true);
+                return Task.CompletedTask;
+            }
+
+            var archivo = NegocioRutasPaginas.archivoDe(contexto.Request.Path);
+            if (archivo is not null)
+            {
+                contexto.Request.Path = archivo;
+            }
+        }
+        return siguiente();
+    });
+
     app.UseDefaultFiles(new DefaultFilesOptions { FileProvider = archivos });
     app.UseStaticFiles(new StaticFileOptions
     {

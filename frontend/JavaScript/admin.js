@@ -171,7 +171,7 @@ const lblCopiado = document.getElementById("lbl-copiado");
 const lblMailCliente = document.getElementById("lbl-mail-cliente");
 
 function mostrarPedidoGuardado(resultado) {
-    const link = new URL(`tracking.html?id=${encodeURIComponent(resultado.idPedido)}`, window.location.href);
+    const link = new URL(`seguimiento?id=${encodeURIComponent(resultado.idPedido)}`, window.location.href);
 
     document.getElementById("lbl-numero-guardado").textContent = `PEDIDO #${resultado.numero}`;
     txtLinkSeguimiento.value = link.href;

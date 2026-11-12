@@ -1,6 +1,6 @@
 import { pedirApi } from "./api.js";
 
-const RUTA_LOGIN = "login.html";
+const RUTA_LOGIN = "ingresar";
 
 export async function haySesion() {
     const { ok } = await pedirApi("/auth/sesion");
