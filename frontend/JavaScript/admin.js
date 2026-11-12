@@ -1,50 +1,37 @@
-const URL_API = "/api";
-
-import { crearCelda, crearCeldaImg, crearButton, crearInput, crearOption } from "./funciones.js";
+import { mensajeError, pedirApi } from "./api.js";
+import { crearOption, formatoPesos, mostrarMensaje } from "./funciones.js";
 import { exigirSesion } from "./sesion.js";
 
-const label = document.getElementById("lbl-mensaje"); 
-label.innerHTML = ""; 
-const btnagregar = document.getElementById("btn-agregar"); 
+const lblMensaje = document.getElementById("lbl-mensaje");
+const btnAgregar = document.getElementById("btn-agregar");
 const contenedorProductos = document.getElementById("tarjeta-productos");
 const plantillaProducto = document.getElementById("tarjeta-sub-productos");
 const lblTotal = document.getElementById("lbl-total");
+const formulario = document.getElementById("formulario");
 
-const formatoPesos = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS" });
+let categorias = [];
+let productos = [];
 
-let array_categorias = []; 
-let array_productos = [];
+async function cargarCategorias() {
+    const resultado = await pedirApi("/Categorias/listar_Categorias");
 
-async function listar_Categorias() {
-    try{
-        const respuesta_cat = await fetch(`${URL_API}/Categorias/listar_Categorias`); 
-
-        if(!respuesta_cat.ok){
-            label.textContent = "No se encontraron categorias"; 
-            return; 
-        }
-
-        array_categorias = await respuesta_cat.json(); 
+    if (!resultado.ok) {
+        mostrarMensaje(lblMensaje, mensajeError(resultado, "No se encontraron categorías."), false);
+        return;
     }
-    catch(error){
-        label.textContent = "No se logro conectar a la base de datos"; 
-    }
+
+    categorias = resultado.datos;
 }
 
-async function listar_Productos() {
-    try{
-        const respuesta_prov = await fetch(`${URL_API}/Productos/listar_productos`); 
+async function cargarProductos() {
+    const resultado = await pedirApi("/Productos/listar_productos");
 
-        if(!respuesta_prov.ok){
-            label.textContent = "No se encontraron productos"; 
-            return; 
-        }
+    if (!resultado.ok) {
+        mostrarMensaje(lblMensaje, mensajeError(resultado, "No se encontraron productos."), false);
+        return;
+    }
 
-        array_productos = await respuesta_prov.json(); 
-    }
-    catch(error){
-        label.textContent = "No se logro conectar a la base de datos"; 
-    }
+    productos = resultado.datos;
 }
 
 function calcularSubtotal(tarjeta) {
@@ -55,7 +42,7 @@ function calcularSubtotal(tarjeta) {
 }
 
 function actualizarTotal() {
-    const tarjetas = contenedorProductos.querySelectorAll(".sub-contendor-productos");
+    const tarjetas = contenedorProductos.querySelectorAll(".sub-contenedor-productos");
     const total = [...tarjetas].reduce((suma, tarjeta) => suma + calcularSubtotal(tarjeta), 0);
 
     lblTotal.textContent = formatoPesos.format(total);
@@ -63,57 +50,55 @@ function actualizarTotal() {
 
 function agregarFilaProducto() {
     const fila = plantillaProducto.content.cloneNode(true);
-    const ddl_categorias = fila.querySelector('[name="ddl-categorias"]');
-    const ddl_productos = fila.querySelector('[name="ddl-productos"]');
-    const txt_precio = fila.querySelector('[name="txt-precio"]');
-    const txt_cantidad = fila.querySelector('[name="txt-cantidad"]');
-    const tarjeta = fila.querySelector(".sub-contendor-productos");
-    const btn_eliminar = fila.querySelector(".btn-eliminar");
-    const lbl_subtotal = fila.querySelector(".lbl-subtotal");
+    const ddlCategorias = fila.querySelector('[name="ddl-categorias"]');
+    const ddlProductos = fila.querySelector('[name="ddl-productos"]');
+    const txtPrecio = fila.querySelector('[name="txt-precio"]');
+    const txtCantidad = fila.querySelector('[name="txt-cantidad"]');
+    const tarjeta = fila.querySelector(".sub-contenedor-productos");
+    const btnEliminar = fila.querySelector(".btn-eliminar");
+    const lblSubtotal = fila.querySelector(".lbl-subtotal");
 
     function actualizarSubtotal() {
-        lbl_subtotal.textContent = formatoPesos.format(calcularSubtotal(tarjeta));
+        lblSubtotal.textContent = formatoPesos.format(calcularSubtotal(tarjeta));
         actualizarTotal();
     }
 
-    array_categorias.forEach(cat => {
-        ddl_categorias.appendChild(crearOption(cat.nombre, cat.idcategoria)); 
+    categorias.forEach((categoria) => {
+        ddlCategorias.appendChild(crearOption(categoria.nombre, categoria.idcategoria));
     });
 
-    ddl_categorias.addEventListener("change", () => {
-        const idCategoria = Number(ddl_categorias.value); 
+    ddlCategorias.addEventListener("change", () => {
+        const idCategoria = Number(ddlCategorias.value);
 
-        const productosCategoria = array_productos.filter(prod => prod.id_categoria === idCategoria);
+        ddlProductos.length = 1;
+        ddlProductos.selectedIndex = 0;
 
-        ddl_productos.length = 1; 
-        ddl_productos.selectedIndex = 0; 
+        productos
+            .filter((producto) => producto.id_categoria === idCategoria)
+            .forEach((producto) => ddlProductos.appendChild(crearOption(producto.nombre, producto.id_producto)));
 
-        productosCategoria.forEach(prod => {
-            ddl_productos.appendChild(crearOption(prod.nombre, prod.id_producto))
-        });
-
-        txt_precio.value = "";
+        txtPrecio.value = "";
         actualizarSubtotal();
     });
 
-    ddl_productos.addEventListener("change", () => {
-        const idProducto = Number(ddl_productos.value); 
-        const productos = array_productos.find(prod => prod.id_producto === idProducto); 
+    ddlProductos.addEventListener("change", () => {
+        const idProducto = Number(ddlProductos.value);
+        const producto = productos.find((actual) => actual.id_producto === idProducto);
 
-        txt_precio.value = productos ? productos.precio : "";
+        txtPrecio.value = producto ? producto.precio : "";
 
-        if(!txt_cantidad.value){
-            txt_cantidad.value = 1;
+        if (!txtCantidad.value) {
+            txtCantidad.value = 1;
         }
 
         actualizarSubtotal();
     });
 
-    txt_cantidad.addEventListener("input", actualizarSubtotal);
-    txt_precio.addEventListener("input", actualizarSubtotal);
+    txtCantidad.addEventListener("input", actualizarSubtotal);
+    txtPrecio.addEventListener("input", actualizarSubtotal);
 
-    btn_eliminar.addEventListener("click", () => {
-        const cantidadTarjetas = contenedorProductos.querySelectorAll(".sub-contendor-productos").length;
+    btnEliminar.addEventListener("click", () => {
+        const cantidadTarjetas = contenedorProductos.querySelectorAll(".sub-contenedor-productos").length;
 
         if (cantidadTarjetas > 1) {
             tarjeta.remove();
@@ -121,11 +106,11 @@ function agregarFilaProducto() {
             return;
         }
 
-        ddl_categorias.selectedIndex = 0;
-        ddl_productos.length = 1;
-        ddl_productos.selectedIndex = 0;
-        txt_precio.value = "";
-        txt_cantidad.value = "";
+        ddlCategorias.selectedIndex = 0;
+        ddlProductos.length = 1;
+        ddlProductos.selectedIndex = 0;
+        txtPrecio.value = "";
+        txtCantidad.value = "";
         actualizarSubtotal();
     });
 
@@ -133,15 +118,12 @@ function agregarFilaProducto() {
     actualizarSubtotal();
 }
 
-
-const formulario = document.getElementById("formulario"); 
-
 formulario.addEventListener("submit", async (evento) => {
-    evento.preventDefault(); 
+    evento.preventDefault();
 
-    const datos = new FormData(formulario); 
+    const datos = new FormData(formulario);
 
-    const detalle = [...contenedorProductos.querySelectorAll(".sub-contendor-productos")].map((fila) => {
+    const detalle = [...contenedorProductos.querySelectorAll(".sub-contenedor-productos")].map((fila) => {
         const producto = fila.querySelector('[name="ddl-productos"]');
 
         return {
@@ -161,43 +143,26 @@ formulario.addEventListener("submit", async (evento) => {
             zona: datos.get("txt-zona")
         },
         pedido: {
-            idestado: 1,
-            nota: datos.get("txt-nota") || null,
-            seguimiento: null
+            nota: datos.get("txt-nota") || null
         },
         detalle
     };
 
     const btnGuardar = formulario.querySelector('button[type="submit"]');
     btnGuardar.disabled = true;
-    label.textContent = "Guardando...";
+    mostrarMensaje(lblMensaje, "Guardando...");
 
-    try{
-        const respuesta = await fetch(`${URL_API}/Compras/guardar`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(compra)
-        });
+    const resultado = await pedirApi("/Compras/guardar", { metodo: "POST", cuerpo: compra });
+    btnGuardar.disabled = false;
 
-        const resultado = await respuesta.json().catch(() => ({}));
-
-        if (!respuesta.ok) {
-            label.textContent = resultado.mensaje ?? "No se pudo guardar el pedido.";
-            return;
-        }
-
-        limpiarFormulario();
-        label.textContent = resultado.mensaje;
-        mostrarPedidoGuardado(resultado);
+    if (!resultado.ok) {
+        mostrarMensaje(lblMensaje, mensajeError(resultado, "No se pudo guardar el pedido."), false);
+        return;
     }
-    catch(error){
-        label.textContent = "No se logro conectar con el servidor";
-    }
-    finally{
-        btnGuardar.disabled = false;
-    }
+
+    limpiarFormulario();
+    mostrarMensaje(lblMensaje, resultado.datos.mensaje, true);
+    mostrarPedidoGuardado(resultado.datos);
 });
 
 const dlgPedidoGuardado = document.getElementById("dlg-pedido-guardado");
@@ -239,15 +204,12 @@ document.getElementById("btn-copiar-link").addEventListener("click", async () =>
 
 function limpiarFormulario() {
     formulario.reset();
-    contenedorProductos.querySelectorAll(".sub-contendor-productos").forEach((fila) => fila.remove());
+    contenedorProductos.querySelectorAll(".sub-contenedor-productos").forEach((fila) => fila.remove());
     agregarFilaProducto();
     chkClienteExistente.dispatchEvent(new Event("change"));
 }
 
-
-btnagregar.addEventListener("click", () => {
-    agregarFilaProducto(); 
-}); 
+btnAgregar.addEventListener("click", agregarFilaProducto);
 
 const chkClienteExistente = document.getElementById("chk-cliente-existente");
 const txtBuscarTelefono = document.getElementById("txt-buscar-telefono");
@@ -259,8 +221,7 @@ chkClienteExistente.addEventListener("change", () => {
 
     txtBuscarTelefono.disabled = !habilitado;
     btnBuscarCliente.disabled = !habilitado;
-    lblBusqueda.textContent = "";
-    lblBusqueda.className = "mensaje-busqueda";
+    mostrarMensaje(lblBusqueda, "");
 
     if (habilitado) {
         txtBuscarTelefono.focus();
@@ -270,43 +231,31 @@ chkClienteExistente.addEventListener("change", () => {
     }
 });
 
-function mostrarBusqueda(texto, encontrado) {
-    lblBusqueda.textContent = texto;
-    lblBusqueda.className = `mensaje-busqueda ${encontrado ? "encontrado" : "no-encontrado"}`;
-}
-
 async function buscarCliente() {
     const telefono = txtBuscarTelefono.value.trim();
 
     if (!txtBuscarTelefono.checkValidity() || telefono === "") {
-        mostrarBusqueda("Ingresá entre 10 y 20 dígitos, sin espacios ni guiones.", false);
+        mostrarMensaje(lblBusqueda, "Ingresá entre 10 y 20 dígitos, sin espacios ni guiones.", false);
         return;
     }
 
     btnBuscarCliente.disabled = true;
 
-    try {
-        const respuesta = await fetch(`${URL_API}/Clientes/por_telefono/${encodeURIComponent(telefono)}`);
-        const datos = await respuesta.json().catch(() => ({}));
+    const resultado = await pedirApi(`/Clientes/por_telefono/${encodeURIComponent(telefono)}`);
+    btnBuscarCliente.disabled = !chkClienteExistente.checked;
 
-        if (!respuesta.ok) {
-            mostrarBusqueda(datos.mensaje ?? "No se pudo buscar el cliente.", false);
-            return;
-        }
+    if (!resultado.ok) {
+        mostrarMensaje(lblBusqueda, mensajeError(resultado, "No se pudo buscar el cliente."), false);
+        return;
+    }
 
-        formulario.elements["txt-nombre"].value = datos.nombre;
-        formulario.elements["txt-apellido"].value = datos.apellido;
-        formulario.elements["txt-correo"].value = datos.correo ?? "";
-        formulario.elements["txt-telefono"].value = datos.telefono;
-        formulario.elements["txt-zona"].value = datos.zona;
-        mostrarBusqueda(`Cliente encontrado: ${datos.nombre} ${datos.apellido}.`, true);
-    }
-    catch (error) {
-        mostrarBusqueda("No se logro conectar con el servidor.", false);
-    }
-    finally {
-        btnBuscarCliente.disabled = !chkClienteExistente.checked;
-    }
+    const cliente = resultado.datos;
+    formulario.elements["txt-nombre"].value = cliente.nombre;
+    formulario.elements["txt-apellido"].value = cliente.apellido;
+    formulario.elements["txt-correo"].value = cliente.correo ?? "";
+    formulario.elements["txt-telefono"].value = cliente.telefono;
+    formulario.elements["txt-zona"].value = cliente.zona;
+    mostrarMensaje(lblBusqueda, `Cliente encontrado: ${cliente.nombre} ${cliente.apellido}.`, true);
 }
 
 btnBuscarCliente.addEventListener("click", buscarCliente);
@@ -319,11 +268,11 @@ txtBuscarTelefono.addEventListener("keydown", (evento) => {
 });
 
 document.addEventListener("DOMContentLoaded", async () => {
-    if(!await exigirSesion()){
+    if (!await exigirSesion()) {
         return;
     }
 
-    await listar_Categorias();
-    await listar_Productos(); 
-    agregarFilaProducto(); 
-}); 
+    await cargarCategorias();
+    await cargarProductos();
+    agregarFilaProducto();
+});

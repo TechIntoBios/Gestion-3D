@@ -1,13 +1,3 @@
-/* Hallmark · shape: kept · genre: editorial · theme: brand · redesign: full · hero: kept (the printer printing the name) · nav: kept (wordmark and quick menu) · footer: mast with socials and the legal lines · signature: the printer animation, kept as the client liked it
- * axes: dark/grotesk-sans/chromatic-cyan · posture: one cyan signal on near-black · contrast: pass · fold: pass · v2.0.0 */
-/* Hallmark · pre-emit critique: P4 H4 E4 S4 R4 V3 · weakest: V, the page keeps its own order and brand on purpose; the catalog moved from a 3,200px card stack to a tile grid with a panel */
-/* Nota: Hallmark marca 2a en .circulo-arcoiris y no admite excepción. Se deja igual a pedido del cliente:
-   el círculo de 18px dice "cualquier color", no es decoración. Es una falla conocida y aceptada. */
-/* Hallmark · dismissed 3 · the border-left on .tubo draws the filament tube of the printer, not a card stripe */
-/* Hallmark · dropped "IMPRESIÓN 3D", "NOSOTROS", "CATÁLOGO", "CONTACTO" · 54 names the eyebrows; each heading already says it */
-
-/* Landing pública (index.html). Por ahora solo formato celular. */
-
 :root {
     /* Fondos */
     --bg_primary: #080B10;
@@ -37,8 +27,6 @@
     --radius-text: 8px;
 }
 
-/* Tokens agregados para esta página. No cambian los de arriba: son los mismos
-   valores que antes estaban escritos sueltos en cada regla. */
 :root {
     --fuente: Arial, Helvetica, sans-serif;
 
@@ -1771,4 +1759,40 @@ h3 {
             transform: none;
         }
     }
+}
+
+/* ===== Página de privacidad ===== */
+
+.pagina-legal {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.pagina-legal h1 {
+    margin-bottom: 4px;
+    font-size: 28px;
+    line-height: 1.2;
+    color: var(--primary_hover);
+}
+
+.pagina-legal h2 {
+    margin-top: 20px;
+    font-size: 18px;
+}
+
+.pagina-legal p,
+.pagina-legal li {
+    margin-top: 8px;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.pagina-legal ul {
+    padding-left: 20px;
+}
+
+.pagina-legal a,
+.legal a {
+    color: var(--primary_hover);
+    text-underline-offset: 3px;
 }

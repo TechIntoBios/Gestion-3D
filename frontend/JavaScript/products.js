@@ -1,105 +1,103 @@
+import { mensajeError, pedirApi } from "./api.js";
+import { iniciarEdicion } from "./catalogo-edicion.js";
+import { crearOption, mostrarMensaje } from "./funciones.js";
 import { exigirSesion } from "./sesion.js";
-import { crearCelda, crearCeldaImg, crearButton, crearInput, crearOption } from "./funciones.js";
 
-const URL_API = "/api"; 
+const lblMensajeProductos = document.getElementById("lbl-mensaje-productos");
+const lblMensajeCategorias = document.getElementById("lbl-mensaje-categorias");
+const lblResumenProductos = document.getElementById("lbl-resumen-productos");
+const lblResumenCategorias = document.getElementById("lbl-resumen-categorias");
+const lblErrores = document.getElementById("lbl-errores");
+const formProducto = document.getElementById("form-productos");
+const formCategorias = document.getElementById("form-categorias");
+const ddlCategorias = document.getElementById("ddl-categorias");
 
-const mensaje_productos = document.getElementById("lbl_mensaje_productos"); 
-const mensaje_categorias = document.getElementById("lbl_mensaje_categorias"); 
-const errores = document.getElementById("lbl_errores"); 
-const formProducto = document.getElementById("form-productos"); 
-const formCategorias = document.getElementById("form-categorias"); 
+function plural(cantidad, singular, pluralTexto) {
+    return `${cantidad} ${cantidad === 1 ? singular : pluralTexto}`;
+}
 
-mensaje_categorias.innerHTML = ""; 
-mensaje_productos.innerHTML = ""; 
-errores.innerHTML = ""; 
+function resumen(items, singular, pluralTexto, inactivo, inactivos) {
+    const apagados = items.filter((item) => !item.activo).length;
+    const texto = plural(items.length, singular, pluralTexto);
 
-async function cargarCategorias() {
-    const ddlcategorias = document.getElementById("ddl_categorias");
+    return apagados === 0 ? texto : `${texto} · ${plural(apagados, inactivo, inactivos)}`;
+}
 
-    try{
-        const respuesta_cat = await fetch(`${URL_API}/Categorias/listar_Categorias`); 
-        
-        if(!respuesta_cat.ok){
-            mensaje_categorias.textContent = "No se encontraron categorias existentes";
-            return;
-        }
+async function cargarCatalogo() {
+    const [categorias, productos] = await Promise.all([
+        pedirApi("/Categorias/listar_Categorias?todos=true"),
+        pedirApi("/Productos/listar_productos?todos=true")
+    ]);
 
-        const categorias = await respuesta_cat.json(); 
-
-        ddlcategorias.length = 1; 
-        categorias.forEach(cat => {
-            ddlcategorias.appendChild(crearOption(cat.nombre, cat.idcategoria)); 
-        });
+    const fallo = [categorias, productos].find((resultado) => !resultado.ok);
+    if (fallo) {
+        mostrarMensaje(lblErrores, mensajeError(fallo, "No se pudo cargar el catálogo."), false);
+        return { categorias: [], productos: [] };
     }
-    catch(error){
-        errores.innerHTML = "Ocurrio un error a conectarse a la base de datos"; 
+
+    mostrarMensaje(lblErrores, "");
+    lblResumenCategorias.textContent = resumen(categorias.datos, "categoría", "categorías", "inactiva", "inactivas");
+    lblResumenProductos.textContent = resumen(productos.datos, "producto", "productos", "inactivo", "inactivos");
+
+    ddlCategorias.length = 1;
+    categorias.datos
+        .filter((categoria) => categoria.activo)
+        .forEach((categoria) => ddlCategorias.appendChild(crearOption(categoria.nombre, categoria.idcategoria)));
+
+    return { categorias: categorias.datos, productos: productos.datos };
+}
+
+const edicion = iniciarEdicion({
+    cargarCatalogo,
+    alGuardar: async (tipo, mensaje) => {
+        await cargarCatalogo();
+        mostrarMensaje(tipo === "producto" ? lblMensajeProductos : lblMensajeCategorias, mensaje, true);
     }
+});
+
+document.getElementById("btn-editar-productos").addEventListener("click", () => edicion.abrir("producto"));
+document.getElementById("btn-editar-categorias").addEventListener("click", () => edicion.abrir("categoria"));
+
+async function enviarFormulario(formulario, ruta, cuerpo, lblMensaje, mensajePorDefecto) {
+    const boton = formulario.querySelector('button[type="submit"]');
+    boton.disabled = true;
+
+    const resultado = await pedirApi(ruta, { metodo: "POST", cuerpo });
+    boton.disabled = false;
+
+    if (!resultado.ok) {
+        mostrarMensaje(lblMensaje, mensajeError(resultado, mensajePorDefecto), false);
+        return false;
+    }
+
+    mostrarMensaje(lblMensaje, resultado.datos.mensaje, true);
+    formulario.reset();
+    await cargarCatalogo();
+    return true;
 }
 
 formProducto.addEventListener("submit", async (evento) => {
     evento.preventDefault();
-    
-    try {
-        const datosform = new FormData(formProducto);
-        const respuesta_products = await fetch(`${URL_API}/Productos/Agregar`, {
-            method: "POST",
-            headers: {"Content-Type": "application/json"}, 
-            body: JSON.stringify(
-                {
-                    id_categoria: Number(datosform.get("categoria")),
-                    nombre: datosform.get("nombreProducto").trim(),
-                    precio: Number(datosform.get("precio"))
-                }
-            )
-        });
 
-        const datos = await respuesta_products.json().catch(() => ({}));
-
-        if(!respuesta_products.ok){
-            mensaje_productos.textContent = datos.mensaje ?? "No se pudo agregar el producto.";
-            return;
-        }
-        
-        mensaje_productos.textContent = datos.mensaje;
-        formProducto.reset();
-    }
-    catch (error) {
-        mensaje_productos.textContent = "Ocurrio un error al conectar a la base de datos";
-    }
+    const datos = new FormData(formProducto);
+    await enviarFormulario(formProducto, "/Productos/Agregar", {
+        id_categoria: Number(datos.get("categoria")),
+        nombre: datos.get("nombreProducto").trim(),
+        precio: Number(datos.get("precio"))
+    }, lblMensajeProductos, "No se pudo agregar el producto.");
 });
 
 formCategorias.addEventListener("submit", async (evento) => {
     evento.preventDefault();
-    
-    try {
-        const datosform = new FormData(formCategorias);
-        const respuesta_categorias = await fetch(`${URL_API}/Categorias/agregar_Categorias`, {
-            method: "POST",
-            headers: {"Content-Type": "application/json"}, 
-            body: JSON.stringify({nombre: datosform.get("nombreCategoria").trim()})
-        });
 
-        const datos = await respuesta_categorias.json().catch(() => ({}));
-
-        if(!respuesta_categorias.ok){
-            mensaje_categorias.textContent = datos.mensaje ?? "No se pudo agregar la categoria.";
-            return;
-        }
-        
-        mensaje_categorias.textContent = datos.mensaje;
-        formCategorias.reset();
-        
-        await cargarCategorias(); 
-    }
-    catch (error) {
-        mensaje_categorias.textContent = "Ocurrio un error al conectar a la base de datos";
-    }
+    const datos = new FormData(formCategorias);
+    await enviarFormulario(formCategorias, "/Categorias/agregar_Categorias", {
+        nombre: datos.get("nombreCategoria").trim()
+    }, lblMensajeCategorias, "No se pudo agregar la categoría.");
 });
 
 document.addEventListener("DOMContentLoaded", async () => {
-    if (!await exigirSesion()) {
-        return;
+    if (await exigirSesion()) {
+        await cargarCatalogo();
     }
-
-    await cargarCategorias(); 
 });

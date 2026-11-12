@@ -1,5 +1,4 @@
 using Entidades;
-using Npgsql;
 using NpgsqlTypes;
 
 namespace Datos;
@@ -14,26 +13,11 @@ public class DaoUsuarios
 
     public async Task<Usuarios?> ObtenerPorUsuario(string nombreUsuario)
     {
-        await using var connection = await accesoDatos.obtenerConexion();
-        await using var command = new NpgsqlCommand(ObtenerUsuario, connection);
-        command.Parameters.Add("@USER", NpgsqlDbType.Varchar, 30).Value = nombreUsuario;
-        await using var reader = await command.ExecuteReaderAsync();
+        var usuarios = await accesoDatos.consultar(
+            ObtenerUsuario,
+            reader => new Usuarios { Usuario = reader.GetString(0), Password = reader.GetString(1) },
+            parametros => parametros.Add("@USER", NpgsqlDbType.Varchar, 30).Value = nombreUsuario);
 
-        if (await reader.ReadAsync())
-        {
-            return new Usuarios
-            {
-                Usuario = reader.GetString(0),
-                Password = reader.GetString(1)
-            };
-        }
-
-        return null;
-    }
-
-        public void armarParametrosUsuarios(NpgsqlCommand command, Usuarios usuarios)
-    {
-        command.Parameters.Add("@USER", NpgsqlDbType.Varchar,100).Value = usuarios.Usuario;
-        command.Parameters.Add("@PASSWORD", NpgsqlDbType.Varchar,100).Value = usuarios.Password;
+        return usuarios.FirstOrDefault();
     }
 }

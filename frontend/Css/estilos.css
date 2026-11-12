@@ -389,7 +389,7 @@ section {
     resize: vertical;
 }
 
-.sub-contendor-productos {
+.sub-contenedor-productos {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -401,14 +401,14 @@ section {
     margin-bottom: 10px;
 }
 
-.sub-contendor-productos p {
+.sub-contenedor-productos p {
     font-size: 12px;
     margin-bottom: 6px;
     margin-top: 0;
     color: var(--header_bg);
 }
 
-.sub-contendor-productos select {
+.sub-contenedor-productos select {
     width: 100%;
     height: 42px;
     margin-bottom: 14px;
@@ -430,7 +430,7 @@ section {
     outline: none;
 }
 
-.sub-contendor-productos select:focus {
+.sub-contenedor-productos select:focus {
     border-color: var(--text_main);
 }
 
@@ -532,7 +532,7 @@ section {
     filter: invert(41%) sepia(85%) saturate(3021%) hue-rotate(339deg) brightness(101%) contrast(102%);
 }
 
-.sub-contendor-productos > div:last-child {
+.sub-contenedor-productos > div:last-child {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -541,13 +541,13 @@ section {
     padding-top: 4px;
 }
 
-.sub-contendor-productos > div:last-child p {
+.sub-contenedor-productos > div:last-child p {
     font-size: 13px;
     color: var(--header_bg);
     margin: 0;
 }
 
-.sub-contendor-productos > div:last-child label {
+.sub-contenedor-productos > div:last-child label {
     font-size: 16px;
     font-weight: 700;
     color: var(--primary_hover);
@@ -719,21 +719,21 @@ section {
     cursor: not-allowed;
 }
 
-.pagina-admin .contenedor-datos .mensaje-busqueda {
+:is(.pagina-admin, .pagina-products) :is(.contenedor-datos, .panel-edicion) .mensaje-busqueda {
     margin: 10px 0 0 0;
     font-size: 12px;
     color: var(--header_bg);
 }
 
-.pagina-admin .contenedor-datos .mensaje-busqueda:empty {
+:is(.pagina-admin, .pagina-products) :is(.contenedor-datos, .panel-edicion) .mensaje-busqueda:empty {
     display: none;
 }
 
-.pagina-admin .contenedor-datos .mensaje-busqueda.encontrado {
+:is(.pagina-admin, .pagina-products) :is(.contenedor-datos, .panel-edicion) .mensaje-busqueda.encontrado {
     color: var(--status_completed);
 }
 
-.pagina-admin .contenedor-datos .mensaje-busqueda.no-encontrado {
+:is(.pagina-admin, .pagina-products) :is(.contenedor-datos, .panel-edicion) .mensaje-busqueda.no-encontrado {
     color: var(--status_cancelled);
 }
 
@@ -888,14 +888,16 @@ section {
     font-weight: 600;
 }
 
-.pagina-products .contenedor-datos p {
+.pagina-products :is(.contenedor-datos, .panel-edicion) p,
+.pagina-products :is(.contenedor-datos, .panel-edicion) label {
+    display: block;
     color: var(--primary_hover);
     font-size: 12px;
     margin-bottom: 8px;
 }
 
-.pagina-products .contenedor-datos input[type="text"],
-.pagina-products .contenedor-datos input[type="number"] {
+.pagina-products :is(.contenedor-datos, .panel-edicion) input[type="text"],
+.pagina-products :is(.contenedor-datos, .panel-edicion) input[type="number"] {
     margin-bottom: 16px;
     border-radius: var(--radius-text);
     width: 100%;
@@ -917,17 +919,17 @@ section {
     margin: 0;
 }
 
-.pagina-products .contenedor-datos input::placeholder {
+.pagina-products :is(.contenedor-datos, .panel-edicion) input::placeholder {
     color: var(--header_bg);
     opacity: 0.6;
 }
 
-.pagina-products .contenedor-datos input:focus,
-.pagina-products .contenedor-datos select:focus {
+.pagina-products :is(.contenedor-datos, .panel-edicion) input:focus,
+.pagina-products :is(.contenedor-datos, .panel-edicion) select:focus {
     border-color: var(--text_main);
 }
 
-.pagina-products .contenedor-datos select {
+.pagina-products :is(.contenedor-datos, .panel-edicion) select {
     width: 100%;
     height: 42px;
     margin-bottom: 16px;
@@ -1482,6 +1484,11 @@ section {
     outline: none;
 }
 
+.btn-editar:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
 .btn-cancelar:hover {
     border-color: var(--status_cancelled);
     color: var(--status_cancelled);
@@ -1507,6 +1514,68 @@ section {
 .acciones-edicion .btn-guardar-cambios {
     flex: 2;
     margin-top: 0;
+}
+
+/* Panel para editar productos y categorías (products.html) */
+.pagina-products .encabezado-tarjeta {
+    margin-bottom: 4px;
+}
+
+.pagina-products .encabezado-tarjeta h4 {
+    margin-bottom: 0;
+}
+
+.resumen-catalogo {
+    margin-bottom: 14px;
+    font-size: 12px;
+    color: var(--header_bg);
+}
+
+.resumen-catalogo:empty {
+    display: none;
+}
+
+.panel-edicion {
+    width: calc(100% - 28px);
+    max-width: 360px;
+    max-height: calc(100dvh - 28px);
+    margin: auto;
+    padding: 22px 18px 18px 18px;
+    overflow-y: auto;
+    border: 1px solid var(--primary);
+    border-radius: var(--radius);
+    background-color: var(--bg_card);
+    color: var(--primary_hover);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+}
+
+.panel-edicion::backdrop {
+    background-color: rgba(8, 11, 16, 0.75);
+}
+
+.ttl-edicion {
+    margin-bottom: 6px;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--primary_hover);
+}
+
+.pagina-products .panel-edicion .ayuda-edicion {
+    margin-bottom: 16px;
+    color: var(--header_bg);
+}
+
+.pagina-products .panel-edicion .interruptor {
+    display: flex;
+    margin-bottom: 14px;
+}
+
+.panel-edicion .acciones-edicion {
+    margin-top: 8px;
+}
+
+.panel-edicion [hidden] {
+    display: none;
 }
 
 /* =====================================================================
@@ -1762,4 +1831,10 @@ section {
     :root {
         --ancho-contenido: 1440px;
     }
+}
+
+.enlace-privacidad {
+    font-size: 14px;
+    color: inherit;
+    text-underline-offset: 3px;
 }

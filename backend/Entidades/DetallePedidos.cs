@@ -7,8 +7,8 @@ public class DetallePedidos
     private int id_producto;
     private string nombre;
     private int cantidad;
-    private double precio;
-    private double importe;
+    private decimal precio;
+    private decimal importe;
 
     public DetallePedidos()
     {
@@ -21,7 +21,7 @@ public class DetallePedidos
         importe = 0;
     }
 
-    public DetallePedidos(int id_detallePedido, Guid id_pedido, int id_producto, string nombre, int cantidad, double precio, double importe)
+    public DetallePedidos(int id_detallePedido, Guid id_pedido, int id_producto, string nombre, int cantidad, decimal precio, decimal importe)
     {
         this.id_detallePedido = id_detallePedido;
         this.id_pedido = id_pedido;
@@ -92,7 +92,7 @@ public class DetallePedidos
         }
     }
 
-    public double Precio
+    public decimal Precio
     {
         get
         {
@@ -104,7 +104,7 @@ public class DetallePedidos
         }
     }
 
-    public double Importe
+    public decimal Importe
     {
         get
         {

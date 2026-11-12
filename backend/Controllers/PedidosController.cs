@@ -17,26 +17,17 @@ public class PedidosController : ControllerBase
     [HttpGet("por_telefono/{telefono}")]
     public async Task<IActionResult> buscarPorTelefono(string telefono)
     {
-        try
+        var seguimiento = await negocioPedidos.buscarPorTelefono(telefono);
+        if (seguimiento is null)
         {
-            var seguimiento = await negocioPedidos.buscarPorTelefono(telefono);
-            if (seguimiento is null)
-            {
-                return NotFound(new { mensaje = "No hay ningún cliente con ese teléfono." });
-            }
+            return NotFound(new { mensaje = "No hay ningún cliente con ese teléfono." });
+        }
 
-            return Ok(seguimiento);
-        }
-        catch (ArgumentException e)
-        {
-            return BadRequest(new { mensaje = e.Message });
-        }
+        return Ok(seguimiento);
     }
 
-    // tracking.html (público, sin sesión): el link lleva el UUID del pedido, que no se puede adivinar.
-    // Límite por IP para que no se pueda probar ids en masa, y sin caché para que no quede guardado en proxies.
     [AllowAnonymous]
-    [EnableRateLimiting(LimitesApi.Publico)]
+    [EnableRateLimiting(NegocioLimitesApi.Publico)]
     [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     [HttpGet("publico/{idPedido:guid}")]
     public async Task<IActionResult> obtenerPublico(Guid idPedido)
@@ -53,21 +44,14 @@ public class PedidosController : ControllerBase
     [HttpPut("{idPedido:guid}/estado")]
     public async Task<IActionResult> cambiarEstado(Guid idPedido, [FromBody] CambioEstadoRequest request)
     {
-        try
+        var resultado = await negocioPedidos.cambiarEstado(idPedido, request.codigoestado, request.seguimiento);
+        if (resultado is null)
         {
-            var resultado = await negocioPedidos.cambiarEstado(idPedido, request.codigoestado, request.seguimiento);
-            if (resultado is null)
-            {
-                return NotFound(new { mensaje = "El pedido no existe." });
-            }
+            return NotFound(new { mensaje = "El pedido no existe." });
+        }
 
-            var (pedido, mailEnviado) = resultado.Value;
-            var mensaje = mailEnviado ? "Cambios guardados. Le avisamos al cliente por mail." : "Cambios guardados.";
-            return Ok(new { pedido, mailEnviado, mensaje });
-        }
-        catch (ArgumentException e)
-        {
-            return BadRequest(new { mensaje = e.Message });
-        }
+        var (pedido, mailEnviado) = resultado.Value;
+        var mensaje = mailEnviado ? "Cambios guardados. Le avisamos al cliente por mail." : "Cambios guardados.";
+        return Ok(new { pedido, mailEnviado, mensaje });
     }
 }

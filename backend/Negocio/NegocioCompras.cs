@@ -1,4 +1,3 @@
-using System.Net.Mail;
 using Datos;
 using DTOs;
 using Npgsql;
@@ -11,25 +10,28 @@ public class NegocioCompras
     private readonly NegocioClientes negocioClientes;
     private readonly NegocioPedidos negocioPedidos;
     private readonly NegocioDetallePedido negocioDetallePedido;
-    private readonly ServicioMail servicioMail;
+    private readonly NegocioProductos negocioProductos;
+    private readonly NegocioEstadoPedido negocioEstadoPedido;
+    private readonly NegocioMail negocioMail;
     private readonly ILogger<NegocioCompras> logger;
-
-    // Id_EstadoPedido_EST de PENDIENTE: es el primer estado que se inserta en EstadoPedido.
-    private const int EstadoPendiente = 1;
 
     public NegocioCompras(
         AccesoDatos accesoDatos,
         NegocioClientes negocioClientes,
         NegocioPedidos negocioPedidos,
         NegocioDetallePedido negocioDetallePedido,
-        ServicioMail servicioMail,
+        NegocioProductos negocioProductos,
+        NegocioEstadoPedido negocioEstadoPedido,
+        NegocioMail negocioMail,
         ILogger<NegocioCompras> logger)
     {
         this.accesoDatos = accesoDatos;
         this.negocioClientes = negocioClientes;
         this.negocioPedidos = negocioPedidos;
         this.negocioDetallePedido = negocioDetallePedido;
-        this.servicioMail = servicioMail;
+        this.negocioProductos = negocioProductos;
+        this.negocioEstadoPedido = negocioEstadoPedido;
+        this.negocioMail = negocioMail;
         this.logger = logger;
     }
 
@@ -45,6 +47,10 @@ public class NegocioCompras
         var detalles = request.detalle;
 
         validarCompra(cliente, pedido, detalles);
+        await negocioProductos.validarVendibles(detalles!.Select(d => d.idproducto));
+
+        var pendiente = await negocioEstadoPedido.obtenerPorCodigo(NegocioEstadoPedido.CodigoPendiente)
+            ?? throw new InvalidOperationException("Falta el estado PENDIENTE en la base de datos.");
 
         Guid idPedido;
         int numero;
@@ -54,10 +60,9 @@ public class NegocioCompras
         {
             try
             {
-                var idCliente = await negocioClientes.agregarCliente(cliente.nombre!, cliente.apellido!, cliente.correo, cliente.zona!, cliente.telefono!, conexion, transaccion);
+                var idCliente = await negocioClientes.agregarCliente(cliente, conexion, transaccion);
 
-                // Todo pedido nuevo arranca Pendiente, mande lo que mande el formulario.
-                idPedido = await negocioPedidos.agregarPedido(idCliente, EstadoPendiente, pedido.nota, pedido.Seguimiento, conexion, transaccion);
+                idPedido = await negocioPedidos.agregarPedido(idCliente, pendiente.IdEstadoPedido, pedido.nota, pedido.Seguimiento, conexion, transaccion);
 
                 foreach (var detalle in detalles!)
                 {
@@ -71,7 +76,7 @@ public class NegocioCompras
             catch (PostgresException e) when (e.SqlState == PostgresErrorCodes.ForeignKeyViolation)
             {
                 await transaccion.RollbackAsync();
-                throw new ArgumentException("Alguno de los productos o el estado del pedido no existe.", e);
+                throw new ArgumentException("Alguno de los productos no existe.", e);
             }
             catch
             {
@@ -80,21 +85,21 @@ public class NegocioCompras
             }
         }
 
-        var (correo, mailEnviado) = await avisarCliente(cliente.telefono!.Trim(), idPedido);
+        var (correo, mailEnviado) = await avisarCliente(idPedido);
         return (idPedido, numero, correo, mailEnviado);
     }
 
-    private async Task<(string? correo, bool enviado)> avisarCliente(string telefono, Guid idPedido)
+    private async Task<(string? correo, bool enviado)> avisarCliente(Guid idPedido)
     {
         try
         {
-            var seguimiento = await negocioPedidos.buscarPorTelefono(telefono);
-            var pedidoGuardado = seguimiento?.pedidos.Find(p => p.idpedido == idPedido);
+            var datos = await negocioPedidos.obtenerPorId(idPedido);
 
-            if (seguimiento?.cliente is not null && pedidoGuardado is not null)
+            if (datos is not null)
             {
-                var enviado = await servicioMail.enviarEstadoPedido(seguimiento.cliente, pedidoGuardado, AvisoPedido.Nuevo);
-                return (seguimiento.cliente.Correo, enviado);
+                var (cliente, pedido) = datos.Value;
+                var enviado = await negocioMail.enviarEstadoPedido(cliente, pedido, NegocioAvisoPedido.Nuevo);
+                return (cliente.Correo, enviado);
             }
         }
         catch (Exception e)
@@ -105,36 +110,20 @@ public class NegocioCompras
         return (null, false);
     }
 
-    private static void validarCompra(ClientesRequest cliente, PedidoResquest pedido, List<DetalleResquest>? detalles)
+    private static void validarCompra(ClientesRequest cliente, PedidoRequest pedido, List<DetalleRequest>? detalles)
     {
-        validarTextoRequerido(cliente.nombre, "El nombre es obligatorio.", 100);
-        validarTextoRequerido(cliente.apellido, "El apellido es obligatorio.", 100);
-
-        if (cliente.nombre!.Any(char.IsDigit) || cliente.apellido!.Any(char.IsDigit))
-        {
-            throw new ArgumentException("El nombre y el apellido no pueden contener números.");
-        }
-        validarTextoRequerido(cliente.zona, "La zona es obligatoria.", 100);
-        NegocioClientes.validarTelefono(cliente.telefono);
-
-        if (cliente.correo?.Length > 300)
-        {
-            throw new ArgumentException("El correo no puede superar los 300 caracteres.");
-        }
-
-        if (!string.IsNullOrWhiteSpace(cliente.correo) && !MailAddress.TryCreate(cliente.correo.Trim(), out _))
-        {
-            throw new ArgumentException("El correo no tiene un formato válido.");
-        }
-
-        if (pedido.nota?.Length > 300 || pedido.Seguimiento?.Length > 300)
-        {
-            throw new ArgumentException("La nota y el seguimiento no pueden superar los 300 caracteres.");
-        }
+        NegocioClientes.validar(cliente);
+        NegocioValidaciones.textoOpcional(pedido.nota, "La nota", 300);
+        NegocioValidaciones.textoOpcional(pedido.Seguimiento, "El seguimiento", 300);
 
         if (detalles is null || detalles.Count == 0)
         {
             throw new ArgumentException("La compra debe incluir al menos un detalle.");
+        }
+
+        if (detalles.Count > NegocioValidaciones.MaximoItemsPorCompra)
+        {
+            throw new ArgumentException($"Una compra no puede tener más de {NegocioValidaciones.MaximoItemsPorCompra} productos.");
         }
 
         foreach (var detalle in detalles)
@@ -144,20 +133,15 @@ public class NegocioCompras
                 throw new ArgumentException("La lista contiene un detalle vacío.");
             }
 
-            validarTextoRequerido(detalle.nombre, "El nombre de cada detalle es obligatorio.", 100);
+            NegocioValidaciones.textoRequerido(detalle.nombre, "El nombre de cada detalle", 100);
 
-            if (detalle.idproducto <= 0 || detalle.cantidad <= 0 || !double.IsFinite(detalle.precio) || detalle.precio <= 0)
+            if (detalle.idproducto <= 0)
             {
-                throw new ArgumentException("Cada detalle debe tener producto, cantidad y precio válidos.");
+                throw new ArgumentException("Cada detalle debe tener un producto válido.");
             }
-        }
-    }
 
-    private static void validarTextoRequerido(string? valor, string mensaje, int longitudMaxima)
-    {
-        if (string.IsNullOrWhiteSpace(valor) || valor.Length > longitudMaxima)
-        {
-            throw new ArgumentException(mensaje);
+            NegocioValidaciones.cantidad(detalle.cantidad);
+            NegocioValidaciones.precio(detalle.precio);
         }
     }
 }

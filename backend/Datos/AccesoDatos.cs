@@ -1,19 +1,11 @@
-
-
 using System.Data;
-using System.Data.Common;
-using System.Net.WebSockets;
-using System.Reflection.Metadata.Ecma335;
-using System.Security.AccessControl;
-using System.Security.Cryptography;
 using Npgsql;
 
 namespace Datos;
 
 public class AccesoDatos
 {
-
-    private readonly String cadena;
+    private readonly string cadena;
 
     public AccesoDatos(IConfiguration configuration)
     {
@@ -35,86 +27,38 @@ public class AccesoDatos
         }
     }
 
-    public async Task<int> ejecutarAccionesIUD(String consulta, NpgsqlCommand command)
+    public async Task<List<T>> consultar<T>(string consulta, Func<NpgsqlDataReader, T> leer, Action<NpgsqlParameterCollection>? parametros = null)
     {
-        try
-        {
-            await using var connection = await obtenerConexion();
-            command.Connection = connection;
-            command.CommandText = consulta;
+        await using var connection = await obtenerConexion();
+        await using var command = new NpgsqlCommand(consulta, connection);
+        parametros?.Invoke(command.Parameters);
+        await using var reader = await command.ExecuteReaderAsync();
 
-            return await command.ExecuteNonQueryAsync();
-        }
-        catch (NpgsqlException e)
+        var filas = new List<T>();
+        while (await reader.ReadAsync())
         {
-            throw new Exception("Ocurrio un error al ejecutar la accion", e);
+            filas.Add(leer(reader));
         }
+
+        return filas;
     }
 
-    public async Task<object?> ejecutarScalar(String consulta, NpgsqlCommand command)
+    public async Task<bool> existe(string consulta, NpgsqlCommand command)
     {
-        try
-        {
-            await using var connection = await obtenerConexion(); 
-            command.Connection = connection; 
-            command.CommandText = consulta; 
+        await using var connection = await obtenerConexion();
+        command.Connection = connection;
+        command.CommandText = consulta;
 
-            return await command.ExecuteScalarAsync(); 
-        }
-        catch(NpgsqlException e)
-        {
-            throw new Exception("Ocurrio un error al obtener el Scalar", e); 
-        }
+        return (bool)(await command.ExecuteScalarAsync())!;
     }
 
-    // la consulta debe de tener SELECT EXISTS (SELECT 1 ...);
-    public async Task<bool> existe(String consulta, NpgsqlCommand command)
+    public async Task ejecutarProcedimientoAlmacenado(string procedimiento, NpgsqlCommand command)
     {
-        try
-        {
-            await using var connection = await obtenerConexion();
-            command.Connection = connection;
-            command.CommandText = consulta;
+        await using var connection = await obtenerConexion();
+        command.Connection = connection;
+        command.CommandText = procedimiento;
+        command.CommandType = CommandType.StoredProcedure;
 
-            return (bool)(await command.ExecuteScalarAsync())!;
-        }
-        catch (NpgsqlException e)
-        {
-            throw new Exception("No se encontro coincidencia", e);
-        }
-    }
-
-    public async Task<int> ejecutarProcedimientoAlmacenado(string procedimiento, NpgsqlCommand command, bool scalar = false)
-    {
-        try
-        {
-            await using var connection = await obtenerConexion();
-            command.Connection = connection;
-            command.CommandText = procedimiento;
-            command.CommandType = CommandType.StoredProcedure;
-
-            return await command.ExecuteNonQueryAsync();
-        }
-        catch (NpgsqlException e)
-        {
-            throw new Exception("Error al ejecutar el procedimiento almacenado.", e);
-        }
-    }
-
-    public async Task<object?> ejecutarFunction(NpgsqlCommand command, String consulta)
-    {
-        try
-        {
-            await using var connection = await obtenerConexion();
-            command.Connection = connection;
-            command.CommandText = consulta;
-            command.CommandType = CommandType.Text;
-
-            return await command.ExecuteScalarAsync();
-        }
-        catch (NpgsqlException e)
-        {
-            throw new Exception("Error al ejecutar la función.", e);
-        }
+        await command.ExecuteNonQueryAsync();
     }
 }

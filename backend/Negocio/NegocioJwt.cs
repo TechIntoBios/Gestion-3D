@@ -6,8 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Negocio;
 
-// Unica fuente de configuracion JWT: emite los tokens y define como se validan.
-public sealed class ServicioJwt
+public sealed class NegocioJwt
 {
     public const string NombreCookie = "__Host-zunox_sesion";
     private const int BytesMinimosClave = 32;
@@ -19,7 +18,7 @@ public sealed class ServicioJwt
 
     public int DuracionHoras { get; }
 
-    public ServicioJwt(IConfiguration configuracion)
+    public NegocioJwt(IConfiguration configuracion)
     {
         var secreto = configuracion["JwtSettings:SecretKey"];
         if (string.IsNullOrWhiteSpace(secreto))

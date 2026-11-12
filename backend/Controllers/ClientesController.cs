@@ -1,3 +1,4 @@
+using DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Negocio;
 
@@ -14,19 +15,24 @@ public class ClientesController : ControllerBase
     [HttpGet("por_telefono/{telefono}")]
     public async Task<IActionResult> buscarPorTelefono(string telefono)
     {
-        try
+        var cliente = await negocioClientes.buscarPorTelefono(telefono);
+        if (cliente is null)
         {
-            var cliente = await negocioClientes.buscarPorTelefono(telefono);
-            if (cliente is null)
-            {
-                return NotFound(new { mensaje = "No hay ningún cliente con ese teléfono." });
-            }
+            return NotFound(new { mensaje = "No hay ningún cliente con ese teléfono." });
+        }
 
-            return Ok(cliente);
-        }
-        catch (ArgumentException e)
+        return Ok(cliente);
+    }
+
+    [HttpPut("{idCliente:guid}")]
+    public async Task<IActionResult> actualizar(Guid idCliente, [FromBody] ClientesRequest request)
+    {
+        var cliente = await negocioClientes.actualizar(idCliente, request);
+        if (cliente is null)
         {
-            return BadRequest(new { mensaje = e.Message });
+            return NotFound(new { mensaje = "El cliente no existe." });
         }
+
+        return Ok(new { cliente, mensaje = "Datos de contacto guardados." });
     }
 }

@@ -1,7 +1,4 @@
-import { crearCelda } from "./funciones.js";
-
-export const formatoPesos = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS" });
-export const formatoFecha = new Intl.DateTimeFormat("es-AR", { dateStyle: "short" });
+import { crearCelda, formatoFecha, formatoPesos } from "./funciones.js";
 
 const ESTADOS = {
     PENDIENTE: { icono: "Iconos/reloj.svg", descripcion: "El pedido está en preparación." },

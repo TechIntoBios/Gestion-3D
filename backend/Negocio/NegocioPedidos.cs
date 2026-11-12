@@ -7,50 +7,54 @@ namespace Negocio;
 
 public class NegocioPedidos
 {
-
     private readonly DaoPedidos daoPedidos;
     private readonly NegocioClientes negocioClientes;
     private readonly NegocioEstadoPedido negocioEstadoPedido;
-    private readonly ServicioMail servicioMail;
+    private readonly NegocioMail negocioMail;
+    private readonly ILogger<NegocioPedidos> logger;
 
-    public NegocioPedidos(DaoPedidos DaoPedidos, NegocioClientes clientes, NegocioEstadoPedido estados, ServicioMail mail)
+    public NegocioPedidos(DaoPedidos daoPedidos, NegocioClientes clientes, NegocioEstadoPedido estados, NegocioMail mail, ILogger<NegocioPedidos> logger)
     {
-        daoPedidos = DaoPedidos;
+        this.daoPedidos = daoPedidos;
         negocioClientes = clientes;
         negocioEstadoPedido = estados;
-        servicioMail = mail;
+        negocioMail = mail;
+        this.logger = logger;
     }
-    public async Task<(PedidoResponse pedido, bool mailEnviado)?> cambiarEstado(Guid idPedido, String? codigoEstado, String? seguimiento)
+
+    public async Task<(PedidoResponse? pedido, bool mailEnviado)?> cambiarEstado(Guid idPedido, string? codigoEstado, string? seguimiento)
     {
-        var estados = await negocioEstadoPedido.obtenerEstadoPedido();
-        var estado = estados.Find(e => string.Equals(e.Codigo, codigoEstado?.Trim(), StringComparison.OrdinalIgnoreCase))
+        var estado = await negocioEstadoPedido.obtenerPorCodigo(codigoEstado)
             ?? throw new ArgumentException("Elegí un estado válido.");
 
-        if (seguimiento?.Length > 300)
-        {
-            throw new ArgumentException("La observación no puede superar los 300 caracteres.");
-        }
+        var observacion = NegocioValidaciones.textoOpcional(seguimiento, "La observación", 300);
 
-        var observacion = string.IsNullOrWhiteSpace(seguimiento) ? null : seguimiento.Trim();
-        var resultado = await daoPedidos.actualizarEstado(idPedido, estado.IdEstadoPedido, observacion);
-        if (resultado is null)
+        var cambioEstado = await daoPedidos.actualizarEstado(idPedido, estado.IdEstadoPedido, observacion);
+        if (cambioEstado is null)
         {
             return null;
         }
 
-        var (telefono, cambioEstado, _) = resultado.Value;
-        var datos = await buscarPorTelefono(telefono);
-        var pedido = datos?.pedidos.Find(p => p.idpedido == idPedido);
-        if (datos?.cliente is null || pedido is null)
+        try
         {
-            return null;
-        }
+            var datos = await daoPedidos.obtenerPorId(idPedido);
+            if (datos is null)
+            {
+                return (null, false);
+            }
 
-        var mailEnviado = cambioEstado && await servicioMail.enviarEstadoPedido(datos.cliente, pedido, AvisoPedido.CambioEstado);
-        return (pedido, mailEnviado);
+            var (cliente, pedido) = datos.Value;
+            var mailEnviado = cambioEstado.Value && await negocioMail.enviarEstadoPedido(cliente, pedido, NegocioAvisoPedido.CambioEstado);
+            return (pedido, mailEnviado);
+        }
+        catch (Exception e)
+        {
+            logger.LogWarning(e, "El pedido {IdPedido} se actualizó pero no se pudo leer o avisar al cliente.", idPedido);
+            return (null, false);
+        }
     }
 
-    public async Task<SeguimientoResponse?> buscarPorTelefono(String? telefono)
+    public async Task<SeguimientoResponse?> buscarPorTelefono(string? telefono)
     {
         var cliente = await negocioClientes.buscarPorTelefono(telefono);
         if (cliente is null)
@@ -65,42 +69,38 @@ public class NegocioPedidos
         };
     }
 
-    // tracking.html: el pedido del link, con los datos del cliente enmascarados. Null si no existe.
+    public async Task<(Clientes cliente, PedidoResponse pedido)?> obtenerPorId(Guid idPedido)
+    {
+        return await daoPedidos.obtenerPorId(idPedido);
+    }
+
     public async Task<SeguimientoPublicoResponse?> obtenerPublico(Guid idPedido)
     {
-        var telefono = await daoPedidos.obtenerTelefonoCliente(idPedido);
-        if (telefono is null)
+        var datos = await daoPedidos.obtenerPorId(idPedido);
+        if (datos is null)
         {
             return null;
         }
 
-        var datos = await buscarPorTelefono(telefono);
-        var pedido = datos?.pedidos.Find(p => p.idpedido == idPedido);
-        if (datos?.cliente is null || pedido is null)
-        {
-            return null;
-        }
-
+        var (cliente, pedido) = datos.Value;
         return new SeguimientoPublicoResponse
         {
-            cliente = new ClientePublico
+            cliente = new ClientePublicoResponse
             {
-                nombre = datos.cliente.Nombre,
-                apellido = datos.cliente.Apellido,
-                correo = enmascararCorreo(datos.cliente.Correo),
-                telefono = enmascararTelefono(datos.cliente.Telefono),
-                zona = datos.cliente.Zona
+                nombre = cliente.Nombre,
+                apellido = cliente.Apellido,
+                correo = enmascararCorreo(cliente.Correo),
+                telefono = enmascararTelefono(cliente.Telefono),
+                zona = cliente.Zona
             },
             pedido = pedido
         };
     }
 
-    // "1144445555" -> "******5555"
-    private static String enmascararTelefono(String telefono) =>
-        telefono.Length <= 4 ? telefono : new String('*', telefono.Length - 4) + telefono[^4..];
+    private static string enmascararTelefono(string telefono) =>
+        telefono.Length <= 4 ? telefono : new string('*', telefono.Length - 4) + telefono[^4..];
 
-    // "martina@correo.com" -> "m***@correo.com"
-    private static String? enmascararCorreo(String? correo)
+    private static string? enmascararCorreo(string? correo)
     {
         var arroba = correo?.IndexOf('@') ?? -1;
         return arroba <= 0 ? null : $"{correo![0]}***{correo[arroba..]}";
@@ -111,15 +111,15 @@ public class NegocioPedidos
         return await daoPedidos.obtenerNumero(idPedido, conexion, transaccion);
     }
 
-    
-    public async Task<Guid> agregarPedido(Guid idCliente, int idEstadoPedido, String? nota, String? seguimiento, NpgsqlConnection conexion, NpgsqlTransaction transaccion)
+    public async Task<Guid> agregarPedido(Guid idCliente, int idEstadoPedido, string? nota, string? seguimiento, NpgsqlConnection conexion, NpgsqlTransaction transaccion)
     {
-        var pedido = new Pedidos(); 
-        
-        pedido.IdCliente = idCliente;
-        pedido.IdEstadoPedido = idEstadoPedido;
-        pedido.Nota = string.IsNullOrWhiteSpace(nota) ? null! : nota.Trim();
-        pedido.Seguimiento = string.IsNullOrWhiteSpace(seguimiento) ? null! : seguimiento.Trim();
+        var pedido = new Pedidos
+        {
+            IdCliente = idCliente,
+            IdEstadoPedido = idEstadoPedido,
+            Nota = NegocioValidaciones.textoOpcional(nota, "La nota", 300)!,
+            Seguimiento = NegocioValidaciones.textoOpcional(seguimiento, "El seguimiento", 300)!
+        };
 
         return await daoPedidos.agregarPedido(pedido, conexion, transaccion);
     }

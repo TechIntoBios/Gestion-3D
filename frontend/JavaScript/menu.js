@@ -13,7 +13,6 @@ botonMenu.addEventListener("click", (evento) => {
     mostrarMenu(panelMenu.hidden);
 });
 
-// Se cierra al tocar fuera del panel o con Escape.
 document.addEventListener("click", (evento) => {
     if (!panelMenu.hidden && !panelMenu.contains(evento.target)) {
         mostrarMenu(false);

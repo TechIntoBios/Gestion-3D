@@ -1,13 +1,10 @@
 const NUMERO_WHATSAPP = "5491123353700";
 
 const MENSAJES = {
-    // Botón "Lo quiero" de cada categoría. {categoria} se reemplaza por el nombre de la tarjeta.
     categoria: "Hola ZUNOX 3D! Me interesa la categoría {categoria}. ¿Me pasan más info?",
 
-    // Botón flotante verde.
     flotante: "Hola ZUNOX 3D! Quería hacer una consulta.",
 
-    // Formulario de consulta. Cada {campo} se reemplaza por lo que completó la persona.
     formulario: "Hola ZUNOX 3D! Quería hacer una consulta.\n\n" +
         "Nombre: {nombre} {apellido}\n" +
         "Mail: {correo}\n" +
@@ -24,12 +21,10 @@ function completar(plantilla, datos) {
     return plantilla.replace(/\{(\w+)\}/g, (_, clave) => datos[clave] ?? "");
 }
 
-// Botones de las categorías
 document.querySelectorAll(".btn-whatsapp[data-categoria]").forEach((boton) => {
     boton.href = linkWhatsapp(completar(MENSAJES.categoria, { categoria: boton.dataset.categoria }));
 });
 
-// Panel de cada categoría: al tocar un mosaico se abre su detalle desde abajo
 const panel = document.getElementById("panel-categoria");
 const panelCuerpo = document.getElementById("panel-cuerpo");
 let mosaicoAbierto = null;
@@ -44,7 +39,6 @@ function abrirPanel(boton) {
     mosaicoAbierto = boton;
 
     panel.showModal();
-    // Así el botón "atrás" del celular cierra el panel en vez de salir de la página
     history.pushState({ panel: true }, "");
 }
 
@@ -54,7 +48,6 @@ document.querySelectorAll(".mosaico-boton[aria-haspopup]").forEach((boton) => {
 
 panel.querySelector("[data-cerrar-panel]").addEventListener("click", () => panel.close());
 
-// Tocar el fondo oscuro, fuera del panel, también lo cierra
 panel.addEventListener("click", (evento) => {
     if (evento.target === panel) {
         panel.close();
@@ -75,7 +68,6 @@ window.addEventListener("popstate", () => {
     }
 });
 
-// Botón flotante: se muestra después de bajar un poco
 const botonFlotante = document.getElementById("btn-whatsapp-flotante");
 botonFlotante.href = linkWhatsapp(MENSAJES.flotante);
 
@@ -86,7 +78,6 @@ function mostrarFlotante() {
 window.addEventListener("scroll", mostrarFlotante, { passive: true });
 mostrarFlotante();
 
-// Formulario de consulta
 const formConsulta = document.getElementById("form-consulta");
 
 formConsulta.addEventListener("submit", (evento) => {

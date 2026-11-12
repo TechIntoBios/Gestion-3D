@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
     <title>Nuevo Registro</title>
     <link rel="icon" href="Iconos/logo.svg">
     <link href="Css/estilos.css" rel="stylesheet">
@@ -99,7 +100,7 @@
                         <textarea name="txt-nota" placeholder="Agregá una nota para el pedido"></textarea>
                     </div>
                     <template id="tarjeta-sub-productos">
-                        <div class="sub-contendor-productos">
+                        <div class="sub-contenedor-productos">
                             <p>Categoría</p>
                             <select id="ddl-categorias" name="ddl-categorias" required>
                                 <option value="" disabled selected>Seleccioná una categoría</option>
@@ -139,7 +140,7 @@
                 </div>
             </section>
             <section id="section-guardar">
-                <label id="lbl-mensaje"></label>
+                <p id="lbl-mensaje" class="mensaje-busqueda" role="status" aria-live="polite"></p>
                 <button type="submit" class="btn-guardar">
                     <img src="Iconos/Check.svg" alt="">
                     Guardar

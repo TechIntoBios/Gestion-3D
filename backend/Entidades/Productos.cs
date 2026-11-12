@@ -5,7 +5,7 @@ public class Productos
     private int id_producto;
     private int id_categoria;
     private string nombre;
-    private double precio;
+    private decimal precio;
     private bool activo; 
 
     public Productos()
@@ -16,7 +16,7 @@ public class Productos
         precio = 0;
         activo = false; 
     }
-    public Productos(int id_producto, int id_categoria, string nombre, double precio, bool activo)
+    public Productos(int id_producto, int id_categoria, string nombre, decimal precio, bool activo)
     {
         this.id_producto = id_producto;
         this.id_categoria = id_categoria;
@@ -57,7 +57,7 @@ public class Productos
             nombre = value;
         }
     }
-    public double Precio
+    public decimal Precio
     {
         get
         {

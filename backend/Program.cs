@@ -1,22 +1,29 @@
 using System.Threading.RateLimiting;
+using Controllers;
 using Datos;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.FileProviders;
 using Negocio;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Admite una imagen de 5 MB mas el sobrecosto del formulario.
+if (Environment.GetEnvironmentVariable("PORT") is { Length: > 0 } puerto)
+{
+    builder.WebHost.UseUrls($"http://0.0.0.0:{puerto}");
+}
+
 builder.WebHost.ConfigureKestrel(opciones => opciones.Limits.MaxRequestBodySize = 6 * 1024 * 1024);
 
-// 1. Controladores y errores
-builder.Services.AddControllers();
+builder.Services.AddControllers(opciones => opciones.Filters.Add<FiltroErroresNegocio>())
+    .ConfigureApiBehaviorOptions(opciones =>
+        opciones.InvalidModelStateResponseFactory = _ => new BadRequestObjectResult(new { mensaje = "Los datos enviados no son válidos." }));
 builder.Services.AddProblemDetails();
 
-// Dependencias de acceso a datos y negocio usadas por los controllers.
 builder.Services.AddScoped<AccesoDatos>();
 
 builder.Services.AddScoped<DaoUsuarios>();
@@ -36,82 +43,96 @@ builder.Services.AddScoped<NegocioCompras>();
 builder.Services.AddScoped<NegocioClientes>();
 builder.Services.AddScoped<NegocioCategorias>();
 
-// Mails a clientes con Resend. Si tarda más de 10 s se corta: el pedido no espera al mail.
-builder.Services.AddHttpClient<ServicioMail>(cliente => cliente.Timeout = TimeSpan.FromSeconds(10));
+builder.Services.AddHttpClient<NegocioMail>(cliente => cliente.Timeout = TimeSpan.FromSeconds(10));
 
-builder.Services.AddMemoryCache();
-builder.Services.AddSingleton<ProteccionLogin>();
+builder.Services.AddMemoryCache(opciones => opciones.SizeLimit = 10_000);
+builder.Services.AddSingleton<NegocioProteccionLogin>();
 
-// 2. Swagger basico (solo se publica en Development)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// 3. Autenticacion: el JWT viaja en una cookie HttpOnly. Sin clave valida, la app no arranca.
-var servicioJwt = new ServicioJwt(builder.Configuration);
-builder.Services.AddSingleton(servicioJwt);
+var negocioJwt = new NegocioJwt(builder.Configuration);
+builder.Services.AddSingleton(negocioJwt);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(opciones =>
     {
         opciones.MapInboundClaims = false;
-        opciones.TokenValidationParameters = servicioJwt.ParametrosValidacion();
+        opciones.TokenValidationParameters = negocioJwt.ParametrosValidacion();
         opciones.Events = new JwtBearerEvents
         {
             OnMessageReceived = contexto =>
             {
-                contexto.Token = contexto.Request.Cookies[ServicioJwt.NombreCookie];
+                contexto.Token = contexto.Request.Cookies[NegocioJwt.NombreCookie];
                 return Task.CompletedTask;
             }
         };
     });
 
-// 4. Todo exige sesion salvo lo marcado explicitamente con [AllowAnonymous].
 builder.Services.AddAuthorizationBuilder()
     .SetFallbackPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
 
-// 5. Limites de uso
 builder.Services.AddRateLimiter(opciones =>
 {
     opciones.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
-    opciones.AddPolicy(LimitesApi.Login, contexto => LimitePorIp(contexto, permitidas: 10));
-    opciones.AddPolicy(LimitesApi.Publico, contexto => LimitePorIp(contexto, permitidas: 120));
+    opciones.AddPolicy(NegocioLimitesApi.Login, contexto => LimitePorIp(contexto, permitidas: 10));
+    opciones.AddPolicy(NegocioLimitesApi.Publico, contexto => LimitePorIp(contexto, permitidas: 120));
 
-    // Tope total de logins: BCrypt es caro y la IP del cliente se puede falsificar.
     opciones.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(contexto =>
         contexto.Request.Path.StartsWithSegments("/api/auth/login")
-            ? RateLimitPartition.GetFixedWindowLimiter("login-global", _ => VentanaDeUnMinuto(60))
+            ? RateLimitPartition.GetFixedWindowLimiter("login-global", _ => VentanaDeUnMinuto(300))
             : RateLimitPartition.GetNoLimiter("resto"));
 });
 
-// 6. Render y Vercel van delante de la app: son dos proxies hasta llegar al cliente.
 builder.Services.Configure<ForwardedHeadersOptions>(opciones =>
 {
     opciones.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-    opciones.ForwardLimit = 2;
+    opciones.ForwardLimit = 1;
     opciones.KnownIPNetworks.Clear();
     opciones.KnownProxies.Clear();
 });
 
 var app = builder.Build();
 
-// 7. Middleware Pipeline
 app.UseForwardedHeaders();
+
+app.Use((contexto, siguiente) =>
+{
+    NegocioCabecerasSeguridad.aplicar(contexto, produccion: !app.Environment.IsDevelopment());
+    return siguiente();
+});
+
 app.UseExceptionHandler();
+
+app.Use(async (contexto, siguiente) =>
+{
+    try { await siguiente(); }
+    catch (BadHttpRequestException error) { contexto.Response.StatusCode = error.StatusCode; }
+});
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseHttpsRedirection(); // En produccion el HTTPS lo terminan Vercel y Render.
+    app.UseHttpsRedirection();
+}
 
-    // En local el front se sirve desde la API para compartir origen, igual que con el rewrite de Vercel.
-    var rutaFrontend = Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, "..", "frontend"));
-    // no-cache: el navegador revalida cada archivo y no muestra CSS o JS viejos mientras se desarrolla.
+var rutaFrontend = app.Environment.IsDevelopment()
+    ? Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, "..", "frontend"))
+    : Path.Combine(AppContext.BaseDirectory, "frontend");
+
+if (Directory.Exists(rutaFrontend))
+{
+    var archivos = new PhysicalFileProvider(rutaFrontend);
+    app.UseDefaultFiles(new DefaultFilesOptions { FileProvider = archivos });
     app.UseStaticFiles(new StaticFileOptions
     {
-        FileProvider = new PhysicalFileProvider(rutaFrontend),
-        OnPrepareResponse = contexto => contexto.Context.Response.Headers.CacheControl = "no-cache"
+        FileProvider = archivos,
+        OnPrepareResponse = contexto => contexto.Context.Response.Headers.CacheControl =
+            !app.Environment.IsDevelopment() && contexto.Context.Request.Path.StartsWithSegments("/Iconos")
+                ? "public, max-age=86400"
+                : "no-cache"
     });
 }
 
@@ -123,6 +144,22 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapGet("/healthz", () => Results.Ok(new { estado = "ok" })).AllowAnonymous();
+
+app.MapGet("/healthz/db", async (AccesoDatos datos, ILogger<Program> logger) =>
+{
+    try
+    {
+        await using var conexion = await datos.obtenerConexion();
+        await using var comando = new NpgsqlCommand("SELECT 1", conexion);
+        await comando.ExecuteScalarAsync();
+        return Results.Ok(new { estado = "ok" });
+    }
+    catch (Exception error)
+    {
+        logger.LogError(error, "La base de datos no respondió en /healthz/db.");
+        return Results.Json(new { mensaje = "La base de datos no responde." }, statusCode: StatusCodes.Status503ServiceUnavailable);
+    }
+}).AllowAnonymous().RequireRateLimiting(NegocioLimitesApi.Publico);
 
 app.Run();
 
@@ -138,5 +175,4 @@ static FixedWindowRateLimiterOptions VentanaDeUnMinuto(int permitidas) => new()
     QueueLimit = 0
 };
 
-// Permite referenciar la app desde los tests con WebApplicationFactory.
 public partial class Program;

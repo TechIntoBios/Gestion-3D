@@ -1,13 +1,11 @@
 using DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Negocio;
-using Entidades; 
 
 namespace Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-
 public class CategoriasController : ControllerBase
 {
     private readonly NegocioCategorias negocioCategorias;
@@ -18,22 +16,27 @@ public class CategoriasController : ControllerBase
     }
 
     [HttpGet("listar_Categorias")]
-    public async Task<IActionResult> GetCategorias()
+    public async Task<IActionResult> GetCategorias([FromQuery] bool todos = false)
     {
-        var categorias = await negocioCategorias.ListarCategorias();
+        var categorias = await negocioCategorias.ListarCategorias(todos);
         return Ok(categorias);
     }
 
     [HttpPost("agregar_Categorias")]
-
-    public async Task<IActionResult> agregarCategorias([FromBody] Categorias categoria)
+    public async Task<IActionResult> agregarCategorias([FromBody] CategoriaRequest request)
     {
-        bool Result = await negocioCategorias.AgregarCategorias(categoria.NOMBRE);
-        
-        if(!Result)
+        await negocioCategorias.AgregarCategorias(request);
+        return Ok(new { mensaje = "Categoria agregada correctamente" });
+    }
+
+    [HttpPut("{idCategoria:int}")]
+    public async Task<IActionResult> actualizarCategoria(int idCategoria, [FromBody] CategoriaRequest request)
+    {
+        if (!await negocioCategorias.actualizar(idCategoria, request))
         {
-            return BadRequest(new {mensaje = "No se pudo agregar la categoria"});
+            return NotFound(new { mensaje = "La categoría no existe." });
         }
-        return Ok(new {mensaje = "Categoria agregada correctamente" });
+
+        return Ok(new { mensaje = "Categoría guardada correctamente." });
     }
 }

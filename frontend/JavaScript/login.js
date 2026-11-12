@@ -1,8 +1,10 @@
+import { pedirApi } from "./api.js";
 import { haySesion } from "./sesion.js";
 
 const RUTA_INICIO = "admin.html";
 
 const MENSAJES_ERROR = {
+    0: "No pudimos conectarnos. Revisá tu conexión y probá de nuevo.",
     401: "Usuario o contraseña incorrectos.",
     429: "Demasiados intentos. Esperá unos minutos y probá de nuevo."
 };
@@ -23,27 +25,17 @@ formulario.addEventListener("submit", async (evento) => {
     botonIngresar.disabled = true;
     botonIngresar.textContent = "Ingresando...";
 
-    try {
-        const respuesta = await fetch("/api/auth/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                usuario: datos.get("username").trim(),
-                contrasena: datos.get("password")
-            })
-        });
+    const resultado = await pedirApi("/auth/login", {
+        metodo: "POST",
+        cuerpo: { usuario: datos.get("username").trim(), contrasena: datos.get("password") }
+    });
 
-        if (respuesta.ok) {
-            window.location.replace(RUTA_INICIO);
-            return;
-        }
-
-        mensaje.textContent = MENSAJES_ERROR[respuesta.status] ?? "No pudimos iniciar sesión. Probá de nuevo en unos minutos.";
-    }
-    catch (error) {
-        mensaje.textContent = "No pudimos conectarnos. Revisá tu conexión y probá de nuevo.";
+    if (resultado.ok) {
+        window.location.replace(RUTA_INICIO);
+        return;
     }
 
+    mensaje.textContent = MENSAJES_ERROR[resultado.status] ?? "No pudimos iniciar sesión. Probá de nuevo en unos minutos.";
     campoPassword.value = "";
     campoPassword.focus();
     botonIngresar.disabled = false;
@@ -60,12 +52,7 @@ botonVerPassword.addEventListener("click", () => {
 });
 
 document.addEventListener("DOMContentLoaded", async () => {
-    try {
-        if (await haySesion()) {
-            window.location.replace(RUTA_INICIO);
-        }
-    }
-    catch (error) {
-        // Si la API no responde, el formulario sigue disponible y el error se muestra al ingresar.
+    if (await haySesion()) {
+        window.location.replace(RUTA_INICIO);
     }
 });

@@ -11,24 +11,31 @@ namespace Controllers;
 public class AuthController : ControllerBase
 {
     private readonly NegocioUsuarios negocioUsuarios;
-    private readonly ServicioJwt servicioJwt;
-    private readonly ProteccionLogin proteccionLogin;
+    private readonly NegocioJwt negocioJwt;
+    private readonly NegocioProteccionLogin negocioProteccionLogin;
 
-    public AuthController(NegocioUsuarios negocioUsuarios, ServicioJwt servicioJwt, ProteccionLogin proteccionLogin)
+    public AuthController(NegocioUsuarios negocioUsuarios, NegocioJwt negocioJwt, NegocioProteccionLogin negocioProteccionLogin)
     {
         this.negocioUsuarios = negocioUsuarios;
-        this.servicioJwt = servicioJwt;
-        this.proteccionLogin = proteccionLogin;
+        this.negocioJwt = negocioJwt;
+        this.negocioProteccionLogin = negocioProteccionLogin;
     }
 
     [AllowAnonymous]
-    [EnableRateLimiting(LimitesApi.Login)]
+    [EnableRateLimiting(NegocioLimitesApi.Login)]
+    [RequestSizeLimit(4096)]
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest solicitud)
     {
-        var nombreUsuario = solicitud.usuario ?? string.Empty;
+        if (!NegocioProteccionLogin.EsEntradaValida(solicitud.usuario, solicitud.contrasena))
+        {
+            return Unauthorized(new { mensaje = "Usuario o contraseña incorrectos." });
+        }
 
-        if (proteccionLogin.EstaBloqueado(nombreUsuario))
+        var nombreUsuario = solicitud.usuario!;
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "desconocida";
+
+        if (negocioProteccionLogin.EstaBloqueado(nombreUsuario, ip))
         {
             return StatusCode(StatusCodes.Status429TooManyRequests, new { mensaje = "Demasiados intentos. Probá de nuevo más tarde." });
         }
@@ -36,24 +43,24 @@ public class AuthController : ControllerBase
         var usuario = await negocioUsuarios.Autenticar(solicitud.usuario, solicitud.contrasena);
         if (usuario is null)
         {
-            proteccionLogin.RegistrarFallo(nombreUsuario);
+            negocioProteccionLogin.RegistrarFallo(nombreUsuario, ip);
             return Unauthorized(new { mensaje = "Usuario o contraseña incorrectos." });
         }
 
-        proteccionLogin.Limpiar(nombreUsuario);
+        negocioProteccionLogin.Limpiar(nombreUsuario, ip);
 
         var opciones = OpcionesCookie();
-        opciones.Expires = DateTimeOffset.UtcNow.AddHours(servicioJwt.DuracionHoras);
-        Response.Cookies.Append(ServicioJwt.NombreCookie, servicioJwt.CrearToken(usuario), opciones);
+        opciones.Expires = DateTimeOffset.UtcNow.AddHours(negocioJwt.DuracionHoras);
+        Response.Cookies.Append(NegocioJwt.NombreCookie, negocioJwt.CrearToken(usuario), opciones);
 
-        return Ok(new LoginResponse { Usuario = usuario.Usuario, ExpiraEnHoras = servicioJwt.DuracionHoras });
+        return Ok(new LoginResponse { Usuario = usuario.Usuario, ExpiraEnHoras = negocioJwt.DuracionHoras });
     }
 
     [AllowAnonymous]
     [HttpPost("logout")]
     public IActionResult Logout()
     {
-        Response.Cookies.Delete(ServicioJwt.NombreCookie, OpcionesCookie());
+        Response.Cookies.Delete(NegocioJwt.NombreCookie, OpcionesCookie());
         return NoContent();
     }
 

@@ -8,10 +8,8 @@ namespace Negocio;
 public class NegocioUsuarios
 {
     private const int LongitudMaximaUsuario = 30;
-    private const int BytesMaximosContrasena = 72; // BCrypt ignora lo que pase de 72 bytes.
+    private const int BytesMaximosContrasena = 72; 
 
-    // Se verifica contra este hash cuando el usuario no existe, para que el tiempo
-    // de respuesta no revele que usuarios hay registrados.
     private static readonly Lazy<string> HashFicticio = new(() => BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString()));
 
     private readonly DaoUsuarios daoUsuarios;
@@ -44,7 +42,6 @@ public class NegocioUsuarios
         }
         catch (SaltParseException)
         {
-            // Un valor que no es BCrypt se trata como credencial invalida, nunca como 500.
             logger.LogWarning("Hay un usuario cuya contraseña guardada no es un hash BCrypt válido.");
             return false;
         }

@@ -1,9 +1,7 @@
-namespace DTOs; 
+namespace DTOs;
 
-public class PedidoResquest
+public class PedidoRequest
 {
-    public String? idcliente {get; set;}
-    public int idestado {get; set;}
-    public String? nota {get; set;}
-    public String? Seguimiento {get; set;}
+    public string? nota { get; set; }
+    public string? Seguimiento { get; set; }
 }

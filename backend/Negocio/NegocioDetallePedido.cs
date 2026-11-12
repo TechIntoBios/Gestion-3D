@@ -10,19 +10,8 @@ public class NegocioDetallePedido
 
     public NegocioDetallePedido(DaoDetallePedidos detallePedidos) => daoDetallePedidos = detallePedidos; 
 
-    // public async Task<bool> agregarDetallePedido(Guid idpedido, int idproducto, String nombre, int cantidad, double precio)
-    // {
-    //     var detalle = new DetallePedidos(); 
-    //     detalle.IdPedido = idpedido; 
-    //     detalle.IdProducto = idproducto; 
-    //     detalle.Nombre = nombre; 
-    //     detalle.Cantidad = cantidad; 
-    //     detalle.Precio = precio; 
 
-    //     return await daoDetallePedidos.agregarDetallePedido(detalle); 
-    // }
-
-    public async Task agregarDetallePedido(Guid idpedido, int idproducto, String nombre, int cantidad, double precio , NpgsqlConnection conexion, NpgsqlTransaction transaccion)
+    public async Task agregarDetallePedido(Guid idpedido, int idproducto, String nombre, int cantidad, decimal precio, NpgsqlConnection conexion, NpgsqlTransaction transaccion)
     {
         var detalle = new DetallePedidos();
         detalle.IdPedido = idpedido;

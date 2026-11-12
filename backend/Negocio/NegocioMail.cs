@@ -7,14 +7,6 @@ using Entidades;
 
 namespace Negocio;
 
-// Solo se avisa cuando el pedido se crea o cambia de estado. Cambiar solo la observación
-// o los datos del cliente no manda mail, para no llenarle la casilla al cliente.
-public enum AvisoPedido
-{
-    Nuevo,          // se acaba de guardar el pedido (Pendiente)
-    CambioEstado    // pasó a Cancelado, Realizado o volvió a Pendiente
-}
-
 // Envía los mails a los clientes con la API de Resend (https://resend.com/docs/api-reference/emails/send-email).
 // Configuración (appsettings.Development.json en local, variables de entorno en Render):
 //   Resend:ApiKey       clave de la API de Resend (secreta)
@@ -23,12 +15,11 @@ public enum AvisoPedido
 //   Frontend:UrlBase    (opcional) "https://tudominio.com"; sin esto el mail sale sin el botón de seguimiento
 //   Contacto:WhatsApp   número para el pie del mail
 // Nunca tira excepción: si el mail falla, el pedido ya quedó guardado igual y solo se registra en el log.
-public class ServicioMail
+public class NegocioMail
 {
     private const string UrlResend = "https://api.resend.com/emails";
     private static readonly CultureInfo Pesos = CultureInfo.GetCultureInfo("es-AR");
 
-    // Mismos colores que estilos.css (:root). En un mail no hay variables CSS: todo va en línea.
     private const string Fondo = "#080B10";
     private const string Tarjeta = "#10161E";
     private const string Borde = "#25333F";
@@ -44,14 +35,14 @@ public class ServicioMail
     };
 
     private readonly HttpClient http;
-    private readonly ILogger<ServicioMail> logger;
+    private readonly ILogger<NegocioMail> logger;
     private readonly string? apiKey;
     private readonly string? emisor;
     private readonly string? responderA;
     private readonly string? urlBase;
     private readonly string? whatsapp;
 
-    public ServicioMail(HttpClient http, IConfiguration configuracion, ILogger<ServicioMail> logger)
+    public NegocioMail(HttpClient http, IConfiguration configuracion, ILogger<NegocioMail> logger)
     {
         this.http = http;
         this.logger = logger;
@@ -64,14 +55,14 @@ public class ServicioMail
 
     private bool EstaConfigurado => !string.IsNullOrWhiteSpace(apiKey) && !string.IsNullOrWhiteSpace(emisor);
 
-    public async Task<bool> enviarEstadoPedido(Clientes cliente, PedidoResponse pedido, AvisoPedido aviso)
+    public async Task<bool> enviarEstadoPedido(Clientes cliente, PedidoResponse pedido, NegocioAvisoPedido aviso)
     {
         if (string.IsNullOrWhiteSpace(cliente.Correo))
         {
             return false;
         }
 
-        var (titulo, asunto, introduccion) = aviso == AvisoPedido.Nuevo
+        var (titulo, asunto, introduccion) = aviso == NegocioAvisoPedido.Nuevo
             ? ("¡Tu pedido está registrado!",
                $"Tu pedido #{pedido.numero} está registrado | ZUNOX 3D",
                "Recibimos tu solicitud en ZUNOX 3D. Tu pedido quedó registrado y ya está en proceso.")

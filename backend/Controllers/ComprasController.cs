@@ -18,14 +18,7 @@ public class ComprasController : ControllerBase
     [HttpPost("guardar")]
     public async Task<IActionResult> registrarCompra([FromBody] CompraRequest request)
     {
-        try
-        {
-            var (idPedido, numero, correo, mailEnviado) = await negocioCompras.registrarCompra(request);
-            return StatusCode(StatusCodes.Status201Created, new { idPedido, numero, correo, mailEnviado, mensaje = $"Pedido #{numero} guardado correctamente." });
-        }
-        catch (ArgumentException e)
-        {
-            return BadRequest(new { mensaje = e.Message });
-        }
+        var (idPedido, numero, correo, mailEnviado) = await negocioCompras.registrarCompra(request);
+        return StatusCode(StatusCodes.Status201Created, new { idPedido, numero, correo, mailEnviado, mensaje = $"Pedido #{numero} guardado correctamente." });
     }
 }

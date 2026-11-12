@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
     <title>Seguimiento de pedidos | ZUNOX 3D</title>
     <link rel="icon" href="Iconos/logo.svg">
     <link href="Css/estilos.css" rel="stylesheet">
@@ -99,7 +100,6 @@
                         </label>
                     </div>
 
-                    <!-- Columna Seguimiento del pedido: es lo que después va a ver el cliente. -->
                     <p class="lbl-obs">Observación general</p>
                     <textarea id="txt-observacion" maxlength="300" placeholder="Link de seguimiento, correo o indicaciones para el cliente..."></textarea>
                     <p class="ayuda-obs">El cliente va a ver este mensaje en el seguimiento de su pedido.</p>
@@ -117,7 +117,7 @@
             <div class="contenedor-datos">
                 <div class="encabezado-tarjeta">
                     <h4>Datos de contacto</h4>
-                    <button type="button" id="btn-editar-contacto" class="btn-editar" aria-label="Editar datos de contacto" title="Editar datos de contacto">
+                    <button type="button" id="btn-editar-contacto" class="btn-editar" disabled aria-label="Editar datos de contacto" title="Editar datos de contacto">
                         <img src="Iconos/editar.svg" alt="">
                     </button>
                 </div>
@@ -155,6 +155,7 @@
                         </button>
                     </div>
                 </form>
+                <p id="lbl-contacto-guardado" class="mensaje-busqueda" role="status" aria-live="polite"></p>
             </div>
         </section>
 
@@ -185,7 +186,6 @@
                     </tfoot>
                 </table>
 
-                <!-- Columna Nota del pedido: lo que se escribió al cargarlo. Solo lectura. -->
                 <div class="nota-pedido">
                     <p class="dato-label">Nota del pedido</p>
                     <p class="dato-valor" id="lbl-nota">—</p>

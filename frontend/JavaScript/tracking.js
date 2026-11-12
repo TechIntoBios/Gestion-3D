@@ -1,6 +1,6 @@
+import { pedirApi } from "./api.js";
 import { mostrarCliente, mostrarPedido } from "./vista-pedido.js";
 
-const URL_API = "/api";
 const FORMATO_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const lblSubtitulo = document.getElementById("lbl-subtitulo");
@@ -50,25 +50,21 @@ async function cargarSeguimiento() {
         return;
     }
 
-    try {
-        const respuesta = await fetch(`${URL_API}/Pedidos/publico/${id}`);
-        const datos = await respuesta.json().catch(() => ({}));
+    const { ok, status, datos } = await pedirApi(`/Pedidos/publico/${id}`);
 
-        if (!respuesta.ok) {
-            mostrarError(respuesta.status === 429
+    if (!ok) {
+        mostrarError(status === 0
+            ? "No pudimos conectarnos. Revisá tu conexión y volvé a abrir el link."
+            : status === 429
                 ? "Hiciste muchas consultas seguidas. Probá de nuevo en un minuto."
                 : datos.mensaje ?? "No pudimos cargar tu pedido.");
-            return;
-        }
+        return;
+    }
 
-        lblSubtitulo.textContent = `Hola ${datos.cliente.nombre}, estos son los datos de tu pedido.`;
-        mostrarPedido(datos.pedido, TEXTOS_VACIOS);
-        mostrarCliente(seccionContacto, datos.cliente);
-        mostrarObservacion(datos.pedido.seguimiento);
-    }
-    catch (error) {
-        mostrarError("No pudimos conectarnos. Revisá tu conexión y volvé a abrir el link.");
-    }
+    lblSubtitulo.textContent = `Hola ${datos.cliente.nombre}, estos son los datos de tu pedido.`;
+    mostrarPedido(datos.pedido, TEXTOS_VACIOS);
+    mostrarCliente(seccionContacto, datos.cliente);
+    mostrarObservacion(datos.pedido.seguimiento);
 }
 
 cargarSeguimiento();
