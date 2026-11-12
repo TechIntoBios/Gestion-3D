@@ -135,7 +135,12 @@ const botonFlotante = document.getElementById("btn-whatsapp-flotante");
 botonFlotante.href = linkWhatsapp(MENSAJES.flotante);
 
 function mostrarFlotante() {
-    botonFlotante.classList.toggle("visible", window.scrollY > 200);
+    const alto = window.scrollY || document.documentElement.scrollTop;
+    if (alto > 200) {
+        botonFlotante.classList.add("visible");
+    } else if (alto < 80) {
+        botonFlotante.classList.remove("visible");
+    }
 }
 
 window.addEventListener("scroll", mostrarFlotante, { passive: true });
@@ -197,7 +202,7 @@ const ALTO_CAPA = 1.2;
 const DURACION = 26000;
 const COLOR_CALIENTE = "#FFB35C";
 const FILTRO_CALIENTE = "sepia(1) saturate(3) hue-rotate(-20deg) brightness(1.3)";
-const TONO_LOGO = 195; // tono del cian del logo.svg, para teñirlo de otro color
+const TONO_LOGO = 195;
 
 const INICIO = 0.02;
 const IMPRESION = 0.34;

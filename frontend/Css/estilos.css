@@ -48,7 +48,7 @@ body {
     background-color: var(--bg_primary);
     min-height: 100vh;
     width: 100%;
-    max-width: 360px;
+    max-width: none;
     margin: 0 auto;
     overflow-x: hidden;
 }
