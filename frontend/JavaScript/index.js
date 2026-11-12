@@ -25,6 +25,68 @@ document.querySelectorAll(".btn-whatsapp[data-categoria]").forEach((boton) => {
     boton.href = linkWhatsapp(completar(MENSAJES.categoria, { categoria: boton.dataset.categoria }));
 });
 
+// ===== Galerías de fotos =====
+// Las categorías con más de una foto las pasan solas, deslizándose hacia un costado (la animación está en el CSS).
+// Se detienen con el mouse encima, con la pestaña oculta, con la galería fuera de pantalla
+// y para quien pidió "reducir movimiento".
+
+const PAUSA_ENTRE_FOTOS = 4000;
+const DURACION_PASE = 750;
+const reducirMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+function pasarFoto(fotos) {
+    const actual = fotos.findIndex((foto) => foto.classList.contains("activa"));
+    const siguiente = fotos[(actual + 1) % fotos.length];
+
+    // Si la siguiente todavía no se descargó, se espera al próximo turno para no mostrar un hueco.
+    if (!siguiente.complete) {
+        return;
+    }
+
+    const saliente = fotos[actual];
+    fotos.forEach((foto) => foto.classList.remove("saliendo", "entrando"));
+    siguiente.classList.add("activa", "entrando");
+    saliente.classList.remove("activa");
+    saliente.classList.add("saliendo");
+    setTimeout(() => {
+        saliente.classList.remove("saliendo");
+        siguiente.classList.remove("entrando");
+    }, DURACION_PASE);
+}
+
+function iniciarGaleria(galeria) {
+    const fotos = [...galeria.querySelectorAll("img")];
+    if (fotos.length < 2 || reducirMovimiento.matches) {
+        return;
+    }
+
+    let enPausa = false;
+    let enPantalla = true;
+
+    const observador = new IntersectionObserver(([entrada]) => {
+        enPantalla = entrada.isIntersecting;
+    });
+    observador.observe(galeria);
+
+    galeria.addEventListener("pointerenter", () => { enPausa = true; });
+    galeria.addEventListener("pointerleave", () => { enPausa = false; });
+
+    // Cada galería arranca con un pequeño desfasaje para que no cambien todas a la vez.
+    const intervalo = PAUSA_ENTRE_FOTOS + Math.random() * 800;
+    const reloj = setInterval(() => {
+        if (!galeria.isConnected) {
+            clearInterval(reloj);
+            observador.disconnect();
+            return;
+        }
+        if (!enPausa && enPantalla && !document.hidden) {
+            pasarFoto(fotos);
+        }
+    }, intervalo);
+}
+
+document.querySelectorAll(".galeria").forEach(iniciarGaleria);
+
 const panel = document.getElementById("panel-categoria");
 const panelCuerpo = document.getElementById("panel-cuerpo");
 let mosaicoAbierto = null;
@@ -35,6 +97,7 @@ function abrirPanel(boton) {
     const detalle = [...mosaico.querySelector(".mosaico-detalle").children].map((nodo) => nodo.cloneNode(true));
 
     panelCuerpo.replaceChildren(imagen, ...detalle);
+    iniciarGaleria(imagen);
     panelCuerpo.querySelector("h3").id = "panel-titulo";
     mosaicoAbierto = boton;
 
@@ -417,7 +480,6 @@ function soltar(evento) {
 impresora.addEventListener("pointerup", soltar);
 impresora.addEventListener("pointercancel", soltar);
 
-// Con teclado: flechas para girar e inclinar; al salir de la impresora vuelve al centro
 impresora.addEventListener("keydown", (evento) => {
     const pasos = { ArrowLeft: [-10, 0], ArrowRight: [10, 0], ArrowUp: [0, 4], ArrowDown: [0, -4] };
     const paso = pasos[evento.key];

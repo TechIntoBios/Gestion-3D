@@ -123,9 +123,6 @@
             </ul>
         </section>
 
-        <!-- Catálogo: un mosaico por categoría. Al tocarlo, su detalle se abre en el panel de abajo.
-             Para poner una foto, reemplazar el <span class="tarjeta-imagen"> del mosaico por
-             <img src="Imagenes/vasos.webp" class="tarjeta-imagen" alt="Vasos impresos en 3D" loading="lazy" width="400" height="300"> -->
         <section id="catalogo" class="seccion-catalogo">
             <h2>Lo que imprimimos</h2>
             <p class="texto">Tocá una categoría para ver el detalle y pedirla por WhatsApp.</p>
@@ -133,7 +130,13 @@
             <ul class="lista-categorias">
                 <li class="mosaico" id="categoria-mascaras">
                     <button type="button" class="mosaico-boton" aria-haspopup="dialog">
-                        <span class="tarjeta-imagen" aria-hidden="true"></span>
+                        <span class="tarjeta-imagen galeria" aria-hidden="true">
+                            <img src="imagenes/mascara1.webp" class="activa" alt="" loading="lazy" decoding="async">
+                            <img src="imagenes/mascara2.webp" alt="" loading="lazy" decoding="async">
+                            <img src="imagenes/mascara3.webp" alt="" loading="lazy" decoding="async">
+                            <img src="imagenes/mascara4.webp" alt="" loading="lazy" decoding="async">
+                            <img src="imagenes/mascara5.webp" alt="" loading="lazy" decoding="async">
+                        </span>
                         <span class="mosaico-nombre">Máscaras <svg class="mosaico-icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v12M6 12h12" /></svg></span>
                     </button>
                     <div class="mosaico-detalle">
@@ -152,7 +155,9 @@
 
                 <li class="mosaico" id="categoria-piezas-funcionales">
                     <button type="button" class="mosaico-boton" aria-haspopup="dialog">
-                        <span class="tarjeta-imagen" aria-hidden="true"></span>
+                        <span class="tarjeta-imagen galeria" aria-hidden="true">
+                            <img src="imagenes/piezafuncional1.webp" class="activa" alt="" loading="lazy" decoding="async">
+                        </span>
                         <span class="mosaico-nombre">Piezas funcionales <svg class="mosaico-icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v12M6 12h12" /></svg></span>
                     </button>
                     <div class="mosaico-detalle">
@@ -171,7 +176,9 @@
 
                 <li class="mosaico" id="categoria-accesorios">
                     <button type="button" class="mosaico-boton" aria-haspopup="dialog">
-                        <span class="tarjeta-imagen" aria-hidden="true"></span>
+                        <span class="tarjeta-imagen galeria" aria-hidden="true">
+                            <img src="imagenes/accesorios1.webp" class="activa" alt="" loading="lazy" decoding="async">
+                        </span>
                         <span class="mosaico-nombre">Accesorios <svg class="mosaico-icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v12M6 12h12" /></svg></span>
                     </button>
                     <div class="mosaico-detalle">
@@ -190,7 +197,11 @@
 
                 <li class="mosaico" id="categoria-vasos">
                     <button type="button" class="mosaico-boton" aria-haspopup="dialog">
-                        <span class="tarjeta-imagen" aria-hidden="true"></span>
+                        <span class="tarjeta-imagen galeria" aria-hidden="true">
+                            <img src="imagenes/vaso1.webp" class="activa" alt="" loading="lazy" decoding="async">
+                            <img src="imagenes/vaso2.webp" alt="" loading="lazy" decoding="async">
+                            <img src="imagenes/vaso3.webp" alt="" loading="lazy" decoding="async">
+                        </span>
                         <span class="mosaico-nombre">Vasos <svg class="mosaico-icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v12M6 12h12" /></svg></span>
                     </button>
                     <div class="mosaico-detalle">
@@ -209,7 +220,9 @@
 
                 <li class="mosaico" id="categoria-pochocleras">
                     <button type="button" class="mosaico-boton" aria-haspopup="dialog">
-                        <span class="tarjeta-imagen" aria-hidden="true"></span>
+                        <span class="tarjeta-imagen galeria" aria-hidden="true">
+                            <img src="imagenes/pochoclera1.webp" class="activa" alt="" loading="lazy" decoding="async">
+                        </span>
                         <span class="mosaico-nombre">Pochocleras <svg class="mosaico-icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v12M6 12h12" /></svg></span>
                     </button>
                     <div class="mosaico-detalle">
@@ -228,7 +241,9 @@
 
                 <li class="mosaico" id="categoria-esculturas">
                     <button type="button" class="mosaico-boton" aria-haspopup="dialog">
-                        <span class="tarjeta-imagen" aria-hidden="true"></span>
+                        <span class="tarjeta-imagen galeria" aria-hidden="true">
+                            <img src="imagenes/esculturas1.webp" class="activa" alt="" loading="lazy" decoding="async">
+                        </span>
                         <span class="mosaico-nombre">Esculturas <svg class="mosaico-icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v12M6 12h12" /></svg></span>
                     </button>
                     <div class="mosaico-detalle">
@@ -247,7 +262,9 @@
 
                 <li class="mosaico" id="categoria-llaveros">
                     <button type="button" class="mosaico-boton" aria-haspopup="dialog">
-                        <span class="tarjeta-imagen" aria-hidden="true"></span>
+                        <span class="tarjeta-imagen galeria" aria-hidden="true">
+                            <img src="imagenes/llavero1.webp" class="activa" alt="" loading="lazy" decoding="async">
+                        </span>
                         <span class="mosaico-nombre">Llaveros <svg class="mosaico-icono" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v12M6 12h12" /></svg></span>
                     </button>
                     <div class="mosaico-detalle">
@@ -337,21 +354,19 @@
                 <img src="Iconos/logo.svg" class="logo" alt="">
                 <b>ZUNOX 3D</b>
             </a>
-            <p class="pie-lema">Impresión 3D a medida en PLA y PETG.</p>
         </div>
 
         <div>
             <h2 class="pie-titulo">Seguinos</h2>
-            <!-- REEMPLAZAR: cambiar cada href="#" por el link del perfil. -->
             <ul class="lista-redes">
                 <li>
-                    <a class="red" data-red="instagram" href="#" target="_blank" rel="noopener">
+                    <a class="red" data-red="instagram" href="https://www.instagram.com/zunox3d" target="_blank" rel="noopener">
                         <svg class="icono-trazo" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><path d="M17.5 6.5h.01" /></svg>
                         Instagram
                     </a>
                 </li>
                 <li>
-                    <a class="red" data-red="tiktok" href="#" target="_blank" rel="noopener">
+                    <a class="red" data-red="tiktok" href="https://www.tiktok.com/@zunox.3d" target="_blank" rel="noopener">
                         <svg class="icono-relleno" viewBox="0 0 24 24" aria-hidden="true"><path d="M16.6 3c.4 2.1 1.8 3.6 3.9 3.9v3.1c-1.4 0-2.8-.4-3.9-1.1v6.3c0 3.3-2.6 5.8-5.8 5.8S5 18.4 5 15.2s2.6-5.8 5.8-5.8c.3 0 .6 0 .9.1v3.2a2.7 2.7 0 0 0-.9-.1 2.6 2.6 0 1 0 2.6 2.6V3h3.2Z" /></svg>
                         TikTok
                     </a>
