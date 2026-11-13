@@ -28,3 +28,6 @@ db/
 *.md
 backend/Dockerfile
 .dockerignore
+
+# Documentacion (capturas del README)
+docs/

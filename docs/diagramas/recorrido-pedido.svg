@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 470" width="1000" height="470" role="img" aria-labelledby="t d">
+  <title id="t">Recorrido de un pedido en ZUNOX 3D</title>
+  <desc id="d">Un cliente mira el catálogo, consulta por WhatsApp, el negocio carga el pedido en el panel, la API lo valida, se guarda en la base de datos, el negocio cambia el estado, Resend envía un mail y el cliente sigue su pedido con un link.</desc>
+
+  <style>
+    text { font-family: "Segoe UI", Arial, Helvetica, sans-serif; }
+    .fondo { fill: #080B10; }
+    .titulo { fill: #F5F7F8; font-size: 22px; font-weight: 700; }
+    .subtitulo { fill: #9CAAB7; font-size: 13px; }
+    .tarjeta { fill: #10161E; stroke-width: 2; }
+    .publico { stroke: #00E5FF; }
+    .interno { stroke: #FFB35C; }
+    .externo { stroke: #A78BFA; }
+    .nombre { fill: #F5F7F8; font-size: 15px; font-weight: 700; }
+    .detalle { fill: #9CAAB7; font-size: 12px; }
+    .numero { fill: #080B10; font-size: 13px; font-weight: 700; text-anchor: middle; }
+    .burbuja-p { fill: #00E5FF; }
+    .burbuja-i { fill: #FFB35C; }
+    .burbuja-e { fill: #A78BFA; }
+    .cable { fill: none; stroke: #25333F; stroke-width: 3; }
+    .flujo { fill: none; stroke: #00E5FF; stroke-width: 3; stroke-linecap: round;
+             stroke-dasharray: 2 14; animation: avanzar 1.2s linear infinite; }
+    .punta { fill: #00E5FF; }
+    .leyenda { fill: #9CAAB7; font-size: 12px; }
+
+    /* Cada paso se ilumina en su turno; el ciclo completo dura 12 segundos. */
+    .paso { animation: encender 12s ease-in-out infinite; }
+    .p1 { animation-delay: 0s; }   .p2 { animation-delay: 1.5s; } .p3 { animation-delay: 3s; }
+    .p4 { animation-delay: 4.5s; } .p5 { animation-delay: 6s; }   .p6 { animation-delay: 7.5s; }
+    .p7 { animation-delay: 9s; }   .p8 { animation-delay: 10.5s; }
+
+    @keyframes avanzar { to { stroke-dashoffset: -16; } }
+    @keyframes encender {
+      0%   { opacity: 0.45; }
+      4%   { opacity: 1; }
+      14%  { opacity: 1; }
+      22%  { opacity: 0.45; }
+      100% { opacity: 0.45; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .flujo { animation: none; }
+      .paso { animation: none; opacity: 1; }
+    }
+  </style>
+
+  <rect class="fondo" width="1000" height="470" rx="18"/>
+
+  <text class="titulo" x="30" y="44">Recorrido de un pedido</text>
+  <text class="subtitulo" x="30" y="66">Del primer contacto hasta el aviso por mail, paso a paso.</text>
+
+  <!-- Cables -->
+  <path class="cable" d="M230 168 H280"/>
+  <path class="cable" d="M480 168 H530"/>
+  <path class="cable" d="M730 168 H780"/>
+  <path class="cable" d="M880 216 V286"/>
+  <path class="cable" d="M780 334 H730"/>
+  <path class="cable" d="M530 334 H480"/>
+  <path class="cable" d="M280 334 H230"/>
+
+  <!-- Flujo animado sobre los cables -->
+  <path class="flujo" d="M230 168 H280"/>
+  <path class="flujo" d="M480 168 H530"/>
+  <path class="flujo" d="M730 168 H780"/>
+  <path class="flujo" d="M880 216 V286"/>
+  <path class="flujo" d="M780 334 H730"/>
+  <path class="flujo" d="M530 334 H480"/>
+  <path class="flujo" d="M280 334 H230"/>
+
+  <!-- Puntas de flecha -->
+  <path class="punta" d="M280 168 l-9 -6 v12 z"/>
+  <path class="punta" d="M530 168 l-9 -6 v12 z"/>
+  <path class="punta" d="M780 168 l-9 -6 v12 z"/>
+  <path class="punta" d="M880 286 l-6 -9 h12 z"/>
+  <path class="punta" d="M730 334 l9 -6 v12 z"/>
+  <path class="punta" d="M480 334 l9 -6 v12 z"/>
+  <path class="punta" d="M230 334 l9 -6 v12 z"/>
+
+  <!-- Fila 1 -->
+  <g class="paso p1">
+    <rect class="tarjeta publico" x="30" y="120" width="200" height="96" rx="14"/>
+    <circle class="burbuja-p" cx="56" cy="146" r="12"/><text class="numero" x="56" y="151">1</text>
+    <text class="nombre" x="78" y="151">El cliente mira</text>
+    <text class="detalle" x="48" y="178">Entra al sitio y elige una</text>
+    <text class="detalle" x="48" y="196">categoría del catálogo.</text>
+  </g>
+
+  <g class="paso p2">
+    <rect class="tarjeta publico" x="280" y="120" width="200" height="96" rx="14"/>
+    <circle class="burbuja-p" cx="306" cy="146" r="12"/><text class="numero" x="306" y="151">2</text>
+    <text class="nombre" x="328" y="151">Consulta</text>
+    <text class="detalle" x="298" y="178">Toca "Lo quiero" y se abre</text>
+    <text class="detalle" x="298" y="196">WhatsApp con el mensaje.</text>
+  </g>
+
+  <g class="paso p3">
+    <rect class="tarjeta interno" x="530" y="120" width="200" height="96" rx="14"/>
+    <circle class="burbuja-i" cx="556" cy="146" r="12"/><text class="numero" x="556" y="151">3</text>
+    <text class="nombre" x="578" y="151">El negocio carga</text>
+    <text class="detalle" x="548" y="178">Registra cliente y productos</text>
+    <text class="detalle" x="548" y="196">en el panel /pedidos.</text>
+  </g>
+
+  <g class="paso p4">
+    <rect class="tarjeta interno" x="780" y="120" width="200" height="96" rx="14"/>
+    <circle class="burbuja-i" cx="806" cy="146" r="12"/><text class="numero" x="806" y="151">4</text>
+    <text class="nombre" x="828" y="151">La API valida</text>
+    <text class="detalle" x="798" y="178">Controla sesión, datos,</text>
+    <text class="detalle" x="798" y="196">productos y precios.</text>
+  </g>
+
+  <!-- Fila 2 -->
+  <g class="paso p5">
+    <rect class="tarjeta externo" x="780" y="286" width="200" height="96" rx="14"/>
+    <circle class="burbuja-e" cx="806" cy="312" r="12"/><text class="numero" x="806" y="317">5</text>
+    <text class="nombre" x="828" y="317">Se guarda</text>
+    <text class="detalle" x="798" y="344">Cliente, pedido y detalle</text>
+    <text class="detalle" x="798" y="362">en PostgreSQL (Supabase).</text>
+  </g>
+
+  <g class="paso p6">
+    <rect class="tarjeta interno" x="530" y="286" width="200" height="96" rx="14"/>
+    <circle class="burbuja-i" cx="556" cy="312" r="12"/><text class="numero" x="556" y="317">6</text>
+    <text class="nombre" x="578" y="317">Cambia el estado</text>
+    <text class="detalle" x="548" y="344">Pendiente, realizado o</text>
+    <text class="detalle" x="548" y="362">cancelado, desde /seguimientos.</text>
+  </g>
+
+  <g class="paso p7">
+    <rect class="tarjeta externo" x="280" y="286" width="200" height="96" rx="14"/>
+    <circle class="burbuja-e" cx="306" cy="312" r="12"/><text class="numero" x="306" y="317">7</text>
+    <text class="nombre" x="328" y="317">Sale el aviso</text>
+    <text class="detalle" x="298" y="344">Resend le manda un mail</text>
+    <text class="detalle" x="298" y="362">al cliente con su link.</text>
+  </g>
+
+  <g class="paso p8">
+    <rect class="tarjeta publico" x="30" y="286" width="200" height="96" rx="14"/>
+    <circle class="burbuja-p" cx="56" cy="312" r="12"/><text class="numero" x="56" y="317">8</text>
+    <text class="nombre" x="78" y="317">El cliente sigue</text>
+    <text class="detalle" x="48" y="344">Abre /seguimiento y ve el</text>
+    <text class="detalle" x="48" y="362">estado de su pedido.</text>
+  </g>
+
+  <!-- Leyenda -->
+  <circle class="burbuja-p" cx="40" cy="432" r="6"/><text class="leyenda" x="54" y="436">Sitio público</text>
+  <circle class="burbuja-i" cx="170" cy="432" r="6"/><text class="leyenda" x="184" y="436">Panel privado y API</text>
+  <circle class="burbuja-e" cx="340" cy="432" r="6"/><text class="leyenda" x="354" y="436">Servicios externos (Supabase, Resend)</text>
+</svg>
