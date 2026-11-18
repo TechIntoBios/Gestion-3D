@@ -1,0 +1,8 @@
+# robots.txt de ZUNOX 3D
+# Las páginas internas (/ingresar, /pedidos, /productos, /seguimientos, /seguimiento) NO se bloquean acá a propósito:
+# ya mandan "noindex" y Google tiene que poder leerlo. Solo se bloquea la API.
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://zunox3d.com.ar/sitemap.xml

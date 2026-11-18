@@ -6,7 +6,7 @@ public static class NegocioCabecerasSeguridad
         "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; " +
         "connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'";
 
-    private static readonly string[] RutasSinIndexar = ["/api", .. NegocioRutasPaginas.SinIndexar];
+    private static readonly string[] RutasSinIndexar = ["/api", "/404.html", .. NegocioRutasPaginas.SinIndexar];
 
     public static void aplicar(HttpContext contexto, bool produccion)
     {

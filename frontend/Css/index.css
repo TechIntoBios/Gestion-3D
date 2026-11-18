@@ -803,6 +803,24 @@ h3 {
     color: var(--primary_hover);
 }
 
+.titulo-hero-marca {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    line-height: 1.3;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text_main);
+}
+
+@media (min-width: 1024px) {
+    .titulo-hero-marca {
+        margin-bottom: 12px;
+        font-size: 16px;
+    }
+}
+
 .texto-hero {
     margin-bottom: 20px;
     font-size: 16px;
@@ -1834,4 +1852,37 @@ h3 {
 .legal a {
     color: var(--primary_hover);
     text-underline-offset: 3px;
+}
+
+/* ===== Página 404 ===== */
+
+.pagina-error {
+    max-width: 720px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.pagina-error h1 {
+    margin-bottom: 8px;
+    font-size: 28px;
+    line-height: 1.2;
+    color: var(--primary_hover);
+}
+
+.acciones-error {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+@media (min-width: 600px) {
+    .acciones-error {
+        flex-direction: row;
+    }
+
+    .acciones-error > * {
+        width: auto;
+        padding: 0 24px;
+    }
 }

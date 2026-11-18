@@ -103,6 +103,17 @@ app.Use((contexto, siguiente) =>
     return siguiente();
 });
 
+app.Use((contexto, siguiente) =>
+{
+    var destino = NegocioDominio.redireccionDe(contexto.Request);
+    if (destino is not null)
+    {
+        contexto.Response.Redirect(destino, permanent: true);
+        return Task.CompletedTask;
+    }
+    return siguiente();
+});
+
 app.UseExceptionHandler();
 
 app.Use(async (contexto, siguiente) =>
@@ -159,6 +170,28 @@ if (Directory.Exists(rutaFrontend))
 
 app.UseRouting();
 app.UseRateLimiter();
+
+// Rutas que no existen (fuera de /api): 404 real con la página amigable, en vez del 401 de la política por defecto.
+var pagina404 = Path.Combine(rutaFrontend, "404.html");
+app.Use(async (contexto, siguiente) =>
+{
+    var metodo = contexto.Request.Method;
+    if (contexto.GetEndpoint() is null
+        && (HttpMethods.IsGet(metodo) || HttpMethods.IsHead(metodo))
+        && !contexto.Request.Path.StartsWithSegments("/api", StringComparison.OrdinalIgnoreCase)
+        && File.Exists(pagina404))
+    {
+        contexto.Response.StatusCode = StatusCodes.Status404NotFound;
+        contexto.Response.ContentType = "text/html; charset=utf-8";
+        contexto.Response.Headers.CacheControl = "no-cache";
+        if (HttpMethods.IsGet(metodo))
+        {
+            await contexto.Response.SendFileAsync(pagina404);
+        }
+        return;
+    }
+    await siguiente();
+});
 
 app.UseAuthentication();
 app.UseAuthorization();
